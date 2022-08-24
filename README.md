@@ -14,7 +14,7 @@
 git remote add -m main template https://github.com/cpppracticum/cpp-backend-template-practicum.git
 ```
 
-Для обновления кода автотестов выполните команду:
+Для обновления шаблона выполните команду:
 
 ```
 git fetch template && git checkout template/main .github
@@ -26,9 +26,6 @@ git fetch template && git checkout template/main .github
 
 При отправке (push) изменений в ветку main репозитория будет запущен пайплайн Github Actions, 
 
-(например, https://github.com/cpppracticum/cpp-backend-template-practicum/runs/7344792085?check_suite_focus=true#step:6:25),
+(https://github.com/cpppracticum/cpp-backend-template-practicum/actions),
 
 который позволит увидеть результат прохождения тестов.
-
-Пример прошедшего пайплайна:
-https://github.com/cpppracticum/cpp-backend-template-practicum/runs/7344821341?check_suite_focus=true#step:6:16.
