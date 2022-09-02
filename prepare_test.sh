@@ -12,8 +12,8 @@ fi
 
 
 if [ ! -d "${REPO}/.venv" ] ; then
-  python3.9 -m venv ${REPO}/.venv
+  python3 -m venv ${REPO}/.venv
 fi
   source ${REPO}/.venv/bin/activate
-  python3.9 -m pip install --upgrade pip
-  python3.9 -m pip install -r requirements.txt
+  python3 -m pip install --upgrade pip
+  python3 -m pip install -r requirements.txt
