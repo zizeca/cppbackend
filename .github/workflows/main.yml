@@ -9,7 +9,9 @@ on:
 
 jobs:
   tests:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
+    container:
+      image: praktikumcpp/practicum_cpp_backend:latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -20,16 +22,10 @@ jobs:
           repository: cpppracticum/cpp-backend-tests-practicum
           path: 'cpp-backend-tests-practicum'
 
-#      TODO: prepare docker image
+
       - name: Install dependencies
         run: |
-          python3 -m pip install --upgrade pip
-          python3 -m pip install -r requirements.txt
-          echo "CONAN PROFILES"
-          conan profile list
-          conan profile new --detect default
-          echo "CONAN PROFILES UPDATE"
-          conan profile update settings.compiler.version=10 default
+          cp -R /home/forconan/.conan /github/home/.conan
 
       - name: build tests sprint1 sync_server
         run: |
@@ -37,7 +33,7 @@ jobs:
           mkdir build
           cd build
           conan install ..
-          cmake -D CMAKE_CXX_COMPILER=/usr/bin/g++-10 ..
+          cmake -D CMAKE_CXX_COMPILER=/usr/bin/g++-11 ..
           cmake --build .
  
       - name: run tests sprint1 sync_server
@@ -52,7 +48,7 @@ jobs:
           mkdir build
           cd build
           conan install ..
-          cmake -D CMAKE_CXX_COMPILER=/usr/bin/g++-10 ..
+          cmake -D CMAKE_CXX_COMPILER=/usr/bin/g++-11 ..
           cmake --build .
 
       - name: run tests sprint1 restaurant_single_threaded
@@ -64,7 +60,7 @@ jobs:
           mkdir build
           cd build
           conan install ..
-          cmake -D CMAKE_CXX_COMPILER=/usr/bin/g++-10 ..
+          cmake -D CMAKE_CXX_COMPILER=/usr/bin/g++-11 ..
           cmake --build .
 
       - name: run tests sprint1 restaurant_multi_threaded
@@ -76,7 +72,7 @@ jobs:
           mkdir build
           cd build
           conan install ..
-          cmake -D CMAKE_CXX_COMPILER=/usr/bin/g++-10 ..
+          cmake -D CMAKE_CXX_COMPILER=/usr/bin/g++-11 ..
           cmake --build .
 
       - name: run tests sprint1 async_server
@@ -91,7 +87,7 @@ jobs:
           mkdir build
           cd build
           conan install ..
-          cmake -D CMAKE_CXX_COMPILER=/usr/bin/g++-10 ..
+          cmake -D CMAKE_CXX_COMPILER=/usr/bin/g++-11 ..
           cmake --build .
 
       - name: run tests sprint1 map_json
