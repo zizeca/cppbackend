@@ -40,8 +40,6 @@ jobs:
         run: pytest --junitxml=results.xml cpp-backend-tests-practicum/tests/test_l02_hello_beast.py
         env:
           DELIVERY_APP: ${{ github.workspace }}/sprint1/problems/sync_server/solution/build/bin/hello
-          CONFIG_PATH: 
-          DATA_PATH: 
 
       - name: build tests sprint1 restaurant_single_threaded
         run: |
@@ -80,24 +78,21 @@ jobs:
         run: pytest --junitxml=results.xml cpp-backend-tests-practicum/tests/test_l03_hello_async.py
         env:
           DELIVERY_APP: ${{ github.workspace }}/sprint1/problems/async_server/solution/build/bin/hello_async
-          CONFIG_PATH: 
-          DATA_PATH: 
 
-#      - name: build tests sprint1 map_json
-#        run: |
-#          cd sprint1/problems/map_json/solution
-#          mkdir build
-#          cd build
-#          conan install ..
-#          cmake -D CMAKE_CXX_COMPILER=/usr/bin/g++-11 ..
-#          cmake --build .
-#
-#      - name: run tests sprint1 map_json
-#        run: pytest --junitxml=results.xml cpp-backend-tests-practicum/tests/test_l04_map_json.py
-#        env:
-#          DELIVERY_APP: ${{ github.workspace }}/sprint1/problems/map_json/solution/build/bin/game_server
-#          CONFIG_PATH: ${{ github.workspace }}/sprint1/problems/map_json/solution/data/config.json
-#          DATA_PATH: 
+      - name: build tests sprint1 map_json
+        run: |
+          cd sprint1/problems/map_json/solution
+          mkdir build
+          cd build
+          conan install ..
+          cmake -D CMAKE_CXX_COMPILER=/usr/bin/g++-11 ..
+          cmake --build .
+
+      - name: run tests sprint1 map_json
+        run: pytest --junitxml=results.xml cpp-backend-tests-practicum/tests/test_l04_map_json.py
+        env:
+          DELIVERY_APP: ${{ github.workspace }}/sprint1/problems/map_json/solution/build/bin/game_server
+          CONFIG_PATH: ${{ github.workspace }}/sprint1/problems/map_json/solution/data/config.json
 
       - name: build tests sprint2 static_content
         run: |
