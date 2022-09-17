@@ -7,6 +7,8 @@
 #include <iostream>
 #include <memory>
 #include <mutex>
+#include <sstream>
+#include <syncstream>
 #include <thread>
 
 namespace net = boost::asio;
@@ -69,13 +71,6 @@ std::ostream& operator<<(std::ostream& os, const Hamburger& h) {
               << (h.IsPacked() ? ", packed"sv : ", not packed"sv);
 }
 
-// Защищает доступ к std::cout от одновременного доступа в многопоточном приложении
-void Print(const std::function<void(std::ostream&)> fn) {
-    static std::mutex mutex;
-    std::lock_guard lk{mutex};
-    fn(std::cout);
-}
-
 class Logger {
 public:
     explicit Logger(std::string id)
@@ -83,19 +78,9 @@ public:
     }
 
     void LogMessage(std::string_view message) const {
-        Log([message](std::ostream& os) {
-            os << message;
-        });
-    }
-
-    template <typename Fn>
-    void Log(Fn&& fn) const {
-        Print([&fn, this](std::ostream& os) {
-            os << id_ << "> ["sv << duration<double>(steady_clock::now() - start_time_).count()
-               << "s] "sv;
-            fn(os);
-            os << std::endl;
-        });
+        std::osyncstream os{std::cout};
+        os << id_ << "> ["sv << duration<double>(steady_clock::now() - start_time_).count()
+           << "s] "sv << message << std::endl;
     }
 
 private:
@@ -113,6 +98,8 @@ public:
     ThreadChecker& operator=(const ThreadChecker&) = delete;
 
     ~ThreadChecker() {
+        // assert выстрелит, если между вызовом конструктора и деструктора
+        // значение expected_counter_ изменится
         assert(expected_counter_ == counter_);
     }
 
@@ -172,12 +159,14 @@ int main() {
     std::unordered_map<int, OrderResult> orders;
 
     // Обработчик заказа может быть вызван в любом из потоков, вызывающих io.run().
-    // Чтобы избежать состояния гонки при обращении к orders, привязываем лямбду к одному
-    // объекту strand. Так обработчики будут вызываться строго последовательно.
-    auto handle_result = net::bind_executor(
-        net::make_strand(io), [&orders](sys::error_code ec, int id, Hamburger* h) {
-            orders.emplace(id, OrderResult{ec, ec ? Hamburger{} : *h});
-        });
+    // Чтобы избежать состояния гонки при обращении к orders, выполняем обращения к orders через
+    // strand, используя функцию dispatch.
+    auto handle_result
+        = [strand = net::make_strand(io), &orders](sys::error_code ec, int id, Hamburger* h) {
+              net::dispatch(strand, [&orders, id, res = OrderResult{ec, ec ? Hamburger{} : *h}] {
+                  orders.emplace(id, res);
+              });
+          };
 
     const int num_orders = 16;
     for (int i = 0; i < num_orders; ++i) {
