@@ -12,7 +12,14 @@ jobs:
     runs-on: ubuntu-22.04
     container:
       image: praktikumcpp/practicum_cpp_backend:latest
+      volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
+      options: --name main-container
     steps:
+      - name: get docker network
+        run: echo "DOCKER_NETWORK=$(docker inspect main-container -f '{{range $k, $v := .NetworkSettings.Networks}}{{printf "%s" $k}}{{end}}')" >> $GITHUB_ENV
+
+
       - name: Checkout code
         uses: actions/checkout@v2
 
@@ -21,7 +28,6 @@ jobs:
         with:
           repository: cpppracticum/cpp-backend-tests-practicum
           path: 'cpp-backend-tests-practicum'
-
 
       - name: Install dependencies
         run: |
@@ -35,9 +41,9 @@ jobs:
           conan install ..
           cmake -D CMAKE_CXX_COMPILER=/usr/bin/g++-11 ..
           cmake --build .
- 
+
       - name: run tests sprint1 sync_server
-        run: pytest --junitxml=results.xml cpp-backend-tests-practicum/tests/test_l02_hello_beast.py
+        run: pytest --junitxml=sync_server.xml cpp-backend-tests-practicum/tests/test_l02_hello_beast.py
         env:
           DELIVERY_APP: ${{ github.workspace }}/sprint1/problems/sync_server/solution/build/bin/hello
 
@@ -75,7 +81,7 @@ jobs:
           cmake --build .
 
       - name: run tests sprint1 async_server
-        run: pytest --junitxml=results.xml cpp-backend-tests-practicum/tests/test_l03_hello_async.py
+        run: pytest --junitxml=async_server.xml cpp-backend-tests-practicum/tests/test_l03_hello_async.py
         env:
           DELIVERY_APP: ${{ github.workspace }}/sprint1/problems/async_server/solution/build/bin/hello_async
 
@@ -89,10 +95,21 @@ jobs:
           cmake --build .
 
       - name: run tests sprint1 map_json
-        run: pytest --junitxml=results.xml cpp-backend-tests-practicum/tests/test_l04_map_json.py
+        run: pytest --junitxml=hello_async.xml cpp-backend-tests-practicum/tests/test_l04_map_json.py
         env:
           DELIVERY_APP: ${{ github.workspace }}/sprint1/problems/map_json/solution/build/bin/game_server
           CONFIG_PATH: ${{ github.workspace }}/sprint1/problems/map_json/solution/data/config.json
+
+      - name: build tests sprint1 final_task
+        run: |
+          cd sprint1/problems/final_task/solution
+          docker build -t my_http_server .
+          echo "COMMAND_RUN=docker run --rm --network ${DOCKER_NETWORK} --name cppserver -p 8080:8080 my_http_server" >> $GITHUB_ENV
+
+      - name: run tests sprint1 final_task
+        run: pytest --junitxml=final_task.xml cpp-backend-tests-practicum/tests/test_l05_final_task.py
+        env:
+          SERVER_DOMAIN: cppserver
 
       - name: build tests sprint2 static_content
         run: |
@@ -109,6 +126,19 @@ jobs:
           DELIVERY_APP: ${{ github.workspace }}/sprint2/problems/static_content/solution/build/bin/game_server
           CONFIG_PATH: ${{ github.workspace }}/sprint2/problems/static_content/solution/data/config.json
           DATA_PATH: ${{ github.workspace }}/sprint2/problems/static_content/solution/static/
+
+      - name: build tests sprint2 logger
+        run: |
+          cp cpp-backend-tests-practicum/tests/cpp/test_s02_logger/main.cpp sprint2/problems/logger/solution/
+          cd sprint2/problems/logger/solution
+          mkdir build
+          cd build
+          conan install ..
+          cmake -D CMAKE_CXX_COMPILER=/usr/bin/g++-11 ..
+          cmake --build .
+
+      - name: run tests sprint2 logger
+        run: ./sprint2/problems/logger/solution/build/bin/hello_log
 
       - name: Publish XML reports
         uses: EnricoMi/publish-unit-test-result-action@v1
