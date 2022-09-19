@@ -19,14 +19,13 @@ jobs:
       - name: get docker network
         run: echo "DOCKER_NETWORK=$(docker inspect main-container -f '{{range $k, $v := .NetworkSettings.Networks}}{{printf "%s" $k}}{{end}}')" >> $GITHUB_ENV
 
-
       - name: Checkout code
         uses: actions/checkout@v2
 
       - name: Load tests
         uses: actions/checkout@v2
         with:
-          repository: cpppracticum/cpp-backend-tests-practicum
+          repository: 'cpppracticum/cpp-backend-tests-practicum'
           path: 'cpp-backend-tests-practicum'
 
       - name: Install dependencies
@@ -134,7 +133,7 @@ jobs:
           mkdir build
           cd build
           conan install ..
-          cmake -D CMAKE_CXX_COMPILER=/usr/bin/g++-11 ..
+          cmake -D CMAKE_CXX_COMPILER=/usr/bin/g++ ..
           cmake --build .
 
       - name: run tests sprint2 logger
