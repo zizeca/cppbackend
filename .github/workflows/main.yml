@@ -190,7 +190,16 @@ jobs:
         env:
           SERVER_DOMAIN: cppserver
 
+      - name: build tests sprint2 command_line
+        run: |
+          cd sprint2/problems/command_line/solution
+          docker build -t command_line .
+          echo "COMMAND_RUN=docker run --rm --entrypoint /app/game_server --network ${DOCKER_NETWORK} --name cppserver -p 8080:8080 command_line --config-file /app/data/config.json --www-root /app/static/" >> $GITHUB_ENV
 
+      - name: run tests sprint2 command_line
+        run: pytest --junitxml=command_line.xml cpp-backend-tests-practicum/tests/test_s02_command_line.py
+        env:
+          SERVER_DOMAIN: cppserver
 
       - name: Publish XML reports
         uses: EnricoMi/publish-unit-test-result-action@v1
