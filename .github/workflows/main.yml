@@ -178,6 +178,8 @@ jobs:
 
       - name: run tests sprint2 move_players
         run: pytest --junitxml=move_players.xml cpp-backend-tests-practicum/tests/test_s02_move_players.py
+        env:
+          SERVER_DOMAIN: cppserver
 
       - name: build tests sprint2 time_control
         run: |
