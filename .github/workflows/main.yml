@@ -12,7 +12,10 @@ jobs:
       image: praktikumcpp/practicum_cpp_backend:latest
       volumes:
         - /var/run/docker.sock:/var/run/docker.sock
-      options: --name main-container
+        - /usr/bin/perf:/usr/bin/perf
+        - /usr/lib/linux-tools:/usr/lib/linux-tools
+        - /usr/lib/linux-azure-tools-5.15.0-1022:/usr/lib/linux-azure-tools-5.15.0-1022
+      options: --privileged --name main-container
     steps:
       - name: get docker network
         run: echo "DOCKER_NETWORK=$(docker inspect main-container -f '{{range $k, $v := .NetworkSettings.Networks}}{{printf "%s" $k}}{{end}}')" >> $GITHUB_ENV
@@ -36,7 +39,7 @@ jobs:
           mkdir build
           cd build
           conan install ..
-          cmake -D CMAKE_CXX_COMPILER=/usr/bin/g++-11 ..
+          cmake ..
           cmake --build .
 
       - name: run tests sprint1 sync_server
@@ -50,7 +53,7 @@ jobs:
           mkdir build
           cd build
           conan install ..
-          cmake -D CMAKE_CXX_COMPILER=/usr/bin/g++-11 ..
+          cmake ..
           cmake --build .
 
       - name: run tests sprint1 restaurant_single_threaded
@@ -62,7 +65,7 @@ jobs:
           mkdir build
           cd build
           conan install ..
-          cmake -D CMAKE_CXX_COMPILER=/usr/bin/g++-11 ..
+          cmake ..
           cmake --build .
 
       - name: run tests sprint1 restaurant_multi_threaded
@@ -74,7 +77,7 @@ jobs:
           mkdir build
           cd build
           conan install ..
-          cmake -D CMAKE_CXX_COMPILER=/usr/bin/g++-11 ..
+          cmake ..
           cmake --build .
 
       - name: run tests sprint1 async_server
@@ -88,7 +91,7 @@ jobs:
           mkdir build
           cd build
           conan install ..
-          cmake -D CMAKE_CXX_COMPILER=/usr/bin/g++-11 ..
+          cmake ..
           cmake --build .
 
       - name: run tests sprint1 map_json
@@ -114,7 +117,7 @@ jobs:
           mkdir build
           cd build
           conan install ..
-          cmake -D CMAKE_CXX_COMPILER=/usr/bin/g++-11 ..
+          cmake ..
           cmake --build .
 
       - name: run tests sprint2 static_content
@@ -131,7 +134,7 @@ jobs:
           mkdir build
           cd build
           conan install ..
-          cmake -D CMAKE_CXX_COMPILER=/usr/bin/g++ ..
+          cmake ..
           cmake --build .
 
       - name: run tests sprint2 logger
@@ -202,6 +205,33 @@ jobs:
         run: pytest --junitxml=command_line.xml cpp-backend-tests-practicum/tests/test_s02_command_line.py
         env:
           SERVER_DOMAIN: cppserver
+
+      - name: build tests sprint3 instrumentation
+        run: |
+          cd sprint3/problems/instrumentation/solution/v2
+          g++ -O3 *.cpp -o event2dot
+
+      - name: run tests sprint3 instrumentation
+        run: pytest --junitxml=instrumentation.xml cpp-backend-tests-practicum/tests/test_s03_instrumentation.py
+        env:
+          REPORT_PATH: ${{ github.workspace }}/sprint3/problems/instrumentation/solution/report
+          BINARY_PATH: ${{ github.workspace }}/sprint3/problems/instrumentation/solution/v2/event2dot
+          ARG: ${{ github.workspace }}/sprint3/problems/instrumentation/solution/v2/inputs
+
+      - name: Load FlameGraph
+        uses: actions/checkout@v2
+        with:
+          repository: 'brendangregg/FlameGraph'
+          path: ${{ github.workspace }}/sprint3/problems/flamegraph/solution/FlameGraph
+
+      - name: run tests sprint3 flamegraph
+        run: |
+          cd sprint3/problems/flamegraph/solution
+          python3 shoot.py "${GITHUB_WORKSPACE}/sprint1/problems/map_json/solution/build/bin/game_server ${GITHUB_WORKSPACE}/sprint1/problems/map_json/solution/data/config.json" || true
+          ls -l
+#          pytest --junitxml=flamegraph.xml ${GITHUB_WORKSPACE}/cpp-backend-tests-practicum/tests/test_s03_flamegraph.py
+        env:
+          DIRECTORY: ${{ github.workspace }}/sprint3/problems/flamegraph/solution
 
       - name: Publish XML reports
         uses: EnricoMi/publish-unit-test-result-action@v1
