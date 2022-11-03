@@ -6,9 +6,9 @@ project(Seabattle CXX)
 set(CMAKE_CXX_STANDARD 20)
 
 # Подключаем сгенерированный скрипт conanbuildinfo.cmake, созданный Conan
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+#include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 # Выполняем макрос из conanbuildinfo.cmake, который настроит СMake на работу с библиотеками, установленными Conan
-conan_basic_setup()
+#conan_basic_setup()
 
 # Ищем Boost версии 1.78
 find_package(Boost 1.78.0 REQUIRED)
