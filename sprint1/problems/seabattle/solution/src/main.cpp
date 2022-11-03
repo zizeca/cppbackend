@@ -5,6 +5,7 @@
 #include <atomic>
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
+#include <cassert>
 #include <iostream>
 #include <optional>
 #include <string>
@@ -68,7 +69,87 @@ class SeabattleAgent {
   void StartGame(tcp::socket& socket, bool my_initiative) {
     while (!IsGameEnded()) {
       PrintFields();
-      break;
+      std::optional<std::pair<int, int>> popt;
+
+      if (my_initiative) {
+        std::cout << "You turn:";
+        std::string input;
+
+        // loop for rong input
+        while (true) {
+          std::cin >> input;
+          popt = ParseMove(input);
+          if (!popt) {
+            std::cout << "Wrong turn...\n";
+          } else {
+            SeabattleField::State s = other_field_(popt->second, popt->first);
+            if (s != SeabattleField::State::UNKNOWN) {
+              std::cout << "Cell is known...\n";
+            } else {
+              break;
+            }
+          }
+        }
+
+        if (!WriteExact(socket, input)) {
+          throw std::runtime_error("Fail to WriteExact");
+        }
+
+        auto retval = ReadExact<1>(socket);
+
+        switch (static_cast<SeabattleField::ShotResult>(*retval->c_str() - '0')) {
+          case SeabattleField::ShotResult::MISS:
+            std::cout << "Miss!\n";
+            my_initiative = !my_initiative;
+            other_field_.MarkMiss(popt->second, popt->first);
+            break;
+          case SeabattleField::ShotResult::HIT:
+            std::cout << "Hit!\n";
+            other_field_.MarkHit(popt->second, popt->first);
+            break;
+          case SeabattleField::ShotResult::KILL:
+            std::cout << "Kill!\n";
+            other_field_.MarkKill(popt->second, popt->first);
+            break;
+
+          default:
+            break;
+        }
+
+      } else {
+        std::cout << "Wait turn...\n";
+        auto retval = ReadExact<2>(socket);
+        std::cout << retval.value() << std::endl;
+        popt = ParseMove(retval.value());
+        // std::cout << "opt " << popt->first << " " << popt->second << "\n";
+        auto shootres = my_field_.Shoot(popt->second, popt->first);  // mixed :( first and second
+        // std::cout << "Shoot res = " << (int)shootres << std::endl;
+        if (!WriteExact(socket, std::to_string(static_cast<int>(shootres)))) {
+          throw std::runtime_error("Fail to write");
+        }
+
+        switch (shootres) {
+          case SeabattleField::ShotResult::MISS:
+            std::cout << "Miss.\n";
+            my_initiative = !my_initiative;
+            break;
+          case SeabattleField::ShotResult::HIT:
+            std::cout << "Hit!\n";
+            break;
+          case SeabattleField::ShotResult::KILL:
+            std::cout << "Kill!\n";
+            break;
+
+          default:
+            break;
+        }
+      }
+    }
+
+    if (my_field_.IsLoser()) {
+      std::cout << "Your Lose.\n";
+    } else {
+      std::cout << "Your Win.\n";
     }
   }
 
