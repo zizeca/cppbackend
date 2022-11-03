@@ -22,4 +22,4 @@ if(WIN32)
 endif()
 
 add_executable(radio src/main.cpp src/audio.h)
-target_link_libraries(radio PRIVATE Threads::Threads)
+target_link_libraries(radio PRIVATE Threads::Threads ${CMAKE_DL_LIBS})
