@@ -16,6 +16,7 @@
 #include <boost/format.hpp>
 #include <iostream>
 #include <thread>
+#include <optional>
 
 namespace net = boost::asio;
 using tcp = net::ip::tcp;
