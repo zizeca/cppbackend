@@ -25,6 +25,7 @@ using namespace std::literals;
 
 namespace beast = boost::beast;
 namespace http = beast::http;
+
 // Запрос, тело которого представлено в виде строки
 using StringRequest = http::request<http::string_body>;
 // Ответ, тело которого представлено в виде строки
