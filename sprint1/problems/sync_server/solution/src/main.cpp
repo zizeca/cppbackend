@@ -1,3 +1,13 @@
+/**
+ * @file main.cpp
+ * @author Enver Kulametov (zizu.meridian@gmail.com)
+ * @brief
+ * @version 0.1
+ * @date 2022-11-07
+ *
+ * @copyright Copyright (c) 2022
+ *
+ */
 #ifdef WIN32
 #include <sdkddkver.h>
 #endif
@@ -8,8 +18,10 @@
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
 #include <iostream>
-#include <thread>
 #include <optional>
+#include <thread>
+
+#include "Server.hpp"
 
 namespace net = boost::asio;
 using tcp = net::ip::tcp;
@@ -18,5 +30,15 @@ namespace beast = boost::beast;
 namespace http = beast::http;
 
 int main() {
-    // Выведите строчку "Server has started...", когда сервер будет готов принимать подключения
+  // Выведите строчку "Server has started...", когда сервер будет готов принимать подключения
+
+  Server s;
+  try {
+    s.init();
+    s.run();
+  } catch (std::exception& e) {
+    std::cout << "Server exception " << e.what() << std::endl;
+  } catch (...) {
+    std::cout << "Catch unknown error\n";
+  }
 }

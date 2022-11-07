@@ -10,5 +10,11 @@ endif()
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
-add_executable(hello src/main.cpp)
-target_link_libraries(hello PRIVATE Threads::Threads)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin )
+
+file(GLOB SRC  "${CMAKE_SOURCE_DIR}/src/*.cpp")
+
+add_compile_definitions(BOOST_BEAST_USE_STD_STRING_VIEW)
+
+add_executable(${PROJECT_NAME} ${SRC})
+target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)
