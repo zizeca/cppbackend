@@ -100,7 +100,7 @@ void HandleConnection(tcp::socket& socket, RequestHandler&& handle_request) {
 
     // Продолжаем обработку запросов, пока клиент их отправляет
     while (auto request = ReadRequest(socket, buffer)) {
-      DumpRequest(*request);
+      // DumpRequest(*request);
       StringResponse response = handle_request(*std::move(request));
       http::write(socket, response);
       if (response.need_eof()) {
@@ -123,7 +123,7 @@ int main() {
 
   tcp::acceptor acceptor(ioc, {address, port});
 
-  std::cout << "Server has started...\n";
+  std::cout << "Server has started..." << std::endl;
 
   while (true) {
     tcp::socket socket(ioc);

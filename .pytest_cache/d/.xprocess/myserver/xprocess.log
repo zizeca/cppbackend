@@ -1,16 +1,1 @@
 Server has started...
-GET /Baron
-  Host: 127.0.0.1:8080
-  User-Agent: python-requests/2.27.1
-  Accept-Encoding: gzip, deflate
-  Accept: */*
-  Connection: keep-alive
-answer - Hello, Baron
-POST /Baron
-  Host: 127.0.0.1:8080
-  User-Agent: python-requests/2.27.1
-  Accept-Encoding: gzip, deflate
-  Accept: */*
-  Connection: keep-alive
-  Content-Length: 4
-answer - Hello, Baron
