@@ -1,9 +1,4 @@
 Server has started...
-GET /test
-  Host: localhost:8080
-  User-Agent: curl/7.74.0
-  Accept: */*
-answer - Hello, test
 GET /Baron
   Host: 127.0.0.1:8080
   User-Agent: python-requests/2.27.1
