@@ -1,25 +1,30 @@
 cmake_minimum_required(VERSION 3.11)
 
+# ������ ���������� Hello � ������� �� C++
 project(Hello CXX)
+# ������� ��� ����� ��������������� � ���������� ��������� �++ 20
 set(CMAKE_CXX_STANDARD 20)
-set(EXEC hello)
+
+# ���������� ��������������� ������ conanbuildinfo.cmake, ��������� Conan
+#include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+# ��������� ������ �� conanbuildinfo.cmake, ������� �������� �Make �� ������ � ������������, �������������� Conan
+#conan_basic_setup()
+
+# ���� Boost ������ 1.78
 find_package(Boost 1.78.0 REQUIRED)
 if(Boost_FOUND)
+  # boost ������, ��������� � ��������� ������������ ������ ������� ���� �
+  # ������������ ������ boost
   include_directories(${Boost_INCLUDE_DIRS})
 endif()
+
+# ��������� ����� linux ������� ����������� ���������� pthread ���
+# ��������� ����������� �������.
+# ��������� ��� ������ ��������� ��� ���������� �� ����� ����������
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
-# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin )
-
-# file(GLOB SRC  "${CMAKE_SOURCE_DIR}/src/*.cpp")
-
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup()
-
-
-set(SRC src/main.cpp)
-add_compile_definitions(BOOST_BEAST_USE_STD_STRING_VIEW)
-
-add_executable(${EXEC} ${SRC})
-target_link_libraries(${EXEC} PRIVATE Threads::Threads)
+# ������ �������� ������������ �������� ���� src/main.cpp
+add_executable(hello src/main.cpp)
+# ������ ����������� ���������� ���������� ��� ��������� �������
+target_link_libraries(hello PRIVATE Threads::Threads)
