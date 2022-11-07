@@ -14,6 +14,10 @@ find_package(Threads REQUIRED)
 
 # file(GLOB SRC  "${CMAKE_SOURCE_DIR}/src/*.cpp")
 
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+conan_basic_setup()
+
+
 set(SRC src/main.cpp)
 add_compile_definitions(BOOST_BEAST_USE_STD_STRING_VIEW)
 
