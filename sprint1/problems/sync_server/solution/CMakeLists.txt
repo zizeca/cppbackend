@@ -6,9 +6,9 @@ project(Hello CXX)
 set(CMAKE_CXX_STANDARD 20)
 
 # ���������� ��������������� ������ conanbuildinfo.cmake, ��������� Conan
-#include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 # ��������� ������ �� conanbuildinfo.cmake, ������� �������� �Make �� ������ � ������������, �������������� Conan
-#conan_basic_setup()
+conan_basic_setup()
 
 # ���� Boost ������ 1.78
 find_package(Boost 1.78.0 REQUIRED)
