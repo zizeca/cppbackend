@@ -6,15 +6,15 @@ project(TCP_UDP_Practice CXX)
 set(CMAKE_CXX_STANDARD 20)
 
 # Подключаем сгенерированный скрипт conanbuildinfo.cmake, созданный Conan
-#include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 # Выполняем макрос из conanbuildinfo.cmake, который настроит СMake на работу с библиотеками, установленными Conan
-#conan_basic_setup()
+conan_basic_setup()
 
 # Добавляем четыре проекта
-add_executable(TCPServer tcp_server.cpp)
-add_executable(TCPClient tcp_client.cpp)
-add_executable(UDPServer udp_server.cpp)
-add_executable(UDPClient udp_client.cpp)
+add_executable(TCPServer src/tcp_server.cpp)
+add_executable(TCPClient src/tcp_client.cpp)
+add_executable(UDPServer src/udp_server.cpp)
+add_executable(UDPClient src/udp_client.cpp)
 
 # Просим компоновщик подключить библиотеку для поддержки потоков
 set(THREADS_PREFER_PTHREAD_FLAG ON)
