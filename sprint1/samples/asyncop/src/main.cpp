@@ -9,7 +9,6 @@
  *
  */
 
-#include <boost/version.hpp>
 #include <iostream>
 #include <memory>
 
@@ -129,7 +128,60 @@ class Order : public std::enable_shared_from_this<Order> {
     CheckReadiness(ec);
   }
 
-  void CheckReadiness(sys::error_code ec) { logger_.LogMessage(ec.to_string()); }
+  void CheckReadiness(sys::error_code ec) {
+    if (delivered_) {
+      // Выходим, если заказ уже доставлен либо клиента уведомили об ошибке
+      return;
+    }
+    if (ec) {
+      // В случае ошибки уведомляем клиента о невозможности выполнить заказ
+      return Deliver(ec);
+    }
+
+    // Самое время добавить лук
+    if (CanAddOnion()) {
+      logger_.LogMessage("Add onion"sv);
+      hamburger_.AddOnion();
+    }
+
+    // Если все компоненты гамбургера готовы, упаковываем его
+    if (IsReadyToPack()) {
+      Pack();
+    }
+  }
+
+  void Deliver(sys::error_code ec) {
+    // Защита заказа от повторной доставки
+    delivered_ = true;
+    // Доставляем гамбургер в случае успеха либо nullptr, если возникла ошибка
+    handler_(ec, id_, ec ? nullptr : &hamburger_);
+  }
+
+  [[nodiscard]] bool CanAddOnion() const {
+    // Лук можно добавить, если котлета обжарена, лук замаринован, но пока не добавлен
+    return hamburger_.IsCutletRoasted() && onion_marinaded_ && !hamburger_.HasOnion();
+  }
+
+  [[nodiscard]] bool IsReadyToPack() const {
+    // Если котлета обжарена и лук добавлен, как просили, гамбургер можно упаковывать
+    return hamburger_.IsCutletRoasted() && (!with_onion_ || hamburger_.HasOnion());
+  }
+
+  void Pack() {
+    logger_.LogMessage("Packing"sv);
+
+    // Просто потребляем ресурсы процессора в течение 0,5 с.
+    auto start = steady_clock::now();
+    while (steady_clock::now() - start < 500ms) {
+    }
+
+    hamburger_.Pack();
+    logger_.LogMessage("Packed"sv);
+
+    Deliver({});
+  }
+
+  bool delivered_ = false;  // Заказ доставлен?
 };
 
 class Restaurant {
@@ -148,12 +200,23 @@ class Restaurant {
 };
 
 int main() {
-  std::cout << (BOOST_VERSION % 100) << '.' << ((BOOST_VERSION / 100) % 1000) << '.' << (BOOST_VERSION / 100000)
-            << std::endl;
   net::io_context io;
+
   Restaurant restaurant{io};
 
-  restaurant.MakeHamburger(true, [](sys::error_code ec, int order_id, Hamburger* h) {});
+  Logger logger{"main"s};
+  auto print_result = [&logger](sys::error_code ec, int order_id, Hamburger* hamburger) {
+    std::ostringstream os;
+    if (ec) {
+      os << "Order "sv << order_id << "failed: "sv << ec.what();
+      return;
+    }
+    os << "Order "sv << order_id << " is ready. "sv << *hamburger;
+    logger.LogMessage(os.str());
+  };
 
+  for (int i = 0; i < 4; ++i) {
+    restaurant.MakeHamburger(i % 2 == 0, print_result);
+  }
   io.run();
 }
