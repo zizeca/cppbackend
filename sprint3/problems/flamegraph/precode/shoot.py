@@ -52,4 +52,3 @@ make_shots()
 stop(server)
 time.sleep(1)
 print('Job done')
-# python3 shoot.py "/test_cpp_backend/sprint1/problems/map_json/solution/build/bin/game_server /test_cpp_backend/sprint1/problems/map_json/solution/data/config.json" || true
