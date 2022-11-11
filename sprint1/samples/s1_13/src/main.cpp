@@ -99,8 +99,8 @@ int main() {
       ioc.stop();
     }
   });
-  net::steady_timer t{ioc, 30s};
-  t.async_wait([](sys::error_code ec) { std::cout << "Timer expired"s << std::endl; });
+  //net::steady_timer t{ioc, 30s};
+  //t.async_wait([](sys::error_code ec) { std::cout << "Timer expired"s << std::endl; });
 /**/
 
   const auto address = net::ip::make_address("0.0.0.0");
