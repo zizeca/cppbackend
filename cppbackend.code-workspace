@@ -1,101 +1,39 @@
 {
   "folders": [
     {
+      "name": "root",
       "path": "."
     },
     {
-      "path": "sprint1/problems/async_server"
-    }
+      "name": "radio",
+      "path": "sprint1/problems/radio/solution"
+    },
+    {
+      "name": "seabattle",
+      "path": "sprint1/problems/seabattle/solution"
+    },
+    {
+      "name": "restaurant_single_threaded",
+      "path": "sprint1/problems/restaurant_single_threaded/solution"
+    },
+    {
+      "name": "restaurant_multi_threaded",
+      "path": "sprint1/problems/restaurant_multi_threaded/solution"
+    },
+    {
+      "name": "sync_server",
+      "path": "sprint1/problems/sync_server/solution"
+    },
+    {
+      "name": "async_server",
+      "path": "sprint1/problems/async_server/solution"
+    },
   ],
   "settings": {
-    "files.associations": {
-      "cctype": "cpp",
-      "clocale": "cpp",
-      "cmath": "cpp",
-      "csignal": "cpp",
-      "cstdarg": "cpp",
-      "cstddef": "cpp",
-      "cstdio": "cpp",
-      "cstdlib": "cpp",
-      "cstring": "cpp",
-      "ctime": "cpp",
-      "cwchar": "cpp",
-      "cwctype": "cpp",
-      "any": "cpp",
-      "array": "cpp",
-      "atomic": "cpp",
-      "bit": "cpp",
-      "*.tcc": "cpp",
-      "bitset": "cpp",
-      "chrono": "cpp",
-      "codecvt": "cpp",
-      "compare": "cpp",
-      "complex": "cpp",
-      "concepts": "cpp",
-      "condition_variable": "cpp",
-      "coroutine": "cpp",
-      "cstdint": "cpp",
-      "deque": "cpp",
-      "list": "cpp",
-      "map": "cpp",
-      "set": "cpp",
-      "unordered_map": "cpp",
-      "vector": "cpp",
-      "exception": "cpp",
-      "algorithm": "cpp",
-      "functional": "cpp",
-      "iterator": "cpp",
-      "memory": "cpp",
-      "memory_resource": "cpp",
-      "numeric": "cpp",
-      "optional": "cpp",
-      "random": "cpp",
-      "ratio": "cpp",
-      "source_location": "cpp",
-      "string": "cpp",
-      "string_view": "cpp",
-      "system_error": "cpp",
-      "tuple": "cpp",
-      "type_traits": "cpp",
-      "utility": "cpp",
-      "fstream": "cpp",
-      "future": "cpp",
-      "initializer_list": "cpp",
-      "iomanip": "cpp",
-      "iosfwd": "cpp",
-      "iostream": "cpp",
-      "istream": "cpp",
-      "limits": "cpp",
-      "mutex": "cpp",
-      "new": "cpp",
-      "ostream": "cpp",
-      "ranges": "cpp",
-      "sstream": "cpp",
-      "stdexcept": "cpp",
-      "stop_token": "cpp",
-      "streambuf": "cpp",
-      "thread": "cpp",
-      "cinttypes": "cpp",
-      "typeindex": "cpp",
-      "typeinfo": "cpp",
-      "variant": "cpp",
-      "syncstream": "cpp",
-      "*.ipp": "cpp",
-      "csetjmp": "cpp",
-      "strstream": "cpp",
-      "cfenv": "cpp",
-      "charconv": "cpp",
-      "forward_list": "cpp",
-      "unordered_set": "cpp",
-      "regex": "cpp",
-      "rope": "cpp",
-      "slist": "cpp",
-      "numbers": "cpp",
-      "semaphore": "cpp",
-      "shared_mutex": "cpp",
-      "span": "cpp",
-      "valarray": "cpp"
-    },
-    "cpp-check-lint.cppcheck.--std_c++=": "c++20"
-  }
+    "C_Cpp.default.cppStandard": "c++20",
+    "C_Cpp.default.includePath": [
+      "${workspaceFolder}/**",
+      "~/.conan/data/**"
+    ]
+  },
 }
