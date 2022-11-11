@@ -38,8 +38,18 @@ StringResponse MakeStringResponse(http::status status, std::string_view body, un
 }
 
 StringResponse HandleRequest(StringRequest&& req) {
-    // Подставьте сюда код из синхронной версии HTTP-сервера
-    return MakeStringResponse(http::status::ok, "OK"sv, req.version(), req.keep_alive());
+  const auto text_response = [&req](http::status status, std::string_view text) {
+    return MakeStringResponse(status, text, req.version(), req.keep_alive());
+  };
+
+  // Здесь можно обработать запрос и сформировать ответ, но пока всегда отвечаем: Hello
+  if (req.method_string() == "GET" || req.method_string() == "HEAD") {
+    std::string s = "Hello, ";
+    s += std::string(req.target().begin() + 1, req.target().end());
+    return text_response(http::status::ok, s);
+  }
+
+  return text_response(http::status::method_not_allowed, "Invalid method"sv);
 }
 
 // Запускает функцию fn на n потоках, включая текущий
