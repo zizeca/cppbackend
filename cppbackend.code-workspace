@@ -28,6 +28,10 @@
       "name": "async_server",
       "path": "sprint1/problems/async_server/solution"
     },
+    {
+      "name": "map_json",
+      "path": "sprint1/problems/map_json/solution"
+    },
   ],
   "settings": {
     "C_Cpp.default.cppStandard": "c++20",
