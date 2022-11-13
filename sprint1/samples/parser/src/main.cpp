@@ -78,6 +78,17 @@ std::string_view map = R"({
 
 #pragma endregion
 
+struct A {
+  std::string s = "key";
+  std::vector<int> v = {1, 2, 3, 4};
+};
+
+void tag_invoke(json::value_from_tag, json::value& jv, A const& a) {
+  jv = {
+      {a.s, json::value_from(a.v)}
+  };
+}
+
 int main() {
   // std::cout << map << std::endl;
   auto value = json::parse(map);
@@ -105,6 +116,18 @@ int main() {
       }
     }
   }
+
+  std::vector<std::string> varr = {"val_1"s, "val_2"s, "val_3"s, "val_4"s};
+
+  auto v1 = json::value_from("val"sv);
+  auto v2 = json::value_from(varr);
+  std::cout << "v1 " << json::serialize(v1) << std::endl;
+  std::cout << "v2 " << json::serialize(v2) << std::endl;
+
+  A a{"anotherKey", {1, 2, 3, 4, 5, 6, 7, 8}};
+
+  auto v3 = json::value_from(a);
+  std::cout << "v3 " << json::serialize(v3) << std::endl;
 
   // std::cout << arr->key() << std::endl;
 
