@@ -1,0 +1,125 @@
+#define BOOST_JSON_STANDALONE  // for std::string_viev
+#include <boost/json.hpp>
+// #include <boost/json/parse.hpp>
+
+// Этот заголовочный файл надо подключить в одном и только одном .cpp-файле программы
+#include <boost/json/src.hpp>
+#include <iostream>
+#include <string>
+#include <string_view>
+namespace json = boost::json;
+using namespace std::literals;
+
+#pragma region
+
+std::string_view map = R"({
+  "maps": [
+    {
+      "id": "map1",
+      "name": "Map 1",
+      "roads": [
+        {
+          "x0": 0,
+          "y0": 0,
+          "x1": 40
+        },
+        {
+          "x0": 40,
+          "y0": 0,
+          "y1": 30
+        },
+        {
+          "x0": 40,
+          "y0": 30,
+          "x1": 0
+        },
+        {
+          "x0": 0,
+          "y0": 0,
+          "y1": 30
+        }
+      ],
+      "buildings": [
+        {
+          "x": 5,
+          "y": 5,
+          "w": 30,
+          "h": 20
+        }
+      ],
+      "offices": [
+        {
+          "id": "o0",
+          "x": 40,
+          "y": 30,
+          "offsetX": 5,
+          "offsetY": 0
+        }
+      ]
+    },
+    {
+      "id": "map2",
+      "name": "Map 2",
+      "roads": [
+        {
+          "x0": 0,
+          "y0": 0,
+          "x1": 40
+        },
+        {
+          "x0": 40,
+          "y0": 0,
+          "y1": 30
+        }
+      ]
+    }
+  ]
+})"sv;
+
+#pragma endregion
+
+int main() {
+  // std::cout << map << std::endl;
+  auto value = json::parse(map);
+  // if(value.is_object()){
+  //   std::cout << "value is object " << value.as_object().at("maps"sv) << std::endl;
+  // }
+
+  // auto arr = value.as_object().at("maps"sv).as_array();
+
+  auto maps = value.as_object().at("maps"sv).as_array();
+
+  for (auto m = maps.cbegin(); m != maps.end(); ++m) {
+    std::cout << "Maps id " << m->at("id"sv).as_string() << " name" << m->at("name"sv).as_string() << std::endl;
+    for (auto i = m->as_object().cbegin(); i != m->as_object().cend(); i++) {
+      if (i->key() == "id"sv || i->key() == "name"sv) {
+        continue;
+      } else if (i->key() == "roads"sv) {
+        std::cout << "Road\n";
+      } else if (i->key() == "buildings"sv) {
+        std::cout << "buildings\n";
+      } else if (i->key() == "offices"sv) {
+        std::cout << "offices\n";
+      } else {
+        std::cout << "unknon object " << i->key() << std::endl;
+      }
+    }
+  }
+
+  // std::cout << arr->key() << std::endl;
+
+  /*
+    int count = 0;
+    for (auto it = arr.begin(); it != arr.end(); ++it) {
+      std::cout << "Count iteration = " << count++ << std::endl;
+      std::cout << "kind " << json::to_string(it->kind()) << std::endl;
+      std::cout << it->as_object() << std::endl;
+
+      for (auto i = it->as_object().begin(); i != it->as_object().end(); ++i) {
+        std::cout << "key" <<  i->key() << " value" << i->value() << std::endl;
+      }
+    }
+   */
+  // std::cout << value.as_object().at("maps"sv).as_array()[0].as_object().at("id"sv) << std::endl;  // Harry Potter
+  //  std::cout << json::serialize(value) << std::endl;          // {"name": "Harry Potter"}
+}
