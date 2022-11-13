@@ -5,6 +5,7 @@
 #include <boost/json/system_error.hpp>
 #include <fstream>
 #include <iostream>
+#include <optional>
 #include <string>
 #include <string_view>
 
@@ -38,33 +39,42 @@ using namespace std::literals;
 namespace {
 void parseRoads(const boost::json::array& arr, model::Map& map) {
   if (arr.size() < 1) return;  // The array must contain at least one element
-  for (auto i : arr) {
-    model::Point start{0, 0};
-    model::Coord end_x{0}, end_y{0};
+  try {
+    for (auto i : arr) {
+      model::Point start{0, 0};
+      // model::Coord end_x{0}, end_y{0};
 
-    auto r = i.as_object();
+      model::Coord end{0};
 
-    for (auto k = r.begin(); k != r.end(); ++k) {
-      if (k->key() == "x0") {
-        start.x = static_cast<model::Coord>(k->value().as_int64());
-      } else if (k->key() == "y0") {
-        start.y = static_cast<model::Coord>(k->value().as_int64());
-      } else if (k->key() == "x1") {
-        end_x = static_cast<model::Coord>(k->value().as_int64());
-      } else if (k->key() == "y1") {
-        end_y = static_cast<model::Coord>(k->value().as_int64());
+      bool vertical = true;
+
+      auto r = i.as_object();
+      if (r.size() != 3) {
+        throw std::logic_error("Too rong cound fields in road");
+      }
+
+      for (auto k = r.begin(); k != r.end(); ++k) {
+        if (k->key() == "x0") {
+          start.x = static_cast<model::Coord>(k->value().as_int64());
+        } else if (k->key() == "y0") {
+          start.y = static_cast<model::Coord>(k->value().as_int64());
+        } else if (k->key() == "x1") {
+          vertical = false;
+          end = static_cast<model::Coord>(k->value().as_int64());
+        } else if (k->key() == "y1") {
+          end = static_cast<model::Coord>(k->value().as_int64());
+        }
+      }
+
+      if (vertical) {
+        map.AddRoad(model::Road(model::Road::VERTICAL, start, end));
+      } else {
+        map.AddRoad(model::Road(model::Road::HORIZONTAL, start, end));
       }
     }
-
-    if ((end_x == 0 && end_y == 0) || (end_x != 0 && end_y != 0)) {
-      throw std::logic_error("Broken road");
-    }
-
-    if (end_y != 0) {
-      map.AddRoad(model::Road(model::Road::VERTICAL, start, end_y));
-    } else {
-      map.AddRoad(model::Road(model::Road::HORIZONTAL, start, end_x));
-    }
+  } catch (std::exception& e) {
+    std::cout << "Fail to parse road" << e.what() << std::endl;
+    throw;
   }
 }
 
@@ -121,6 +131,28 @@ void parseOffice(const boost::json::array& arr, model::Map& map) {
   }
 }
 
+void parseMap(const boost::json::value& val, model::Map& map) {
+  // get field form map
+  for (auto i = val.as_object().cbegin(); i != val.as_object().cend(); i++) {
+    auto p_arr = i->value().if_array();
+    if (i->key() == "id"sv || i->key() == "name"sv || p_arr == nullptr) {
+      continue;
+    } else if (i->key() == "roads"sv) {
+      parseRoads(*p_arr, map);
+      std::cout << "Road\n";
+    } else if (i->key() == "buildings"sv) {
+      parseBuilding(*p_arr, map);
+      std::cout << "buildings\n";
+    } else if (i->key() == "offices"sv) {
+      parseOffice(*p_arr, map);
+      std::cout << "offices\n";
+    } else {
+      std::cout << "unknon object " << i->key() << std::endl;
+      throw std::logic_error("Found unknon json object"s.append(i->key()));
+    }
+  }
+}
+
 }  // namespace
 
 namespace json_loader {
@@ -157,24 +189,11 @@ model::Game LoadGame(const std::filesystem::path& json_path) {
     model::Map map(model::Map::Id(std::string(m->as_object().at("id"sv).as_string())),
                    std::string(m->as_object().at("name"sv).as_string()));
 
-    // get field form map
-    for (auto i = m->as_object().cbegin(); i != m->as_object().cend(); i++) {
-      auto arr = i->value().as_array();
-      if (i->key() == "id"sv || i->key() == "name"sv) {
-        continue;
-      } else if (i->key() == "roads"sv) {
-        parseRoads(arr, map);
-        std::cout << "Road\n";
-      } else if (i->key() == "buildings"sv) {
-        parseBuilding(arr, map);
-        std::cout << "buildings\n";
-      } else if (i->key() == "offices"sv) {
-        parseOffice(arr, map);
-        std::cout << "offices\n";
-      } else {
-        std::cout << "unknon object " << i->key() << std::endl;
-        throw std::logic_error("Found unknon json object"s.append(i->key()));
-      }
+    try {
+      parseMap(m->as_object(), map);
+    } catch (std::exception& e) {
+      std::cout << "Fail to parse map " << e.what() << std::endl;
+      continue;
     }
     game.AddMap(map);
   }

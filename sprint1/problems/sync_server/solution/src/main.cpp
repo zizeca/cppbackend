@@ -21,7 +21,6 @@
 namespace net = boost::asio;
 using tcp = net::ip::tcp;
 using namespace std::literals;
-
 namespace beast = boost::beast;
 namespace http = beast::http;
 

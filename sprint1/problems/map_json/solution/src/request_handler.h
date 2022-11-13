@@ -17,7 +17,10 @@ public:
 
     template <typename Body, typename Allocator, typename Send>
     void operator()(http::request<Body, http::basic_fields<Allocator>>&& req, Send&& send) {
-        // Обработать запрос request и отправить ответ, используя send
+      // Обработать запрос request и отправить ответ, используя send
+      if (req.method_string() == "GET" || req.method_string() == "HEAD") {
+        std::cout << "Target " << req.target() << std::endl;
+      }
         
     }
 
