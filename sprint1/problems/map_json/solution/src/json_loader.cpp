@@ -1,15 +1,13 @@
 #include "json_loader.h"
 
-#define BOOST_JSON_STANDALONE
+//#define BOOST_JSON_STANDALONE
 #include <boost/json.hpp>
-#include <boost/json/system_error.hpp>
 #include <fstream>
 #include <iostream>
 #include <optional>
 #include <string>
 #include <string_view>
 
-#include "boost_json.cpp"
 
 using namespace std::literals;
 
@@ -112,7 +110,7 @@ void parseOffice(const boost::json::array& arr, model::Map& map) {
   for (auto i : arr) {
     model::Point position{};
     model::Offset offset{};
-    model::Office::Id id(std::string(i.as_object().at("id"sv).as_string()));
+    model::Office::Id id(std::string(i.as_object().at("id").as_string()));
 
     auto r = i.as_object();
     for (auto k = r.begin(); k != r.end(); ++k) {
@@ -135,20 +133,20 @@ void parseMap(const boost::json::value& val, model::Map& map) {
   // get field form map
   for (auto i = val.as_object().cbegin(); i != val.as_object().cend(); i++) {
     auto p_arr = i->value().if_array();
-    if (i->key() == "id"sv || i->key() == "name"sv || p_arr == nullptr) {
+    if (i->key() == "id" || i->key() == "name" || p_arr == nullptr) {
       continue;
-    } else if (i->key() == "roads"sv) {
+    } else if (i->key() == "roads") {
       parseRoads(*p_arr, map);
       std::cout << "Road\n";
-    } else if (i->key() == "buildings"sv) {
+    } else if (i->key() == "buildings") {
       parseBuilding(*p_arr, map);
       std::cout << "buildings\n";
-    } else if (i->key() == "offices"sv) {
+    } else if (i->key() == "offices") {
       parseOffice(*p_arr, map);
       std::cout << "offices\n";
     } else {
       std::cout << "unknon object " << i->key() << std::endl;
-      throw std::logic_error("Found unknon json object"s.append(i->key()));
+      throw std::logic_error( "Found unknon json object"s + i->key_c_str());
     }
   }
 }
@@ -178,16 +176,16 @@ model::Game LoadGame(const std::filesystem::path& json_path) {
   // parse
   auto doc = boost::json::parse(data, ec);
   if (ec) {
-    throw std::runtime_error("Fail to json parse "s.append(ec.message()));
+    throw std::runtime_error(("Fail to json parse "s).append(ec.message()));
   }
 
   model::Game game;
 
-  auto maps = doc.as_object().at("maps"sv).as_array();  // if hasn't map thow error
+  auto maps = doc.as_object().at("maps").as_array();  // if hasn't map thow error
   // get map from maps array
   for (auto m = maps.cbegin(); m != maps.end(); ++m) {
-    model::Map map(model::Map::Id(std::string(m->as_object().at("id"sv).as_string())),
-                   std::string(m->as_object().at("name"sv).as_string()));
+    model::Map map(model::Map::Id(std::string(m->as_object().at("id").as_string())),
+                   std::string(m->as_object().at("name").as_string()));
 
     try {
       parseMap(m->as_object(), map);

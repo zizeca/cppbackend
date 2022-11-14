@@ -19,6 +19,7 @@ set(SRC
 	${SRCDIR}/boost_json.cpp
 	${SRCDIR}/json_loader.cpp
 	${SRCDIR}/request_handler.cpp
+	${SRCDIR}/tag_invokers.cpp
 )
 
 set(HEADER 
@@ -32,6 +33,7 @@ set(HEADER
   ${SRCDIR}/tagged.h
   ${SRCDIR}/json_loader.h
   ${SRCDIR}/request_handler.h
+  ${SRCDIR}/tag_invokers.h
 )
 
 

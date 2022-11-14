@@ -1,4 +1,4 @@
-#define BOOST_JSON_STANDALONE  // for std::string_viev
+//#define BOOST_JSON_STANDALONE  // for std::string_viev
 #include <boost/json.hpp>
 // #include <boost/json/parse.hpp>
 
@@ -83,33 +83,37 @@ struct A {
   std::vector<int> v = {1, 2, 3, 4};
 };
 
-void tag_invoke(json::value_from_tag, json::value& jv, A const& a) {
-  jv = {
-      {a.s, json::value_from(a.v)}
-  };
-}
+struct B {
+  std::string s;
+  std::vector<A> v;
+  std::vector<A>& get() const { return v; }
+};
+
+void tag_invoke(json::value_from_tag, json::value& jv, A const& a) { jv = {{a.s, json::value_from(a.v)}}; }
+
+void tag_invoke(json::value_from_tag, json::value& jv, B const& b) { jv = {{b.s, json::value_from(b.get())}}; }
 
 int main() {
   // std::cout << map << std::endl;
-  auto value = json::parse(map);
+  auto value = json::parse(std::string(map));
   // if(value.is_object()){
   //   std::cout << "value is object " << value.as_object().at("maps"sv) << std::endl;
   // }
 
   // auto arr = value.as_object().at("maps"sv).as_array();
 
-  auto maps = value.as_object().at("maps"sv).as_array();
+  auto maps = value.as_object().at("maps").as_array();
 
   for (auto m = maps.cbegin(); m != maps.end(); ++m) {
-    std::cout << "Maps id " << m->at("id"sv).as_string() << " name" << m->at("name"sv).as_string() << std::endl;
+    std::cout << "Maps id " << m->at("id").as_string() << " name" << m->at("name").as_string() << std::endl;
     for (auto i = m->as_object().cbegin(); i != m->as_object().cend(); i++) {
-      if (i->key() == "id"sv || i->key() == "name"sv) {
+      if (i->key() == "id" || i->key() == "name") {
         continue;
-      } else if (i->key() == "roads"sv) {
+      } else if (i->key() == "roads") {
         std::cout << "Road\n";
-      } else if (i->key() == "buildings"sv) {
+      } else if (i->key() == "buildings") {
         std::cout << "buildings\n";
-      } else if (i->key() == "offices"sv) {
+      } else if (i->key() == "offices") {
         std::cout << "offices\n";
       } else {
         std::cout << "unknon object " << i->key() << std::endl;
@@ -128,6 +132,15 @@ int main() {
 
   auto v3 = json::value_from(a);
   std::cout << "v3 " << json::serialize(v3) << std::endl;
+
+  A a1{"A_Key1", {1, 2, 3, 4, 5, 6, 7, 8}};
+  A a2{"A_Key2", {2, 3, 4, 5, 6, 7, 8}};
+  A a3{"A_Key3", {3, 4, 5, 6, 7, 8}};
+  A a4{"A_Key4", {4, 5, 6, 7, 8}};
+  B b{"keyB", {a1, a2, a3, a4}};
+
+  auto v4 = json::value_from(b);
+  std::cout << "v4 B " << json::serialize(v4) << std::endl;
 
   // std::cout << arr->key() << std::endl;
 

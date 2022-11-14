@@ -1,11 +1,10 @@
 #pragma once
 
-#define BOOST_JSON_STANDALONE
-#include <boost/json.hpp>
 #include <string_view>
 
 #include "ServeHttp.hpp"
 #include "model.h"
+#include "tag_invokers.h"
 
 namespace http_handler {
 namespace beast = boost::beast;
@@ -27,7 +26,6 @@ struct ErrorStr {
   "code": "badRequest",
   "message": "Bad request"
 })"sv;
-
 };
 
 struct ContentType {
@@ -46,25 +44,6 @@ StringResponse MakeStringResponse(http::status status, std::string_view body, un
   return response;
 }
 
-/*
-StringResponse HandleRequest(StringRequest&& req) {
-  const auto text_response = [&req](http::status status, std::string_view text) {
-    return MakeStringResponse(status, text, req.version(), req.keep_alive());
-  };
-
-  // Здесь можно обработать запрос и сформировать ответ, но пока всегда отвечаем: Hello
-  if (req.method_string() == "GET" || req.method_string() == "HEAD") {
-    // return text_response(http::status::ok, std::format("Hello, ", req.target().substr(1))); // not suported
-    std::string s = "Hello, ";
-    // s += std::string(req.target().begin() + 1, req.target().end());
-    s += std::string(req.target().substr(1));
-    return text_response(http::status::ok, s);
-  }
-
-  return text_response(http::status::method_not_allowed, "Invalid method"sv);
-}
- */
-
 }  // namespace
 
 class RequestHandler {
@@ -77,7 +56,7 @@ class RequestHandler {
   template <typename Body, typename Allocator, typename Send>
   void operator()(http::request<Body, http::basic_fields<Allocator>>&& req, Send&& send) {
     // as sync_server
-    const auto text_response = [&req,&send](http::status status, std::string_view text) {
+    const auto text_response = [&req, &send](http::status status, std::string_view text) {
       send(MakeStringResponse(status, text, req.version(), req.keep_alive(), ContentType::APP_JSON));
     };
 
@@ -85,8 +64,8 @@ class RequestHandler {
     if (req.method_string() == "GET" || req.method_string() == "HEAD") {
       std::cout << "Target " << req.target() << std::endl;
       std::string target(req.target());
-      if(!target.starts_with("/api/"sv)) {
-        text_response(http::status::bad_request, ErrorStr::BAD_REQ );
+      if (!target.starts_with("/api/"sv)) {
+        text_response(http::status::bad_request, ErrorStr::BAD_REQ);
         return;
       }
     } else {
