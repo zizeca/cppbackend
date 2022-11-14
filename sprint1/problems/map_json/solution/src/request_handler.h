@@ -1,15 +1,17 @@
 #pragma once
 
+#include <boost/json.hpp>
 #include <string_view>
 
 #include "ServeHttp.hpp"
 #include "model.h"
-#include "tag_invokers.h"
+// #include "tag_invokers.h"
 
 namespace http_handler {
 namespace beast = boost::beast;
 namespace http = beast::http;
 using namespace std::literals;
+//using namespace tag_invokers;
 
 using StringResponse = http::response<http::string_body>;
 
@@ -67,6 +69,22 @@ class RequestHandler {
       if (!target.starts_with("/api/"sv)) {
         text_response(http::status::bad_request, ErrorStr::BAD_REQ);
         return;
+      } else if (target == "/api/v1/maps") {
+        boost::json::array arr;
+        for (auto i : game_.GetMaps()) {
+          boost::json::value v = {{"id",*i.GetId()},{"name", i.GetName()}};
+          arr.push_back(v);
+        }
+        boost::json::value v = arr;
+        text_response(http::status::ok, std::string(boost::json::serialize(v)));
+      } else if (target.starts_with("/api/v1/maps/")) {
+        std::string s = target.substr(("/api/v1/maps/"s).size());
+        auto m = game_.FindMap( model::Map::Id(s));
+        if(m) {
+          text_response(http::status::ok, s);
+        } else {
+          text_response((http::status)404, ErrorStr::MAP_NOT_FOUND);
+        }
       }
     } else {
       text_response(http::status::method_not_allowed, "Invalid method"sv);

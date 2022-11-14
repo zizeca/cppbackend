@@ -1,6 +1,6 @@
 #include "tag_invokers.h"
 
-namespace model {
+namespace tag_invokers {
 /**/
 void tag_invoke(boost::json::value_from_tag, boost::json::value& jv, model::Building const& building) {
   jv = {{"x", std::to_string(building.GetBounds().position.x)},
@@ -51,4 +51,4 @@ void tag_invoke(boost::json::value_from_tag, boost::json::value& jv, model::Map 
   jv = obj;
 }
 /**/
-}  // namespace http_handler
+}  // namespace tag_invokes
