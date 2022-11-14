@@ -10,6 +10,7 @@
 namespace http_handler {
 namespace beast = boost::beast;
 namespace http = beast::http;
+namespace js = boost::json;
 using namespace std::literals;
 // using namespace tag_invokers;
 
@@ -48,6 +49,9 @@ StringResponse MakeStringResponse(http::status status, std::string_view body, un
 
 }  // namespace
 
+// костыли,
+js::value invoke(model::Map const& map);
+
 class RequestHandler {
  public:
   explicit RequestHandler(model::Game& game) : game_{game} {}
@@ -64,7 +68,7 @@ class RequestHandler {
 
     // Обработать запрос request и отправить ответ, используя send
     if (req.method_string() != "GET" && req.method_string() != "HEAD") {
-      // todo
+      text_response(http::status::method_not_allowed, ErrorStr::BAD_REQ);
       return;
     }
 
@@ -90,7 +94,9 @@ class RequestHandler {
       std::string s = target.substr(("/api/v1/maps/"s).size());
       auto m = game_.FindMap(model::Map::Id(s));
       if (m) {
-        text_response(http::status::ok, s);
+        // js::value v = js::value_from(*m);
+        js::value v = invoke(*m);
+        text_response(http::status::ok, js::serialize(v));
         return;
       } else {
         text_response((http::status)404, ErrorStr::MAP_NOT_FOUND);
