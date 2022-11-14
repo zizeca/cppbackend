@@ -15,12 +15,12 @@ js::value invoke(model::Map const& map) {
       // auto v = boost::json::value_from(r);
       // arr.push_back(boost::json::value_from(i));
       boost::json::object vobj;
-      vobj["x0"] = std::to_string(i.GetStart().x);
-      vobj["y0"] = std::to_string(i.GetStart().y);
+      vobj["x0"] =  static_cast<int>(i.GetStart().x);
+      vobj["y0"] = static_cast<int>(i.GetStart().y);
       if (i.IsHorizontal()) {
-        vobj["x1"] = std::to_string(i.GetEnd().x);
+        vobj["x1"] = static_cast<int>(i.GetEnd().x);
       } else {
-        vobj["y1"] = std::to_string(i.GetEnd().y);
+        vobj["y1"] = static_cast<int>(i.GetEnd().y);
       }
       arr.push_back(boost::json::value_from(vobj));
     }
@@ -31,10 +31,10 @@ js::value invoke(model::Map const& map) {
     boost::json::array arr;
     for (auto& i : map.GetBuildings()) {
       boost::json::value v;
-      v = {{"x", std::to_string(i.GetBounds().position.x)},
-           {"y", std::to_string(i.GetBounds().position.y)},
-           {"w", std::to_string(i.GetBounds().size.width)},
-           {"h", std::to_string(i.GetBounds().size.height)}};
+      v = {{"x", static_cast<int>(i.GetBounds().position.x)},
+           {"y", static_cast<int>(i.GetBounds().position.y)},
+           {"w", static_cast<int>(i.GetBounds().size.width)},
+           {"h", static_cast<int>(i.GetBounds().size.height)}};
       arr.push_back(v);
     }
     obj["buildings"] = boost::json::value_from(arr);
@@ -45,10 +45,10 @@ js::value invoke(model::Map const& map) {
     for (auto& office : map.GetOffices()) {
       boost::json::value v;
       v = {{"id", *office.GetId()},
-           {"x", std::to_string(office.GetPosition().x)},
-           {"y", std::to_string(office.GetPosition().y)},
-           {"offsetX", std::to_string(office.GetOffset().dx)},
-           {"offsetY", std::to_string(office.GetOffset().dy)}};
+           {"x", static_cast<int>(office.GetPosition().x)},
+           {"y", static_cast<int>(office.GetPosition().y)},
+           {"offsetX", static_cast<int>(office.GetOffset().dx)},
+           {"offsetY", static_cast<int>(office.GetOffset().dy)}};
       arr.push_back(v);
     }
     obj["offices"] = boost::json::value_from(arr);
