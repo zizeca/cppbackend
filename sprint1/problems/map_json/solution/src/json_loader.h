@@ -6,6 +6,7 @@
 
 #include "model.h"
 
+
 namespace json_loader {
 
 model::Game LoadGame(const std::filesystem::path& json_path);
@@ -13,11 +14,13 @@ model::Game LoadGame(const std::filesystem::path& json_path);
 }  // namespace json_loader
 
 /// это все не работает (((
+//  * 
+/* 
 void tag_invoke(boost::json::value_from_tag, boost::json::value& jv, model::Building const& building);
 void tag_invoke(boost::json::value_from_tag, boost::json::value& jv, model::Office const& office);
 void tag_invoke(boost::json::value_from_tag, boost::json::value& jv, model::Road const& road);
-//void tag_invoke(boost::json::value_from_tag, boost::json::value& jv, model::Map const& map);
-
+void tag_invoke(boost::json::value_from_tag, boost::json::value& jv, model::Map const& map);
+ */
 // model::Building tag_invoke(boost::json::value_to_tag<model::Building>, boost::json::value& jv);
 // model::Office tag_invoke(boost::json::value_to_tag<model::Office>, boost::json::value& jv);
 // model::Road tag_invoke(boost::json::value_to_tag<model::Road>, boost::json::value& jv);

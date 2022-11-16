@@ -202,6 +202,7 @@ model::Game LoadGame(const std::filesystem::path& json_path) {
 
 }  // namespace json_loader
 
+/** /
 
 void tag_invoke(boost::json::value_from_tag, boost::json::value& jv, model::Building const& building) {
   jv = {{"x", std::to_string(building.GetBounds().position.x)},
@@ -209,7 +210,7 @@ void tag_invoke(boost::json::value_from_tag, boost::json::value& jv, model::Buil
         {"w", std::to_string(building.GetBounds().size.width)},
         {"x", std::to_string(building.GetBounds().size.height)}};
 }
-
+/** /
 void tag_invoke(boost::json::value_from_tag, boost::json::value& jv, model::Office const& office) {
   jv = {{"id", *office.GetId()},
         {"x", std::to_string(office.GetPosition().x)},
@@ -218,7 +219,7 @@ void tag_invoke(boost::json::value_from_tag, boost::json::value& jv, model::Offi
         {"offsetY", std::to_string(office.GetOffset().dy)}};
 }
 
-/**/
+/** /
 void tag_invoke(boost::json::value_from_tag, boost::json::value& jv, model::Road const& road) {
   boost::json::object obj;
   obj["x0"] = std::to_string(road.GetStart().x);

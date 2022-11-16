@@ -2,10 +2,12 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-
+#include <boost/json.hpp>
 #include "tagged.h"
 
 namespace model {
+
+
 
 using Dimension = int;
 using Coord = Dimension;
@@ -166,6 +168,11 @@ private:
     OfficeIdToIndex warehouse_id_to_index_;
     Offices offices_;
 };
+
+void tag_invoke(boost::json::value_from_tag, boost::json::value& jv, model::Building const& building);
+void tag_invoke(boost::json::value_from_tag, boost::json::value& jv, model::Office const& office);
+void tag_invoke(boost::json::value_from_tag, boost::json::value& jv, model::Road const& road);
+void tag_invoke(boost::json::value_from_tag, boost::json::value& jv, model::Map const& map);
 
 class Game {
 public:
