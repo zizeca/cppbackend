@@ -19,29 +19,29 @@ extruct(const value& jv, const string_view& key) {
 }  // namespace
 
 void tag_invoke(value_from_tag, value& jv, Building const& building) {
-  jv = {{MapKey::pos_X, std::to_string(building.GetBounds().position.x)},
-        {MapKey::pos_Y, std::to_string(building.GetBounds().position.y)},
-        {MapKey::width, std::to_string(building.GetBounds().size.width)},
-        {MapKey::height, std::to_string(building.GetBounds().size.height)}};
+  jv = {{MapKey::pos_X, building.GetBounds().position.x},
+        {MapKey::pos_Y, building.GetBounds().position.y},
+        {MapKey::width, building.GetBounds().size.width},
+        {MapKey::height, building.GetBounds().size.height}};
 }
 
 void tag_invoke(value_from_tag, value& jv, Office const& office) {
   jv = {
       {MapKey::id, *office.GetId()},
-      {MapKey::pos_X, std::to_string(office.GetPosition().x)},
-      {MapKey::pos_Y, std::to_string(office.GetPosition().y)},
-      {MapKey::offset_X, std::to_string(office.GetOffset().dx)},
-      {MapKey::offset_Y, std::to_string(office.GetOffset().dy)}};
+      {MapKey::pos_X, office.GetPosition().x},
+      {MapKey::pos_Y, office.GetPosition().y},
+      {MapKey::offset_X, office.GetOffset().dx},
+      {MapKey::offset_Y, office.GetOffset().dy}};
 }
 
 void tag_invoke(value_from_tag, value& jv, Road const& road) {
   object obj;
-  obj[MapKey::start_X] = std::to_string(road.GetStart().x);
-  obj[MapKey::start_Y] = std::to_string(road.GetStart().y);
+  obj[MapKey::start_X] = road.GetStart().x;
+  obj[MapKey::start_Y] = road.GetStart().y;
   if (road.IsHorizontal()) {
-    obj[MapKey::end_X] = std::to_string(road.GetEnd().x);
+    obj[MapKey::end_X] = road.GetEnd().x;
   } else {
-    obj[MapKey::end_Y] = std::to_string(road.GetEnd().y);
+    obj[MapKey::end_Y] = road.GetEnd().y;
   }
 
   jv = value_from(obj);
