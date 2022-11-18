@@ -96,8 +96,7 @@ class RequestHandler {
       std::string s = target.substr(("/api/v1/maps/"s).size());
       auto m = game_.FindMap(model::Map::Id(s));
       if (m) {
-        js::value v1 = js::value_from(m->GetBuildings().at(0));
-        // js::value v = invoke(*m);
+
         js::value v = js::value_from(*m);
         text_response(http::status::ok, js::serialize(v));
         return;

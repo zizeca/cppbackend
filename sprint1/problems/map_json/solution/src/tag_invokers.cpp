@@ -2,102 +2,120 @@
 
 namespace model {
 
-void tag_invoke(boost::json::value_from_tag, boost::json::value& jv, model::Building const& building) {
-  jv = {{"x", std::to_string(building.GetBounds().position.x)},
-        {"y", std::to_string(building.GetBounds().position.y)},
-        {"w", std::to_string(building.GetBounds().size.width)},
-        {"x", std::to_string(building.GetBounds().size.height)}};
+namespace {
+
+template <typename T>
+std::enable_if_t<std::is_integral_v<T>, T>
+extruct(const value& jv, const string_view& key) {
+  return static_cast<T>(jv.as_object().at(key).as_int64());
 }
 
-void tag_invoke(boost::json::value_from_tag, boost::json::value& jv, model::Office const& office) {
-  jv = {{"id", *office.GetId()},
-        {"x", std::to_string(office.GetPosition().x)},
-        {"y", std::to_string(office.GetPosition().y)},
-        {"offsetX", std::to_string(office.GetOffset().dx)},
-        {"offsetY", std::to_string(office.GetOffset().dy)}};
+template <typename T>
+std::enable_if_t<std::is_same_v<T, std::string>, std::string>
+extruct(const value& jv, const string_view& key) {
+  return static_cast<std::string>(jv.as_object().at(key).as_string());
 }
 
-void tag_invoke(boost::json::value_from_tag, boost::json::value& jv, model::Road const& road) {
-  boost::json::object obj;
-  obj["x0"] = std::to_string(road.GetStart().x);
-  obj["y0"] = std::to_string(road.GetStart().y);
+}  // namespace
+
+void tag_invoke(value_from_tag, value& jv, Building const& building) {
+  jv = {{MapKey::pos_X, std::to_string(building.GetBounds().position.x)},
+        {MapKey::pos_Y, std::to_string(building.GetBounds().position.y)},
+        {MapKey::width, std::to_string(building.GetBounds().size.width)},
+        {MapKey::height, std::to_string(building.GetBounds().size.height)}};
+}
+
+void tag_invoke(value_from_tag, value& jv, Office const& office) {
+  jv = {
+      {MapKey::id, *office.GetId()},
+      {MapKey::pos_X, std::to_string(office.GetPosition().x)},
+      {MapKey::pos_Y, std::to_string(office.GetPosition().y)},
+      {MapKey::offset_X, std::to_string(office.GetOffset().dx)},
+      {MapKey::offset_Y, std::to_string(office.GetOffset().dy)}};
+}
+
+void tag_invoke(value_from_tag, value& jv, Road const& road) {
+  object obj;
+  obj[MapKey::start_X] = std::to_string(road.GetStart().x);
+  obj[MapKey::start_Y] = std::to_string(road.GetStart().y);
   if (road.IsHorizontal()) {
-    obj["x1"] = std::to_string(road.GetEnd().x);
+    obj[MapKey::end_X] = std::to_string(road.GetEnd().x);
   } else {
-    obj["y1"] = std::to_string(road.GetEnd().y);
+    obj[MapKey::end_Y] = std::to_string(road.GetEnd().y);
   }
 
-  jv = boost::json::value_from(obj);
+  jv = value_from(obj);
 }
 
-void tag_invoke(boost::json::value_from_tag, boost::json::value& jv, model::Map const& map) {
-  boost::json::object obj;
-  obj["id"] = *map.GetId();
-  obj["name"] = map.GetName();
+void tag_invoke(value_from_tag, value& jv, Map const& map) {
+  object obj;
+  obj[MapKey::id] = *map.GetId();
+  obj[MapKey::name] = map.GetName();
 
   // road parse
   if (!map.GetRoads().empty()) {
-    boost::json::array arr;
+    array arr;
     for (auto& i : map.GetRoads()) {
-      arr.push_back(boost::json::value_from(i));
+      arr.push_back(value_from(i));
     }
-    obj["roads"] = boost::json::value_from(arr);
+
+    obj[MapKey::roads] = value_from(arr);
   }
 
   // building parse
   if (!map.GetBuildings().empty()) {
-    boost::json::array arr;
+    array arr;
     for (auto& i : map.GetBuildings()) {
-      arr.push_back(boost::json::value_from(i));
+      arr.push_back(value_from(i));
     }
-    obj["buildings"] = boost::json::value_from(arr);
+    obj[MapKey::buildings] = value_from(arr);
   }
 
   // office parse
   if (!map.GetOffices().empty()) {
-    boost::json::array arr;
+    array arr;
     for (auto& office : map.GetOffices()) {
-      arr.push_back(boost::json::value_from(office));
+      arr.push_back(value_from(office));
     }
-    obj["offices"] = boost::json::value_from(arr);
+    obj[MapKey::offices] = value_from(arr);
   }
   jv = obj;
 }
 
-
-
-/* model::Building tag_invoke(boost::json::value_to_tag<model::Building>, boost::json::value& jv) {
+Building tag_invoke(value_to_tag<Building>, value const& jv) {
   if (jv.as_object().size() != 4) {
-    throw std::logic_error("rong building val");
+    throw std::logic_error("wrong building val");
   }
 
-  auto x = jv.as_object().at("x").as_int64();
-  auto y = jv.as_object().at("y").as_int64();
-  auto w = jv.as_object().at("w").as_int64();
-  auto h = jv.as_object().at("h").as_int64();
+  const Coord& x = extruct<Coord>(jv, MapKey::pos_X);
+  const Coord& y = extruct<Coord>(jv, MapKey::pos_Y);
+  const Dimension& w = extruct<Dimension>(jv, MapKey::width);
+  const Dimension& h = extruct<Dimension>(jv, MapKey::height);
 
   if (w == 0 || h == 0) {
-    throw std::logic_error("rong building size");
+    throw std::logic_error("Wrong building size");
   }
 
-  Rectangle rect{{x, y}, {w, h}};
+  return Building({{x, y}, {w, h}});
+}
 
-  return Building(rect);
-} */
-/* 
-model::Office tag_invoke(boost::json::value_to_tag<model::Office>, boost::json::value& jv) {
+Office tag_invoke(value_to_tag<Office>, value const& jv) {
   auto& office = jv.as_object();
 
-  model::Office::Id id(std::string(office.at("id").as_string()));
-  model::Point position{office.at("x").as_int64(), office.at("y").as_int64()};
-  model::Offset offset{office.at("offsetX").as_int64(), office.at("offsetY").as_int64()};
+  Office::Id id(extruct<std::string>(jv, MapKey::id));
+
+  const Coord& x = extruct<Coord>(jv, MapKey::pos_X);
+  const Coord& y = extruct<Coord>(jv, MapKey::pos_Y);
+  const Dimension& ofX = extruct<Dimension>(jv, MapKey::offset_X);
+  const Dimension& ofY = extruct<Dimension>(jv, MapKey::offset_Y);
+
+  Point position{x, y};
+  Offset offset{ofX, ofY};
 
   return {id, position, offset};
 }
- */
 
-/* 
-model::Road tag_invoke(boost::json::value_to_tag<model::Road>, boost::json::value& jv) {  // NOLINT
+Road tag_invoke(value_to_tag<Road>, value const& jv) {
   Point start{};
   Coord finish{};
 
@@ -108,16 +126,16 @@ model::Road tag_invoke(boost::json::value_to_tag<model::Road>, boost::json::valu
 
   bool vertical = true;
   for (auto i = road.cbegin(); i != road.cend(); ++i) {
-    if (i->key() == "x0") {
-      start.x = static_cast<model::Coord>(i->value().as_int64());
-    } else if (i->key() == "y0") {
-      start.y = static_cast<model::Coord>(i->value().as_int64());
-    } else if (i->key() == "x1") {
+    if (i->key() == MapKey::start_X) {
+      start.x = static_cast<Coord>(i->value().as_int64());
+    } else if (i->key() == MapKey::start_Y) {
+      start.y = static_cast<Coord>(i->value().as_int64());
+    } else if (i->key() == MapKey::end_X) {
       vertical = false;
-      finish = static_cast<model::Coord>(i->value().as_int64());
-    } else if (i->key() == "y1") {
+      finish = static_cast<Coord>(i->value().as_int64());
+    } else if (i->key() == MapKey::end_Y) {
       vertical = true;
-      finish = static_cast<model::Coord>(i->value().as_int64());
+      finish = static_cast<Coord>(i->value().as_int64());
     } else {
       throw std::logic_error("Unknon key in road json");
     }
@@ -128,29 +146,34 @@ model::Road tag_invoke(boost::json::value_to_tag<model::Road>, boost::json::valu
   }
   return {Road::HORIZONTAL, start, finish};
 }
- */
-/* 
-model::Map tag_invoke(boost::json::value_to_tag<model::Map>, boost::json::value& jv) {
+
+Map tag_invoke(value_to_tag<Map>, value const& jv) {
   auto& m = jv.as_object();
-  Map map(Map::Id(std::string(m.at("id").as_string())), std::string(m.at("name").as_string()));
+  Map map(
+      Map::Id(extruct<std::string>(jv, MapKey::id)),
+      extruct<std::string>(jv, MapKey::name));
 
   for (auto i = m.cbegin(); i != m.cend(); ++i) {
-    if (i->key() == "id" || i->key() == "name") {
-    } else if (i->key() == "roads") {
+    if (i->key() == MapKey::id || i->key() == MapKey::name) {
+      // pass
+    } else if (i->key() == MapKey::roads) {
       for (auto r : i->value().as_array()) {
-        map.AddRoad(boost::json::value_to<Road>(r));
+        map.AddRoad(value_to<Road>(r));
       }
-    } else if (i->key() == "buildings") {
+    } else if (i->key() == MapKey::buildings) {
       for (auto b : i->value().as_array()) {
-        map.GetBuildings(boost::json::value_to<Building>(b));
+        map.AddBuilding(value_to<Building>(b));
       }
-    } else if (i->key() == "offices") {
+    } else if (i->key() == MapKey::offices) {
       for (auto office : i->value().as_array()) {
-        map.AddOffice(boost::json::value_to<Office>(office));
+        map.AddOffice(value_to<Office>(office));
       }
+    } else {
+      throw std::logic_error(
+          std::string("Found unknon key").append(i->key_c_str()));
     }
   }
   return map;
 }
- */
+
 }  // namespace model
