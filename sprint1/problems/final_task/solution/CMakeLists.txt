@@ -18,14 +18,14 @@ set(SRC
 	${SRCDIR}/model.cpp
 	${SRCDIR}/boost_json.cpp
 	${SRCDIR}/json_loader.cpp
-	${SRCDIR}/request_handler.cpp
-	#${SRCDIR}/tag_invokers.cpp
+	#${SRCDIR}/request_handler.cpp
+	${SRCDIR}/tag_invokers.cpp
 )
 
 set(HEADER 
-  # ${SRCDIR}/http_server.h replace own realisation
+  # ${SRCDIR}/ replace own realisation
   ${SRCDIR}/ReportError.hpp
-  ${SRCDIR}/ServeHttp.hpp
+  ${SRCDIR}/http_server.h
   ${SRCDIR}/Listener.hpp
   ${SRCDIR}/Session.hpp
   ${SRCDIR}/sdk.h
@@ -33,7 +33,7 @@ set(HEADER
   ${SRCDIR}/tagged.h
   ${SRCDIR}/json_loader.h
   ${SRCDIR}/request_handler.h
-  #${SRCDIR}/tag_invokers.h
+  ${SRCDIR}/tag_invokers.h
 )
 
 

@@ -1,13 +1,33 @@
-#pragma once
-#include "sdk.h"
-//
+/**
+ * @file ServeHttp.hpp
+ * @author Enver Kulametov (zizu.meridian@gmail.com)
+ * @brief 
+ * @version 0.1
+ * @date 2022-11-10
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
+
+#ifndef __SERVERHTTP_HPP__
+#define __SERVERHTTP_HPP__
+
 #include <boost/asio/ip/tcp.hpp>
-#include <boost/asio/strand.hpp>
-#include <boost/beast/core.hpp>
-#include <boost/beast/http.hpp>
+#include <memory>
+
+#include "Listener.hpp"
 
 namespace http_server {
 
-// Разместите здесь реализацию http-сервера, взяв её из задания по разработке асинхронного сервера
+template <typename RequestHandler>
+inline void ServeHttp(boost::asio::io_context& ioc, const boost::asio::ip::tcp::endpoint& endpoint, RequestHandler&& handler) {
+  // При помощи decay_t исключим ссылки из типа RequestHandler,
+  // чтобы Listener хранил RequestHandler по значению
+  using MyListener = Listener<std::decay_t<RequestHandler>>;
+
+  std::make_shared<MyListener>(ioc, endpoint, std::forward<RequestHandler>(handler))->Run();
+}
 
 }  // namespace http_server
+
+#endif // __SERVERHTTP_HPP__
