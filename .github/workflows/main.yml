@@ -38,7 +38,7 @@ jobs:
           conan install ..
           cmake ..
           cmake --build .
-          echo "COMMAND_RUN=${DELIVERY_APP}" >> ${GITHUB_ENV}
+          echo "COMMAND_RUN=${DELIVERY_APP}" >> $GITHUB_ENV
         env:
           DELIVERY_APP: ${{ github.workspace }}/sprint1/problems/sync_server/solution/build/bin/hello
 
