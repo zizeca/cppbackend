@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.11)
+cmake_minimum_required(VERSION 3.23)
 
 project(game_server CXX)
 set(CMAKE_CXX_STANDARD 20)
@@ -13,21 +13,14 @@ set(EXECUTE game_server)
 
 set(SRC 
 	${SRCDIR}/main.cpp
-  # ${SRCDIR}/http_server.cpp replace own realisation
-  ${SRCDIR}/Session.cpp
 	${SRCDIR}/model.cpp
 	${SRCDIR}/boost_json.cpp
 	${SRCDIR}/json_loader.cpp
-	#${SRCDIR}/request_handler.cpp
 	${SRCDIR}/tag_invokers.cpp
 )
 
 set(HEADER 
-  # ${SRCDIR}/ replace own realisation
-  ${SRCDIR}/ReportError.hpp
   ${SRCDIR}/http_server.h
-  ${SRCDIR}/Listener.hpp
-  ${SRCDIR}/Session.hpp
   ${SRCDIR}/sdk.h
   ${SRCDIR}/model.h
   ${SRCDIR}/tagged.h
@@ -35,6 +28,7 @@ set(HEADER
   ${SRCDIR}/request_handler.h
   ${SRCDIR}/tag_invokers.h
 )
+
 
 
 
@@ -47,5 +41,7 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
 
+
 add_executable(${EXECUTE} ${SRC} ${HEADER})
 target_link_libraries(${EXECUTE} PRIVATE Threads::Threads)
+add_subdirectory(${SRCDIR}/http_server)
