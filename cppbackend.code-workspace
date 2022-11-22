@@ -5,36 +5,12 @@
       "path": "."
     },
     {
-      "name": "radio",
-      "path": "sprint1/problems/radio/solution"
+      "name": "s1",
+      "path": "sprint1/problems/"
     },
     {
-      "name": "seabattle",
-      "path": "sprint1/problems/seabattle/solution"
-    },
-    {
-      "name": "restaurant_single_threaded",
-      "path": "sprint1/problems/restaurant_single_threaded/solution"
-    },
-    {
-      "name": "restaurant_multi_threaded",
-      "path": "sprint1/problems/restaurant_multi_threaded/solution"
-    },
-    {
-      "name": "sync_server",
-      "path": "sprint1/problems/sync_server/solution"
-    },
-    {
-      "name": "async_server",
-      "path": "sprint1/problems/async_server/solution"
-    },
-    {
-      "name": "map_json",
-      "path": "sprint1/problems/map_json/solution"
-    },
-    {
-      "name": "parser_test",
-      "path": "sprint1/samples/parser"
+      "name": "s2_static_constent",
+      "path": "sprint2/problems/static_content"
     },
   ],
   "settings": {
