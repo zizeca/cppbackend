@@ -30,6 +30,7 @@ struct ContentType {
   ContentType() = delete;
   constexpr static std::string_view TEXT_HTML = "text/html"sv;
   constexpr static std::string_view APP_JSON = "application/json"sv;
+  static const std::unordered_map<std::string_view, std::string_view> DICT;
 };
 
 inline StringResponse MakeStringResponse(http::status status, std::string_view body, unsigned http_version, bool keep_alive,
@@ -58,6 +59,7 @@ class RequestHandler {
     const auto text_response = [&req, &send](http::status status, std::string_view text) {
       send(MakeStringResponse(status, text, req.version(), req.keep_alive(), ContentType::APP_JSON));
     };
+    std::string target(req.target());
 
     // Обработать запрос request и отправить ответ, используя send
     if (req.method_string() != "GET" && req.method_string() != "HEAD") {
@@ -65,35 +67,46 @@ class RequestHandler {
       return;
     }
 
-    std::string target(req.target());
+    // api else file
+    if(target.starts_with("/api/")){
 
-    if (!target.starts_with("/api/v1/maps"sv)) {
-      text_response(http::status::bad_request, ErrorStr::BAD_REQ);
-      return;
-    }
-    
-    if (target == "/api/v1/maps") {
-      json::array arr;
-      for (auto i : game_.GetMaps()) {
-        json::value v = {{"id", *i.GetId()}, {"name", i.GetName()}};
-        arr.push_back(v);
-      }
-      json::value v = arr;
-      text_response(http::status::ok, std::string(json::serialize(v)));
-      return;
-    }
+      // map handler
+      if(target.starts_with("/api/v1/maps"sv)){
 
-    if (target.starts_with("/api/v1/maps/")) {
-      std::string s = target.substr(("/api/v1/maps/"s).size());
-      auto m = game_.FindMap(model::Map::Id(s));
-      if (m) {
-        json::value v = json::value_from(*m);
-        text_response(http::status::ok, json::serialize(v));
+      if (target == "/api/v1/maps") {
+        json::array arr;
+        for (auto i : game_.GetMaps()) {
+          json::value v = {{"id", *i.GetId()}, {"name", i.GetName()}};
+          arr.push_back(v);
+        }
+        json::value v = arr;
+        text_response(http::status::ok, std::string(json::serialize(v)));
         return;
+      }
+
+      if (target.starts_with("/api/v1/maps/")) {
+        std::string s = target.substr(("/api/v1/maps/"s).size());
+        auto m = game_.FindMap(model::Map::Id(s));
+        if (m) {
+          json::value v = json::value_from(*m);
+          text_response(http::status::ok, json::serialize(v));
+          return;
+        } else {
+          text_response(http::status::not_found, ErrorStr::MAP_NOT_FOUND);
+          return;
+        }
+      }
+
       } else {
-        text_response(http::status::not_found, ErrorStr::MAP_NOT_FOUND);
+        text_response(http::status::bad_request, ErrorStr::BAD_REQ);
         return;
       }
+
+    } else {
+      // file handler
+      // check path
+      // send file
+
     }
 
     text_response(http::status::method_not_allowed, "Invalid method"sv);

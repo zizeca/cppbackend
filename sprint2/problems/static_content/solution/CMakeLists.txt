@@ -16,6 +16,7 @@ set(SRC
 	${SRCDIR}/model.cpp
 	${SRCDIR}/boost_json.cpp
 	${SRCDIR}/json_loader.cpp
+	${SRCDIR}/request_handler.cpp
 	${SRCDIR}/tag_invokers.cpp
 )
 
