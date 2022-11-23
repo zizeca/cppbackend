@@ -18,16 +18,18 @@ bool IsSubPath(fs::path path, fs::path base) {
 
 std::string url_decode(const std::string &s) {
   std::string str;
-  str.resize(s.size());
-
-  for (auto i = 0, j = 0; i < s.size(); ++i, ++j) {
+  str.reserve(s.size());
+  for (size_t i = 0; i < s.size(); ++i) {
     if (s[i] == '%' && i + 2 < s.size()) {
-      std::string r = s.substr(i + 1, 2);
-      str[j] = (unsigned char)std::stoul(r, nullptr, 16);
+      const std::string r = s.substr(i + 1, 2);
+      str.push_back(std::stoul(r, nullptr, 16));
       i += 2;
       continue;
+    } else if (s[i] == '+') {
+      str.push_back(' ');
+    } else {
+      str.push_back(s[i]);
     }
-    str[j] = s[i];
   }
   return str;
 }
