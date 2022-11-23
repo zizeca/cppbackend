@@ -1,6 +1,7 @@
 #pragma once
 
 #include <boost/json.hpp>
+#include <filesystem>
 #include <string_view>
 
 #include "ApiRequestHandler.hpp"
@@ -17,7 +18,11 @@ using namespace std::literals;
 
 class RequestHandler {
  public:
-  explicit RequestHandler(model::Game& game) : game_{game} {}
+  explicit RequestHandler(model::Game& game, const char* argv) : game_{game}, content_path_(argv) {
+    if (!std::filesystem::exists(content_path_)) {
+      throw std::logic_error("path to static files not exist");
+    }
+  }
 
   RequestHandler(const RequestHandler&) = delete;
   RequestHandler& operator=(const RequestHandler&) = delete;
@@ -39,7 +44,7 @@ class RequestHandler {
     // api else file
     if (target.starts_with("/api/")) {
       send(ApiRequestHandler(req, game_));
-      return;   
+      return;
     } else {
       // file handler
       // check path
@@ -47,11 +52,11 @@ class RequestHandler {
       send(FileRequestHandler(req));
       return;
     }
-
   }
 
  private:
   model::Game& game_;
+  std::filesystem::path content_path_;
 };
 
 }  // namespace http_handler
