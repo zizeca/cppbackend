@@ -14,30 +14,6 @@ namespace beast = boost::beast;
 namespace http = beast::http;
 namespace json = boost::json;
 using namespace std::literals;
-// using namespace tag_invokers;
-
-using StringResponse = http::response<http::string_body>;
-
-// inner ns
-namespace {
-
-struct ErrorStr {
-  ErrorStr() = delete;
-  constexpr static std::string_view MAP_NOT_FOUND = R"({"code": "mapNotFound", "message": "Map not found"})"sv;
-  constexpr static std::string_view BAD_REQ = R"({"code": "badRequest", "message": "Bad request"})"sv;
-};
-
-inline StringResponse MakeStringResponse(http::status status, std::string_view body, unsigned http_version, bool keep_alive,
-                                         std::string_view content_type = ContentType::TEXT_HTML) {
-  StringResponse response(status, http_version);
-  response.set(http::field::content_type, content_type);
-  response.body() = body;
-  response.content_length(body.size());
-  response.keep_alive(keep_alive);
-  return response;
-}
-
-}  // namespace
 
 class RequestHandler {
  public:
@@ -56,7 +32,7 @@ class RequestHandler {
 
     // Обработать запрос request и отправить ответ, используя send
     if (req.method_string() != "GET" && req.method_string() != "HEAD") {
-      text_response(http::status::method_not_allowed, ErrorStr::BAD_REQ);
+      text_response(http::status::method_not_allowed, ErrStr::BAD_REQ);
       return;
     }
 
@@ -68,9 +44,10 @@ class RequestHandler {
       // file handler
       // check path
       // send file
+      send(FileRequestHandler(req));
+      return;
     }
 
-    text_response(http::status::method_not_allowed, "Invalid method"sv);
   }
 
  private:

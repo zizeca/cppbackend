@@ -26,8 +26,8 @@ struct ErrStr {
   constexpr static std::string_view BAD_REQ = R"({"code": "badRequest", "message": "Bad request"})"sv;
 };
 
-StringResponse MakeResponse(http::status status, std::string_view body, unsigned http_version, bool keep_alive,
-                            std::string_view content_type = ContentType::TEXT_HTML) {
+StringResponse MakeStringResponse(http::status status, std::string_view body, unsigned http_version, bool keep_alive,
+                                  std::string_view content_type = ContentType::TEXT_HTML) {
   StringResponse response(status, http_version);
   response.set(http::field::content_type, content_type);
   response.body() = body;
@@ -40,7 +40,7 @@ StringResponse MakeResponse(http::status status, std::string_view body, unsigned
 template <typename Body, typename Allocator>
 StringResponse ApiRequestHandler(http::request<Body, http::basic_fields<Allocator>>& req, model::Game& game) {
   const auto response = [&req](http::status status, std::string_view text) {
-    return MakeResponse(status, text, req.version(), req.keep_alive(), ContentType::APP_JSON);
+    return MakeStringResponse(status, text, req.version(), req.keep_alive(), ContentType::APP_JSON);
   };
 
   std::string target(req.target());
@@ -74,5 +74,20 @@ StringResponse ApiRequestHandler(http::request<Body, http::basic_fields<Allocato
 
   return response(http::status::bad_request, ErrStr::BAD_REQ);
 }
+
+template <typename Body, typename Allocator>
+StringResponse FileRequestHandler(http::request<Body, http::basic_fields<Allocator>>& req) {
+  const auto text_response = [&req](http::status status, std::string_view text) {
+    return MakeStringResponse(status, text, req.version(), req.keep_alive(), ContentType::TEXT_HTML);
+  };
+  std::string target(req.target());
+
+  if (target.starts_with("/api/")) {
+    throw std::logic_error("Wrong file call");
+  }
+
+  return text_response(http::status::ok, target);
+}
+
 }  // namespace http_handler
 #endif  // __APIREQUESTHANDLER_H__
