@@ -49,7 +49,7 @@ class RequestHandler {
       // file handler
       // check path
       // send file
-      send(FileRequestHandler(req));
+      send(FileRequestHandler(req, content_path_));
       return;
     }
   }

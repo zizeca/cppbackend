@@ -17,6 +17,7 @@ using namespace std::string_literals;
 namespace http = boost::beast::http;
 namespace json = boost::json;
 using StringResponse = http::response<http::string_body>;
+using FileResponse = http::response<http::file_body>;
 
 namespace {
 
@@ -35,6 +36,17 @@ StringResponse MakeStringResponse(http::status status, std::string_view body, un
   response.keep_alive(keep_alive);
   return response;
 }
+
+FileResponse MakeFileResponse(http::status status, http::file_body::value_type&& body, unsigned http_version, bool keep_alive,
+                              std::string_view content_type = ContentType::TEXT_HTML) {
+  FileResponse response(status, http_version);
+  response.set(http::field::content_type, content_type);
+  response.body() = std::move(body);
+  response.payload_size();
+  response.keep_alive(keep_alive);
+  return response;
+}
+
 }  // namespace
 
 template <typename Body, typename Allocator>
@@ -76,9 +88,9 @@ StringResponse ApiRequestHandler(http::request<Body, http::basic_fields<Allocato
 }
 
 template <typename Body, typename Allocator>
-StringResponse FileRequestHandler(http::request<Body, http::basic_fields<Allocator>>& req) {
-  const auto text_response = [&req](http::status status, std::string_view text) {
-    return MakeStringResponse(status, text, req.version(), req.keep_alive(), ContentType::TEXT_HTML);
+FileResponse FileRequestHandler(http::request<Body, http::basic_fields<Allocator>>& req, const std::filesystem::path& dir) {
+  const auto file_response = [&req](http::status status, http::file_body::value_type&& file, const std::string_view& content_type) {
+    return MakeFileResponse(status, std::forward<http::file_body::value_type>(file), req.version(), req.keep_alive(), content_type);
   };
   std::string target(req.target());
 
@@ -86,7 +98,16 @@ StringResponse FileRequestHandler(http::request<Body, http::basic_fields<Allocat
     throw std::logic_error("Wrong file call");
   }
 
-  return text_response(http::status::ok, target);
+  std::filesystem::path f = dir /  "assets" / "road_nt.png";
+
+  boost::beast::http::file_body::value_type file;
+
+  if (boost::system::error_code ec; file.open(f.c_str(), boost::beast::file_mode::read, ec), ec) {
+    std::cout << "Failed to open file "sv << f << std::endl;
+    throw std::logic_error("Wrong open file");
+  }
+
+  return file_response(http::status::ok, std::move(file), ContentType::DICT.at(".svg"));
 }
 
 }  // namespace http_handler
