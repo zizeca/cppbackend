@@ -11,4 +11,5 @@ for i in req:
   print("Satus code =", r.status_code)
   for k in r.headers:
     print(k, r.headers[k] , sep=' "', end='"\n' )
-  print("body=", r.json())  # print(r.text)
+  #print("body=", r.json())  
+  print(r.text)

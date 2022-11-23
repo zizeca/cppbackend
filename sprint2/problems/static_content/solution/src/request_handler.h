@@ -3,6 +3,7 @@
 #include <boost/json.hpp>
 #include <string_view>
 
+#include "ApiRequestHandler.hpp"
 #include "content_type.hpp"
 #include "http_server.h"
 #include "model.h"
@@ -61,37 +62,8 @@ class RequestHandler {
 
     // api else file
     if (target.starts_with("/api/")) {
-      // map handler
-      if (target.starts_with("/api/v1/maps"sv)) {
-        if (target == "/api/v1/maps") {
-          json::array arr;
-          for (auto i : game_.GetMaps()) {
-            json::value v = {{"id", *i.GetId()}, {"name", i.GetName()}};
-            arr.push_back(v);
-          }
-          json::value v = arr;
-          text_response(http::status::ok, std::string(json::serialize(v)));
-          return;
-        }
-
-        if (target.starts_with("/api/v1/maps/")) {
-          std::string s = target.substr(("/api/v1/maps/"s).size());
-          auto m = game_.FindMap(model::Map::Id(s));
-          if (m) {
-            json::value v = json::value_from(*m);
-            text_response(http::status::ok, json::serialize(v));
-            return;
-          } else {
-            text_response(http::status::not_found, ErrorStr::MAP_NOT_FOUND);
-            return;
-          }
-        }
-
-      } else {
-        text_response(http::status::bad_request, ErrorStr::BAD_REQ);
-        return;
-      }
-
+      send(ApiRequestHandler(req, game_));
+      return;   
     } else {
       // file handler
       // check path
