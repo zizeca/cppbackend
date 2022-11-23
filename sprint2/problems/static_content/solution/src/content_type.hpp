@@ -10,6 +10,7 @@ using namespace std::string_view_literals;
 struct ContentType {
   ContentType() = delete;
   constexpr static std::string_view TEXT_HTML = "text/html"sv;
+  constexpr static std::string_view TEXT_PLAIN = "text/plain"sv;
   constexpr static std::string_view APP_JSON = "application/json"sv;
   static const std::unordered_map<std::string_view, std::string_view> DICT;
 };

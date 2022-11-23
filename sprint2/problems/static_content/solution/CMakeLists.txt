@@ -18,6 +18,7 @@ set(SRC
 	${SRCDIR}/json_loader.cpp
 	#${SRCDIR}/request_handler.cpp
 	${SRCDIR}/tag_invokers.cpp
+  ${SRCDIR}/util.cpp
 )
 
 set(HEADER 
@@ -29,6 +30,8 @@ set(HEADER
   ${SRCDIR}/request_handler.h
   ${SRCDIR}/tag_invokers.h
   ${SRCDIR}/content_type.hpp
+  ${SRCDIR}/util.h
+  ${SRCDIR}/ApiResponseHandler.hpp
 )
 
 
