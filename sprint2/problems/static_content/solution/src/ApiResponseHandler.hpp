@@ -43,9 +43,6 @@ class ApiResponseHandler {
     if (m_target == "/") {
       m_target += "index.html";
     }
-
-    std::cout << "target" << m_target << std::endl;
-
     // api else file
     if (m_target.starts_with("/api/")) {
       ApiRequest();
@@ -82,34 +79,36 @@ class ApiResponseHandler {
   }
 
   void FileRequest() {
-    std::filesystem::path p;
-    p = m_dir;
-    p.append("tr");
+    std::filesystem::path pf = m_dir;
+    pf += m_target;
 
-    std::cout << "m_dir=" << m_dir << ", path =" << p.string() << std::endl;
-
-    if (!util::IsSubPath(p, m_dir)) {
+    if (!util::IsSubPath(pf, m_dir)) {
       return text_response(http::status::bad_request, "Permission deny, or incorrect url request", ContentType::TEXT_PLAIN);
     }
 
-    if (!std::filesystem::exists(p) || !std::filesystem::is_regular_file(p)) {
+    if (!std::filesystem::exists(pf) || !std::filesystem::is_regular_file(pf)) {
       return text_response(http::status::not_found, "Not found resource, or wrong request", ContentType::TEXT_PLAIN);
     }
 
     boost::beast::http::file_body::value_type file;
 
-    if (boost::system::error_code ec; file.open(p.c_str(), boost::beast::file_mode::read, ec), ec) {
-      std::cout << "Failed to open file "sv << p << std::endl;
+    if (boost::system::error_code ec; file.open(pf.c_str(), boost::beast::file_mode::read, ec), ec) {
+      std::cout << "Failed to open file "sv << pf << std::endl;
       throw std::logic_error("Wrong open file");
     }
 
-    return file_response(http::status::ok, file, ContentType::DICT.at(p.extension().string()));
+    std::string ext = pf.extension().string();
+    std::transform(ext.begin(), ext.end(), ext.begin(), [](unsigned char c) { return std::tolower(c); });
+
+    std::string_view content_type = ContentType::DICT.count(ext) ? ContentType::DICT.at(ext) : ContentType::MEDIA_UNKNOWN;
+
+    return file_response(http::status::ok, file, content_type);
   }
 
  private:
   http::request<Body, http::basic_fields<Allocator>>& m_req;
   Send& m_send;
-  std::filesystem::path m_dir;
+  const std::filesystem::path& m_dir;
   std::string m_target;
   model::Game& m_game;
 

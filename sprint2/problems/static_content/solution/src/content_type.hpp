@@ -12,11 +12,12 @@ struct ContentType {
   constexpr static std::string_view TEXT_HTML = "text/html"sv;
   constexpr static std::string_view TEXT_PLAIN = "text/plain"sv;
   constexpr static std::string_view APP_JSON = "application/json"sv;
-  static const std::unordered_map<std::string_view, std::string_view> DICT;
+  constexpr static std::string_view MEDIA_UNKNOWN = "application/octet-stream"sv;
+  static const std::unordered_map<std::string, std::string_view> DICT;
 };
 
 
-const std::unordered_map<std::string_view, std::string_view> ContentType::DICT = {
+const std::unordered_map<std::string, std::string_view> ContentType::DICT = {
     {".htm", "text/html"},
     {".html", "text/html"},
     {"html", "text/html"},
