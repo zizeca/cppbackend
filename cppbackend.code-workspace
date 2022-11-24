@@ -5,12 +5,8 @@
       "path": "."
     },
     {
-      "name": "s1",
-      "path": "sprint1/problems/"
-    },
-    {
-      "name": "s2_static_constent",
-      "path": "sprint2/problems/static_content"
+      "name": "s2_logger",
+      "path": "sprint2/problems/logger"
     },
   ],
   "settings": {
