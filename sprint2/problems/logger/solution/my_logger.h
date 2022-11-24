@@ -9,7 +9,7 @@
 #include <string>
 #include <string_view>
 #include <thread>
-
+// #include <iostream>
 using namespace std::literals;
 
 #define LOG(...) Logger::GetInstance().Log(__VA_ARGS__)
@@ -40,13 +40,13 @@ class Logger {
     return ss.str();
   }
 
-  Logger() { openfile(); }
+  Logger() { /* openfile();  */}
 
   Logger(const Logger&) = delete;
 
-  void LogPrint() {
-    ofs_ << std::endl;
-  }
+  //void LogPrint() {
+  //  ofs_ << std::endl;
+  //}
 
   template <class T>
   void LogPrint(const T& arg) {
@@ -55,16 +55,16 @@ class Logger {
 
   template <class T, class... Ts>
   void LogPrint(const T& arg, const Ts&... args) {
-    ofs_ << arg << " ";
+    ofs_ << arg;
     LogPrint(args...);
   }
 
   void openfile() {
-    std::lock_guard<std::mutex> lk(mx_);
     if (ofs_.is_open()) {
+      ofs_.flush();
       ofs_.close();
     }
-    ofs_.open(GetFileTimeStamp());
+    ofs_.open(GetFileTimeStamp(), std::ios::app);
     if(!ofs_.is_open()) {
       throw std::runtime_error("fail to open/create log file");
     }
