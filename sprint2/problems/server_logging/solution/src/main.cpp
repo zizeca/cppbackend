@@ -2,11 +2,11 @@
 //
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/signal_set.hpp>
-#include <iostream>
 #include <thread>
 
 #include "json_loader.h"
 #include "request_handler.h"
+#include "logger.h"
 
 using namespace std::literals;
 namespace net = boost::asio;
@@ -33,6 +33,10 @@ int main(int argc, const char* argv[]) {
     std::cerr << "Usage: game_server <game-config-json> <dir-to-content>"sv << std::endl;
     return EXIT_FAILURE;
   }
+
+  // initial logger
+  InitBoostLogger();
+  
   try {
     // 1. Загружаем карту из файла и построить модель игры
     model::Game game = json_loader::LoadGame(argv[1]);
@@ -60,12 +64,14 @@ int main(int argc, const char* argv[]) {
     constexpr net::ip::port_type port = 8080;
 
     http_server::ServeHttp(ioc, {address, port}, [&handler](auto&& req, auto&& send) {
-        handler(std::forward<decltype(req)>(req), std::forward<decltype(send)>(send));
+      handler(std::forward<decltype(req)>(req), std::forward<decltype(send)>(send));
     });
     /**/
 
     // Эта надпись сообщает тестам о том, что сервер запущен и готов обрабатывать запросы
-    std::cout << "Server has started..."sv << std::endl;
+    // std::cout << "Server has started..."sv << std::endl;
+    boost::json::value jv_port_address{{"port"s, 8080},{"address"s,"0.0.0.0"s}};
+    BOOST_LOG_TRIVIAL(info) <<  boost::log::add_value(additional_data, jv_port_address) << "Server has started..."sv;
 
     // 6. Запускаем обработку асинхронных операций
     RunWorkers(std::max(1u, num_threads), [&ioc] { ioc.run(); });

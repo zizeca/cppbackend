@@ -3,9 +3,9 @@ cmake_minimum_required(VERSION 3.13)
 project(game_server CXX)
 set(CMAKE_CXX_STANDARD 20)
 
-# conan gen
+# обратите внимание на аргумент TARGETS у команды conan_basic_setup
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup()
+conan_basic_setup(TARGETS)
 
 set(SRCDIR src)
 
@@ -32,6 +32,7 @@ set(HEADER
   ${SRCDIR}/content_type.hpp
   ${SRCDIR}/util.h
   ${SRCDIR}/api_responser.hpp
+  ${SRCDIR}/logger.h
 )
 
 
@@ -48,5 +49,6 @@ find_package(Threads REQUIRED)
 
 
 add_executable(${EXECUTE} ${SRC} ${HEADER})
-target_link_libraries(${EXECUTE} PRIVATE Threads::Threads)
+target_include_directories(${EXECUTE} PRIVATE CONAN_PKG::boost)
+target_link_libraries(${EXECUTE} PRIVATE Threads::Threads CONAN_PKG::boost)
 add_subdirectory(${SRCDIR}/http_server)
