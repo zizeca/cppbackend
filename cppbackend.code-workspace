@@ -1,12 +1,12 @@
 {
   "folders": [
+    // {
+    //   "name": "root",
+    //   "path": "."
+    // },
     {
-      "name": "root",
-      "path": "."
-    },
-    {
-      "name": "s2_logger",
-      "path": "sprint2/problems/logger"
+      "name": "s2_server_logging",
+      "path": "sprint2/problems/server_logging/solution"
     },
   ],
   "settings": {
