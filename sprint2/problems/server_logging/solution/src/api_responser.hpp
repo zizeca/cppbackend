@@ -7,7 +7,6 @@
 #include <filesystem>
 #include <functional>
 #include <string_view>
-#include <iostream>
 
 #include "content_type.hpp"
 #include "model.h"
@@ -94,8 +93,7 @@ class ApiResponseHandler {
     boost::beast::http::file_body::value_type file;
 
     if (boost::system::error_code ec; file.open(pf.c_str(), boost::beast::file_mode::read, ec), ec) {
-      std::cout << "Failed to open file "sv << pf << std::endl;
-      throw std::logic_error("Wrong open file");
+      throw std::logic_error("Wrong open file"s.append(ec.message()));
     }
 
     std::string ext = pf.extension().string();

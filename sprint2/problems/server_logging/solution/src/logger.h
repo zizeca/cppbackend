@@ -32,7 +32,7 @@ class Logger final {
 
   static void LogExit(const int& code);
   static void LogExit(const std::exception& ex);
-  static void LogErr(const boost::system::error_code& ec, const std::string& where);
+  static void LogErr(const boost::system::error_code& ec, std::string_view where);
   static void LogErr(const boost::system::error_code& ec, const Where& where);
 
   static void Init();

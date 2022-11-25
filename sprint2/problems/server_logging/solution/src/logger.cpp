@@ -1,37 +1,37 @@
 #include "logger.h"
 
 void Logger::LogExit(const int& code) {
-  boost::json::value jv{{"code", code}};
+  boost::json::object obj{{"code", code}};
   if (code)
-    BOOST_LOG_TRIVIAL(error) << boost::log::add_value(additional_data, jv) << "server exited"sv;
+    BOOST_LOG_TRIVIAL(error) << boost::log::add_value(additional_data, obj) << "server exited"sv;
   else
-    BOOST_LOG_TRIVIAL(info) << boost::log::add_value(additional_data, jv) << "server exited"sv;
+    BOOST_LOG_TRIVIAL(info) << boost::log::add_value(additional_data, obj) << "server exited"sv;
 }
 
 void Logger::LogExit(const std::exception& ex) {
-  boost::json::value jv{{"exception", ex.what()}};
-  BOOST_LOG_TRIVIAL(error) << boost::log::add_value(additional_data, jv) << "server exited"sv;
+  boost::json::object obj{{"exception", ex.what()}};
+  BOOST_LOG_TRIVIAL(error) << boost::log::add_value(additional_data, obj) << "server exited"sv;
 }
 
-void Logger::LogErr(const boost::system::error_code& ec, const std::string& where) {
-  boost::json::value jv = {
+void Logger::LogErr(const boost::system::error_code& ec, std::string_view where) {
+  boost::json::object obj = {
       {"code", ec.value()},
       {"text", ec.message()},
       {"where", where},
   };
-  BOOST_LOG_TRIVIAL(error) << boost::log::add_value(additional_data, jv) << "error"sv;
+  BOOST_LOG_TRIVIAL(error) << boost::log::add_value(additional_data, obj) << "error"sv;
 }
 
 void Logger::LogErr(const boost::system::error_code& ec, const Where& where) {
   switch (where) {
     case Where::READ:
-      LogErr(ec, "read");
+      LogErr(ec, "read"sv);
       break;
     case Where::WRITE:
-      LogErr(ec, "write");
+      LogErr(ec, "write"sv);
       break;
     case Where::ACCEPT:
-      LogErr(ec, "accept");
+      LogErr(ec, "accept"sv);
       break;
     default:
       throw std::logic_error("switch unknown code");

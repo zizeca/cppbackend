@@ -123,15 +123,6 @@ class Map {
   Offices offices_;
 };
 
-// void tag_invoke(boost::json::value_from_tag, boost::json::value& jv, Building const& building);
-// void tag_invoke(boost::json::value_from_tag, boost::json::value& jv, Office const& office);
-// void tag_invoke(boost::json::value_from_tag, boost::json::value& jv, Road const& road);
-// void tag_invoke(boost::json::value_from_tag, boost::json::value& jv, Map const& map);
-
-// Building tag_invoke(boost::json::value_to_tag<Building>, boost::json::value& jv);
-// Office tag_invoke(boost::json::value_to_tag<Office>, boost::json::value& jv);
-// Road tag_invoke(boost::json::value_to_tag<Road>, boost::json::value& jv);
-// Map tag_invoke(boost::json::value_to_tag<Map>, boost::json::value& jv);
 
 class Game {
  public:

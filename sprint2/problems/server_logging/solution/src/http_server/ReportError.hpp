@@ -3,14 +3,14 @@
 
 #define BOOST_BEAST_USE_STD_STRING_VIEW
 #include <boost/beast/core.hpp>
-#include <iostream>
+#include "../logger.h"
 
 namespace http_server {
 
 using namespace std::literals;
 
 inline void ReportError(boost::beast::error_code ec, std::string_view what) {
-  std::cerr << what << ": "sv << ec.message() << std::endl;
+  Logger::LogErr(ec, what);
 }
 
 }  // namespace http_server
