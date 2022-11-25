@@ -19,6 +19,7 @@ set(SRC
 	#${SRCDIR}/request_handler.cpp
 	${SRCDIR}/tag_invokers.cpp
   ${SRCDIR}/util.cpp
+  ${SRCDIR}/logger.cpp
 )
 
 set(HEADER 

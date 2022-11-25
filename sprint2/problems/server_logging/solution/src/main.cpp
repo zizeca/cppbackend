@@ -26,6 +26,8 @@ void RunWorkers(unsigned n, const Fn& fn) {
   fn();
 }
 
+
+
 }  // namespace
 
 int main(int argc, const char* argv[]) {
@@ -35,7 +37,7 @@ int main(int argc, const char* argv[]) {
   }
 
   // initial logger
-  InitBoostLogger();
+  Logger::Init();
   
   try {
     // 1. Загружаем карту из файла и построить модель игры
@@ -71,12 +73,14 @@ int main(int argc, const char* argv[]) {
     // Эта надпись сообщает тестам о том, что сервер запущен и готов обрабатывать запросы
     // std::cout << "Server has started..."sv << std::endl;
     boost::json::value jv_port_address{{"port"s, 8080},{"address"s,"0.0.0.0"s}};
-    BOOST_LOG_TRIVIAL(info) <<  boost::log::add_value(additional_data, jv_port_address) << "Server has started..."sv;
+    BOOST_LOG_TRIVIAL(info) <<  boost::log::add_value(additional_data, jv_port_address) << "server started"sv;
 
     // 6. Запускаем обработку асинхронных операций
     RunWorkers(std::max(1u, num_threads), [&ioc] { ioc.run(); });
   } catch (const std::exception& ex) {
-    std::cerr << ex.what() << std::endl;
+    Logger::LogExit(ex);
     return EXIT_FAILURE;
   }
+  Logger::LogExit(0);
+  return 0;
 }

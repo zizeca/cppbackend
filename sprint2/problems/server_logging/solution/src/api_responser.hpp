@@ -7,6 +7,7 @@
 #include <filesystem>
 #include <functional>
 #include <string_view>
+#include <iostream>
 
 #include "content_type.hpp"
 #include "model.h"
