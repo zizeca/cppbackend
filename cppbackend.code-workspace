@@ -1,22 +1,26 @@
 {
   "folders": [
-    // {
-    //   "name": "root",
-    //   "path": "."
-    // },
+    {
+      "name": "root",
+      "path": "."
+    },
     {
       "name": "s2_server_logging",
       "path": "sprint2/problems/server_logging/solution"
     },
   ],
   "settings": {
-    "C_Cpp.default.cppStandard": "c++20",
     "C_Cpp.default.includePath": [
       "${workspaceFolder}/**",
       "~/.conan/data/**"
     ],
     "files.associations": {
+      "string_view": "cpp",
       "*.ipp": "cpp",
+      "array": "cpp",
+      "string": "cpp",
+      "ranges": "cpp",
+      "span": "cpp",
       "cctype": "cpp",
       "clocale": "cpp",
       "cmath": "cpp",
@@ -31,7 +35,6 @@
       "cwchar": "cpp",
       "cwctype": "cpp",
       "any": "cpp",
-      "array": "cpp",
       "atomic": "cpp",
       "strstream": "cpp",
       "bit": "cpp",
@@ -52,7 +55,6 @@
       "list": "cpp",
       "map": "cpp",
       "set": "cpp",
-      "string": "cpp",
       "unordered_map": "cpp",
       "unordered_set": "cpp",
       "vector": "cpp",
@@ -68,7 +70,6 @@
       "ratio": "cpp",
       "regex": "cpp",
       "source_location": "cpp",
-      "string_view": "cpp",
       "system_error": "cpp",
       "tuple": "cpp",
       "type_traits": "cpp",
@@ -87,21 +88,26 @@
       "new": "cpp",
       "numbers": "cpp",
       "ostream": "cpp",
-      "ranges": "cpp",
       "semaphore": "cpp",
       "shared_mutex": "cpp",
-      "span": "cpp",
       "sstream": "cpp",
       "stdexcept": "cpp",
       "stop_token": "cpp",
       "streambuf": "cpp",
-      "syncstream": "cpp",
       "thread": "cpp",
       "cinttypes": "cpp",
       "typeindex": "cpp",
       "typeinfo": "cpp",
       "valarray": "cpp",
-      "variant": "cpp"
+      "variant": "cpp",
+      "syncstream": "cpp"
+    },
+    "C_Cpp.codeAnalysis.exclude": {
+      "**/build": true,
+      "**/data": true,
+      "**/sratic": true,
+      "**/precode": true,
+      "cpp-backend-tests-practicum/**": true
     }
   },
 }
