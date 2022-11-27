@@ -7,6 +7,7 @@
 #include "json_loader.h"
 #include "request_handler.h"
 #include "logger.h"
+#include "application.h"
 
 using namespace std::literals;
 namespace net = boost::asio;
@@ -40,8 +41,8 @@ int main(int argc, const char* argv[]) {
   Logger::Init();
   
   try {
-    // 1. Загружаем карту из файла и построить модель игры
-    model::Game game = json_loader::LoadGame(argv[1]);
+    
+    Application app(argv[1], argv[2]);
 
     // 2. Инициализируем io_context
     const unsigned num_threads = std::thread::hardware_concurrency();
@@ -57,7 +58,7 @@ int main(int argc, const char* argv[]) {
     });
 
     // 4. Создаём обработчик HTTP-запросов и связываем его с моделью игры
-    http_handler::RequestHandler handler{game, argv[2]};
+    http_handler::RequestHandler handler{app};
 
     LogRequestHandler<http_handler::RequestHandler> loghandler{handler};
 

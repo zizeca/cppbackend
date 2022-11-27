@@ -13,27 +13,29 @@ set(EXECUTE game_server)
 
 set(SRC 
 	${SRCDIR}/main.cpp
-	${SRCDIR}/model.cpp
+  ${SRCDIR}/logger.cpp
 	${SRCDIR}/boost_json.cpp
 	${SRCDIR}/json_loader.cpp
-	#${SRCDIR}/request_handler.cpp
+	${SRCDIR}/model.cpp
 	${SRCDIR}/tag_invokers.cpp
   ${SRCDIR}/util.cpp
-  ${SRCDIR}/logger.cpp
+  ${SRCDIR}/application.cpp
+	#${SRCDIR}/request_handler.cpp
 )
 
 set(HEADER 
-  ${SRCDIR}/http_server.h
   ${SRCDIR}/sdk.h
-  ${SRCDIR}/model.h
-  ${SRCDIR}/tagged.h
+  ${SRCDIR}/logger.h
   ${SRCDIR}/json_loader.h
-  ${SRCDIR}/request_handler.h
+  ${SRCDIR}/http_server.h
+  ${SRCDIR}/tagged.h
+  ${SRCDIR}/model.h
   ${SRCDIR}/tag_invokers.h
+  ${SRCDIR}/application.h
+  ${SRCDIR}/request_handler.h
   ${SRCDIR}/content_type.hpp
   ${SRCDIR}/util.h
   ${SRCDIR}/api_responser.hpp
-  ${SRCDIR}/logger.h
 )
 
 

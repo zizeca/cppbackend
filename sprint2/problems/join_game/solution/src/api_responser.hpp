@@ -11,6 +11,7 @@
 #include "content_type.hpp"
 #include "model.h"
 #include "util.h"
+#include "application.h"
 
 namespace http_handler {
 
@@ -31,8 +32,8 @@ struct ErrStr {
 template <typename Body, typename Allocator, typename Send>
 class ApiResponseHandler {
  public:
-  ApiResponseHandler(http::request<Body, http::basic_fields<Allocator>>& req, Send& send, const std::filesystem::path& root_dir, model::Game& game)
-      : m_req(req), m_send(send), m_dir(root_dir), m_target(util::url_decode(std::string(req.target()))), m_game(game) {
+  ApiResponseHandler(http::request<Body, http::basic_fields<Allocator>>& req, Send& send, Application& app)
+      : m_req(req), m_send(send), m_target(util::url_decode(std::string(req.target()))), app_(app) {
     if (m_target == "/") {
       m_target += "index.html";
     }
@@ -65,7 +66,7 @@ class ApiResponseHandler {
   void ApiRequest() {
     if (m_target == "/api/v1/maps") {
       json::array arr;
-      for (auto i : m_game.GetMaps()) {
+      for (auto i : app_.GetGame().GetMaps()) {
         json::value v = {{"id", *i.GetId()}, {"name", i.GetName()}};
         arr.push_back(v);
       }
@@ -76,7 +77,7 @@ class ApiResponseHandler {
 
     if (m_target.starts_with("/api/v1/maps/")) {
       std::string s = m_target.substr(("/api/v1/maps/"s).size());
-      auto m = m_game.FindMap(model::Map::Id(s));
+      auto m = app_.GetGame().FindMap(model::Map::Id(s));
       if (m) {
         json::value v = json::value_from(*m);
         text_response(http::status::ok, json::serialize(v), ContentType::APP_JSON);
@@ -90,10 +91,10 @@ class ApiResponseHandler {
   }
 
   void FileRequest() {
-    std::filesystem::path pf = m_dir;
+    std::filesystem::path pf = app_.GetContentDir();
     pf += m_target;
 
-    if (!util::IsSubPath(pf, m_dir)) {
+    if (!util::IsSubPath(pf, app_.GetContentDir())) {
       return text_response(http::status::bad_request, "Permission deny, or incorrect url request", ContentType::TEXT_PLAIN);
     }
 
@@ -122,9 +123,8 @@ class ApiResponseHandler {
  private:
   http::request<Body, http::basic_fields<Allocator>>& m_req;
   Send& m_send;
-  const std::filesystem::path& m_dir;
   std::string m_target;
-  model::Game& m_game;
+  Application& app_;
 
   void
   text_response(http::status status, std::string_view body, std::string_view content_type, std::string_view cache_control = ""sv) {

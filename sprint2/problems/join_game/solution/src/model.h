@@ -1,11 +1,12 @@
 #pragma once
 #include <boost/json.hpp>
+#include <random>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
-#include "tagged.h"
 #include "players_token.h"
+#include "tagged.h"
 
 namespace model {
 
@@ -124,12 +125,54 @@ class Map {
   Offices offices_;
 };
 
-class Dog {};
+namespace detail {
+struct TokenTag {};
+}  // namespace detail
+
+using Token = util::Tagged<std::string, detail::TokenTag>;
+
+class Player {
+
+};
+
+class PlayerTokens {
+ public:
+  Player FindPlayer();
+  void AddPlayer(Player player);
+ private:
+  std::random_device random_device_;
+  std::mt19937_64 generator1_{[this] {
+    std::uniform_int_distribution<std::mt19937_64::result_type> dist;
+    return dist(random_device_);
+  }()};
+  std::mt19937_64 generator2_{[this] {
+    std::uniform_int_distribution<std::mt19937_64::result_type> dist;
+    return dist(random_device_);
+  }()};
+  // Чтобы сгенерировать токен, получите из generator1_ и generator2_
+  // два 64-разрядных числа и, переведя их в hex-строки, склейте в одну.
+  // Вы можете поэкспериментировать с алгоритмом генерирования токенов,
+  // чтобы сделать их подбор ещё более затруднительным
+};
+
+class Dog {
+ public:
+  using Id = util::Tagged<std::string, Dog>;
+  const Id& GetId() const noexcept { return id_; }
+  const std::string& GetName() const noexcept { return name_; }
+
+ private:
+  std::string name_;
+  Id id_;
+  Token player_token_;
+};
 
 class GameSession {
  public:
   explicit GameSession(Map& map) : map_(map) {}
   ~GameSession() = default;
+
+  void AddDog(Dog dog){ dogs_.push_back(dog);}
 
  private:
   Map& map_;
@@ -141,6 +184,9 @@ class Game {
   using Maps = std::vector<Map>;
 
   void AddMap(Map map);
+
+  // todo
+  void AddGameSession(GameSession session);
 
   const Maps& GetMaps() const noexcept { return maps_; }
 
