@@ -32,22 +32,23 @@ template <typename Body, typename Allocator, typename Send>
 class ApiResponseHandler {
  public:
   ApiResponseHandler(http::request<Body, http::basic_fields<Allocator>>& req, Send& send, const std::filesystem::path& root_dir, model::Game& game)
-      : m_req(req), m_send(send), m_dir(root_dir), m_target(util::url_decode(std::string(req.target()))), m_game(game) {}
-
-  void Execute() {
-    if (m_req.method_string() != "GET" && m_req.method_string() != "HEAD") {
-      text_response(http::status::method_not_allowed, ErrStr::BAD_REQ, ContentType::APP_JSON);
-      return;
-    }
-
+      : m_req(req), m_send(send), m_dir(root_dir), m_target(util::url_decode(std::string(req.target()))), m_game(game) {
     if (m_target == "/") {
       m_target += "index.html";
     }
-    // api else file
-    if (m_target.starts_with("/api/")) {
-      ApiRequest();
+  }
+
+  void Execute() {
+    if (m_req.method() == http::verb::get || m_req.method() == http::verb::head) {
+      if (m_target.starts_with("/api/")) {
+        ApiRequest();
+      } else {
+        FileRequest();
+      }
+    } else if (m_req.method() == http::verb::post) {
+      // todo
     } else {
-      FileRequest();
+      text_response(http::status::method_not_allowed, ErrStr::BAD_REQ, ContentType::APP_JSON);
     }
   }
 

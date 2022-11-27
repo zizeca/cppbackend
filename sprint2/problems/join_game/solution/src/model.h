@@ -129,7 +129,7 @@ class Dog {};
 class GameSession {
  public:
   explicit GameSession(Map& map) : map_(map) {}
-  ~GameSession();
+  ~GameSession() = default;
 
  private:
   Map& map_;
