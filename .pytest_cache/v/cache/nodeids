@@ -2,5 +2,13 @@
   "cpp-backend-tests-practicum/tests/test_l02_hello_beast.py::test_hello",
   "cpp-backend-tests-practicum/tests/test_l02_hello_beast.py::test_hello_error",
   "cpp-backend-tests-practicum/tests/test_l03_hello_async.py::test_hello",
-  "cpp-backend-tests-practicum/tests/test_l03_hello_async.py::test_hello_error"
+  "cpp-backend-tests-practicum/tests/test_l03_hello_async.py::test_hello_error",
+  "cpp-backend-tests-practicum/tests/test_s02_server_logging.py::test_bad_request",
+  "cpp-backend-tests-practicum/tests/test_s02_server_logging.py::test_file_not_found",
+  "cpp-backend-tests-practicum/tests/test_s02_server_logging.py::test_image",
+  "cpp-backend-tests-practicum/tests/test_s02_server_logging.py::test_index_html",
+  "cpp-backend-tests-practicum/tests/test_s02_server_logging.py::test_info",
+  "cpp-backend-tests-practicum/tests/test_s02_server_logging.py::test_list",
+  "cpp-backend-tests-practicum/tests/test_s02_server_logging.py::test_logs",
+  "cpp-backend-tests-practicum/tests/test_s02_server_logging.py::test_map_not_found"
 ]

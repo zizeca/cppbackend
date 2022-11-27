@@ -1,1 +1,10 @@
-{}
+{
+  "cpp-backend-tests-practicum/tests/test_s02_server_logging.py::test_logs": true,
+  "cpp-backend-tests-practicum/tests/test_s02_server_logging.py::test_list": true,
+  "cpp-backend-tests-practicum/tests/test_s02_server_logging.py::test_info": true,
+  "cpp-backend-tests-practicum/tests/test_s02_server_logging.py::test_map_not_found": true,
+  "cpp-backend-tests-practicum/tests/test_s02_server_logging.py::test_bad_request": true,
+  "cpp-backend-tests-practicum/tests/test_s02_server_logging.py::test_image": true,
+  "cpp-backend-tests-practicum/tests/test_s02_server_logging.py::test_file_not_found": true,
+  "cpp-backend-tests-practicum/tests/test_s02_server_logging.py::test_index_html": true
+}
