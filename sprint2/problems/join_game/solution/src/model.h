@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "tagged.h"
+#include "players_token.h"
 
 namespace model {
 
@@ -123,6 +124,17 @@ class Map {
   Offices offices_;
 };
 
+class Dog {};
+
+class GameSession {
+ public:
+  explicit GameSession(Map& map) : map_(map) {}
+  ~GameSession();
+
+ private:
+  Map& map_;
+  std::vector<Dog> dogs_;
+};
 
 class Game {
  public:
@@ -145,6 +157,7 @@ class Game {
 
   std::vector<Map> maps_;
   MapIdToIndex map_id_to_index_;
+  std::vector<GameSession> sessions_;
 };
 
 }  // namespace model
