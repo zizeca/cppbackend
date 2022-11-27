@@ -7,15 +7,19 @@ Application::Application(std::filesystem::path config, std::filesystem::path dir
   game_ = json_loader::LoadGame(config);
 }
 
-Application::~Application(){
+Application::~Application() {
   // todo
   // close resource
 }
 
-const std::filesystem::path& Application::GetContentDir() const noexcept {
+const std::filesystem::path &Application::GetContentDir() const noexcept {
   return dir_to_content_;
 }
 
-model::Game& Application::GetGame() noexcept {
-  return game_;
+const model::Map *Application::FindMap(const model::Map::Id &id) const noexcept {
+  return game_.FindMap(id);
+}
+
+const model::Game::Maps &Application::GetMaps() const noexcept {
+  return game_.GetMaps();
 }

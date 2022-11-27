@@ -35,12 +35,28 @@ class Application {
   const std::filesystem::path& GetContentDir() const noexcept;
 
   /**
-   * @brief return created Game for modification
+   * @brief 
    * 
-   * @return  model::Game
+   * @param id map id
+   * @return const model::Map* pointer on map or null
    */
-  model::Game& GetGame() noexcept;  // { return game_;}
+  const model::Map* FindMap(const model::Map::Id& id) const noexcept;
 
+  /**
+   * @brief Get the Maps array
+   * 
+   * @return const std::vector<model::Map>& list of all maps parsed from json config file
+   */
+  const std::vector<model::Map>& GetMaps() const noexcept;
+
+  /**
+   * @brief 
+   * 
+   * @param map_id 
+   * @param user_name 
+   */
+  void JoinGame(std::string_view map_id, std::string_view user_name);
+  
  private:
   model::Game game_;
   std::vector<model::Player> players_;

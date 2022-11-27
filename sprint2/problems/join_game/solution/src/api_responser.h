@@ -66,7 +66,7 @@ class ApiResponseHandler {
   void ApiRequest() {
     if (m_target == "/api/v1/maps") {
       json::array arr;
-      for (auto i : app_.GetGame().GetMaps()) {
+      for (auto i : app_.GetMaps()) {
         json::value v = {{"id", *i.GetId()}, {"name", i.GetName()}};
         arr.push_back(v);
       }
@@ -77,7 +77,7 @@ class ApiResponseHandler {
 
     if (m_target.starts_with("/api/v1/maps/")) {
       std::string s = m_target.substr(("/api/v1/maps/"s).size());
-      auto m = app_.GetGame().FindMap(model::Map::Id(s));
+      auto m = app_.FindMap(model::Map::Id(s));
       if (m) {
         json::value v = json::value_from(*m);
         text_response(http::status::ok, json::serialize(v), ContentType::APP_JSON);
