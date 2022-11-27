@@ -12,6 +12,6 @@
 #define __HTTP_SERVER_H__
 
 // include main part of server, for information handling
-#include "http_server/ServeHttp.hpp"
+#include "http_server/serve_http.h"
 
 #endif // __HTTP_SERVER_H__

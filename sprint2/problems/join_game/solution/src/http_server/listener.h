@@ -9,7 +9,7 @@
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
 
-#include "Session.hpp"
+#include "session.h"
 
 // Ядро асинхронного HTTP-сервера будет располагаться в пространстве имён http_server
 namespace http_server {

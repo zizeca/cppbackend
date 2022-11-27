@@ -4,12 +4,10 @@
 #include <filesystem>
 #include <string_view>
 
-#include "api_responser.hpp"
-#include "content_type.hpp"
+#include "api_responser.h"
+#include "application.h"
 #include "http_server.h"
 #include "model.h"
-#include "tag_invokers.h"
-#include "application.h"
 
 namespace http_handler {
 namespace beast = boost::beast;
@@ -19,8 +17,8 @@ using namespace std::literals;
 
 class RequestHandler {
  public:
-//  explicit RequestHandler(model::Game& game, std::filesystem::path path) : game_{game}, content_path_( std::filesystem::absolute(path)) {
-  explicit RequestHandler(Application &app) : app_(app) {}
+  //  explicit RequestHandler(model::Game& game, std::filesystem::path path) : game_{game}, content_path_( std::filesystem::absolute(path)) {
+  explicit RequestHandler(Application& app) : app_(app) {}
 
   RequestHandler(const RequestHandler&) = delete;
   RequestHandler& operator=(const RequestHandler&) = delete;

@@ -8,10 +8,10 @@
 #include <functional>
 #include <string_view>
 
-#include "content_type.hpp"
+#include "application.h"
+#include "content_type.h"
 #include "model.h"
 #include "util.h"
-#include "application.h"
 
 namespace http_handler {
 
@@ -117,7 +117,7 @@ class ApiResponseHandler {
   }
 
   void PlayerJoinRequestPost() {
-    text_response(http::status::ok, "Player name" , ContentType::TEXT_HTML, "no-cache");
+    text_response(http::status::ok, "Player name", ContentType::TEXT_HTML, "no-cache");
   }
 
  private:

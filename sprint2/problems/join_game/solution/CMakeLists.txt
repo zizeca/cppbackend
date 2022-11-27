@@ -33,9 +33,9 @@ set(HEADER
   ${SRCDIR}/tag_invokers.h
   ${SRCDIR}/application.h
   ${SRCDIR}/request_handler.h
-  ${SRCDIR}/content_type.hpp
+  ${SRCDIR}/content_type.h
   ${SRCDIR}/util.h
-  ${SRCDIR}/api_responser.hpp
+  ${SRCDIR}/api_responser.h
 )
 
 

@@ -1,5 +1,5 @@
 /**
- * @file Session.hpp
+ * @file session.h
  * @author Enver Kulametov (zizu.meridian@gmail.com)
  * @brief
  * @version 0.1
@@ -20,7 +20,7 @@
 #include <boost/beast/http.hpp>
 #include <iostream>
 
-#include "ReportError.hpp"
+#include "report_error.h"
 
 namespace http_server {
 
