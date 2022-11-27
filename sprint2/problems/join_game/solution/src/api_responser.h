@@ -27,13 +27,19 @@ struct ErrStr {
   ErrStr() = delete;
   constexpr static std::string_view MAP_NOT_FOUND = R"({"code": "mapNotFound", "message": "Map not found"})"sv;
   constexpr static std::string_view BAD_REQ = R"({"code": "badRequest", "message": "Bad request"})"sv;
+  constexpr static std::string_view BAD_PARSE = R"({"code": "invalidArgument", "message": "Join game request parse error"})"sv;
+};
+
+struct CacheControl {
+  CacheControl() = delete;
+  constexpr static std::string_view NO_CACHE = "no-cache"sv;
 };
 
 template <typename Body, typename Allocator, typename Send>
 class ApiResponseHandler {
  public:
   ApiResponseHandler(http::request<Body, http::basic_fields<Allocator>>& req, Send& send, Application& app)
-      : m_req(req), m_send(send), m_target(util::url_decode(std::string(req.target()))), app_(app) {
+      : m_req(req), m_send(send), m_target(util::url_decode(std::string(req.target()))), m_app(app) {
     if (m_target == "/") {
       m_target += "index.html";
     }
@@ -66,7 +72,7 @@ class ApiResponseHandler {
   void ApiRequest() {
     if (m_target == "/api/v1/maps") {
       json::array arr;
-      for (auto i : app_.GetMaps()) {
+      for (auto i : m_app.GetMaps()) {
         json::value v = {{"id", *i.GetId()}, {"name", i.GetName()}};
         arr.push_back(v);
       }
@@ -77,7 +83,7 @@ class ApiResponseHandler {
 
     if (m_target.starts_with("/api/v1/maps/")) {
       std::string s = m_target.substr(("/api/v1/maps/"s).size());
-      auto m = app_.FindMap(model::Map::Id(s));
+      auto m = m_app.FindMap(model::Map::Id(s));
       if (m) {
         json::value v = json::value_from(*m);
         text_response(http::status::ok, json::serialize(v), ContentType::APP_JSON);
@@ -91,10 +97,10 @@ class ApiResponseHandler {
   }
 
   void FileRequest() {
-    std::filesystem::path pf = app_.GetContentDir();
+    std::filesystem::path pf = m_app.GetContentDir();
     pf += m_target;
 
-    if (!util::IsSubPath(pf, app_.GetContentDir())) {
+    if (!util::IsSubPath(pf, m_app.GetContentDir())) {
       return text_response(http::status::bad_request, "Permission deny, or incorrect url request", ContentType::TEXT_PLAIN);
     }
 
@@ -117,17 +123,36 @@ class ApiResponseHandler {
   }
 
   void PlayerJoinRequestPost() {
-    text_response(http::status::ok, "Player name", ContentType::TEXT_HTML, "no-cache");
+    std::string user_name;
+    std::string map_id;
+
+    try {
+      boost::json::value jv = boost::json::parse(m_req.body());
+      user_name = jv.as_object().at("userName").as_string();
+      map_id = jv.as_object().at("mapId").as_string();
+    } catch (...) {
+      text_response(http::status::bad_request, ErrStr::BAD_PARSE, ContentType::APP_JSON, CacheControl::NO_CACHE);
+      return;
+    }
+
+    if (auto map = m_app.FindMap(model::Map::Id(map_id)); map == nullptr) {
+      text_response(http::status::bad_request, ErrStr::MAP_NOT_FOUND, ContentType::APP_JSON, CacheControl::NO_CACHE);
+    }
+
+    // todo check user
+
+    // m_app.JoinGame();
+    text_response(http::status::ok, "Player name", ContentType::TEXT_HTML, CacheControl::NO_CACHE);
   }
 
  private:
   http::request<Body, http::basic_fields<Allocator>>& m_req;
   Send& m_send;
   std::string m_target;
-  Application& app_;
+  Application& m_app;
 
   void
-  text_response(http::status status, std::string_view body, std::string_view content_type, std::string_view cache_control = ""sv) {
+  text_response(http::status status, std::string_view body, std::string_view content_type, std::string_view cache_control = std::string_view()) {
     StringResponse response(status, m_req.version());
     response.set(http::field::content_type, content_type);
     response.body() = body;
