@@ -100,7 +100,10 @@
       "typeinfo": "cpp",
       "valarray": "cpp",
       "variant": "cpp",
-      "syncstream": "cpp"
+      "syncstream": "cpp",
+      "barrier": "cpp",
+      "latch": "cpp",
+      "scoped_allocator": "cpp"
     },
     "C_Cpp.codeAnalysis.exclude": {
       "**/build": true,

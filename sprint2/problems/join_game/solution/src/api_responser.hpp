@@ -39,16 +39,26 @@ class ApiResponseHandler {
   }
 
   void Execute() {
-    if (m_req.method() == http::verb::get || m_req.method() == http::verb::head) {
-      if (m_target.starts_with("/api/")) {
-        ApiRequest();
+    try {
+      if (m_req.method() == http::verb::get || m_req.method() == http::verb::head) {
+        if (m_target.starts_with("/api/")) {
+          ApiRequest();
+        } else {
+          FileRequest();
+        }
+      } else if (m_req.method() == http::verb::post) {
+        if (m_req.count(http::field::content_type) && m_req.at(http::field::content_type) == ContentType::APP_JSON) {
+          PlayerJoinRequestPost();
+        } else {
+          text_response(http::status::method_not_allowed, ErrStr::BAD_REQ, ContentType::APP_JSON);
+        }
       } else {
-        FileRequest();
+        text_response(http::status::method_not_allowed, ErrStr::BAD_REQ, ContentType::APP_JSON);
       }
-    } else if (m_req.method() == http::verb::post) {
-      // todo
-    } else {
-      text_response(http::status::method_not_allowed, ErrStr::BAD_REQ, ContentType::APP_JSON);
+
+    } catch (const std::exception& e) {
+      text_response(http::status::internal_server_error, "server request error", ContentType::TEXT_HTML);
+      throw;
     }
   }
 
@@ -105,6 +115,10 @@ class ApiResponseHandler {
     return file_response(http::status::ok, file, content_type);
   }
 
+  void PlayerJoinRequestPost() {
+    text_response(http::status::ok, "Player name" , ContentType::TEXT_HTML, "no-cache");
+  }
+
  private:
   http::request<Body, http::basic_fields<Allocator>>& m_req;
   Send& m_send;
@@ -113,12 +127,15 @@ class ApiResponseHandler {
   model::Game& m_game;
 
   void
-  text_response(http::status status, std::string_view body, std::string_view content_type) {
+  text_response(http::status status, std::string_view body, std::string_view content_type, std::string_view cache_control = ""sv) {
     StringResponse response(status, m_req.version());
     response.set(http::field::content_type, content_type);
     response.body() = body;
     response.prepare_payload();
     response.keep_alive(m_req.keep_alive());
+    if (!cache_control.empty()) {
+      response.set(http::field::cache_control, cache_control);
+    }
     m_send(response);
   }
 
