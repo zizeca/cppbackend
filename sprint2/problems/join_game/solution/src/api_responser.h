@@ -126,6 +126,7 @@ class ApiResponseHandler {
     std::string user_name;
     std::string map_id;
 
+    // check parsing
     try {
       boost::json::value jv = boost::json::parse(m_req.body());
       user_name = jv.as_object().at("userName").as_string();
@@ -135,8 +136,10 @@ class ApiResponseHandler {
       return;
     }
 
+    // check map id exist
     if (auto map = m_app.FindMap(model::Map::Id(map_id)); map == nullptr) {
       text_response(http::status::bad_request, ErrStr::MAP_NOT_FOUND, ContentType::APP_JSON, CacheControl::NO_CACHE);
+      return;
     }
 
     // todo check user

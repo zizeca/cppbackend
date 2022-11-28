@@ -59,8 +59,6 @@ class Application {
   
  private:
   model::Game game_;
-  std::vector<model::Player> players_;
-  model::PlayerTokens player_tokens_;
   const std::filesystem::path dir_to_content_;
 };
 

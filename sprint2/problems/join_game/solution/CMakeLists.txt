@@ -16,6 +16,7 @@ set(SRC
   ${SRCDIR}/logger.cpp
 	${SRCDIR}/boost_json.cpp
 	${SRCDIR}/json_loader.cpp
+  ${SRCDIR}/model_map.cpp
 	${SRCDIR}/model.cpp
 	${SRCDIR}/tag_invokers.cpp
   ${SRCDIR}/util.cpp
@@ -29,6 +30,7 @@ set(HEADER
   ${SRCDIR}/json_loader.h
   ${SRCDIR}/http_server.h
   ${SRCDIR}/tagged.h
+  ${SRCDIR}/model_map.h
   ${SRCDIR}/model.h
   ${SRCDIR}/tag_invokers.h
   ${SRCDIR}/application.h
