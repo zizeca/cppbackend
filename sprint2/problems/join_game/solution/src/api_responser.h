@@ -28,6 +28,8 @@ struct ErrStr {
   constexpr static std::string_view MAP_NOT_FOUND = R"({"code": "mapNotFound", "message": "Map not found"})"sv;
   constexpr static std::string_view BAD_REQ = R"({"code": "badRequest", "message": "Bad request"})"sv;
   constexpr static std::string_view BAD_PARSE = R"({"code": "invalidArgument", "message": "Join game request parse error"})"sv;
+  constexpr static std::string_view USERNAME_EMPTY = R"({"code": "invalidArgument", "message": "Invalid name"})"sv;
+  constexpr static std::string_view POST_INVALID = R"({"code": "invalidMethod", "message": "Only POST method is expected"})"sv;
 };
 
 struct CacheControl {
@@ -50,11 +52,13 @@ class ApiResponseHandler {
       if (m_req.method() == http::verb::get || m_req.method() == http::verb::head) {
         if (m_target.starts_with("/api/")) {
           ApiRequest();
+        } else if (m_target == "/api/v1/game/join") {
+          return text_response(http::status::method_not_allowed, ErrStr::POST_INVALID, ContentType::APP_JSON);
         } else {
           FileRequest();
         }
       } else if (m_req.method() == http::verb::post) {
-        if (m_req.count(http::field::content_type) && m_req.at(http::field::content_type) == ContentType::APP_JSON) {
+        if (m_req.count(http::field::content_type) && m_req.at(http::field::content_type) == ContentType::APP_JSON && m_target == "/api/v1/game/join") {
           PlayerJoinRequestPost();
         } else {
           text_response(http::status::method_not_allowed, ErrStr::BAD_REQ, ContentType::APP_JSON);
@@ -122,6 +126,43 @@ class ApiResponseHandler {
     return file_response(http::status::ok, file, content_type);
   }
 
+  /**
+   * @brief
+   * .
+   * - Request
+   *  - POST /api/v1/game/join HTTP/1.1
+   *  - Content-Type: application/json
+   *  - body = {"userName": "Harry Potter", "mapId": "azkaban"}
+   * .
+   * - Response if ok
+   *  - HTTP/1.1 200 OK
+   *  - Content-Type: application/json
+   *  - Content-Length: 61
+   *  - Cache-Control: no-cache
+   *  - body = {"authToken":"6516861d89ebfff147bf2eb2b5153ae1","playerId":0}
+   * .
+   * - Response if mapId not exist / done
+   *  - HTTP/1.1 404 Not found
+   *  - Content-Type: application/json
+   *  - Content-Length: 51
+   *  - Cache-Control: no-cache
+   *  - body = {"code": "mapNotFound", "message": "Map not found"}
+   * .
+   * - Response if userName is empty
+   *  - HTTP/1.1 400 Bad request
+   *  - Content-Type: application/json
+   *  - Content-Length: 54
+   *  - Cache-Control: no-cache
+   *  - body = {"code": "invalidArgument", "message": "Invalid name"}
+   * .
+   * - Response if bad JSON parsing / done
+   *  - HTTP/1.1 400 Bad request
+   *  - Content-Type: application/json
+   *  - Content-Length: 71
+   *  - Cache-Control: no-cache
+   *  - body = {"code": "invalidArgument", "message": "Join game request parse error"}
+   * .
+   */
   void PlayerJoinRequestPost() {
     std::string user_name;
     std::string map_id;
@@ -138,11 +179,15 @@ class ApiResponseHandler {
 
     // check map id exist
     if (auto map = m_app.FindMap(model::Map::Id(map_id)); map == nullptr) {
-      text_response(http::status::bad_request, ErrStr::MAP_NOT_FOUND, ContentType::APP_JSON, CacheControl::NO_CACHE);
+      text_response(http::status::not_found, ErrStr::MAP_NOT_FOUND, ContentType::APP_JSON, CacheControl::NO_CACHE);
       return;
     }
 
-    // todo check user
+    // check if userName is empty
+    if (user_name.empty()) {
+      text_response(http::status::bad_request, ErrStr::USERNAME_EMPTY, ContentType::APP_JSON, CacheControl::NO_CACHE);
+      return;
+    }
 
     // m_app.JoinGame();
     text_response(http::status::ok, "Player name", ContentType::TEXT_HTML, CacheControl::NO_CACHE);
