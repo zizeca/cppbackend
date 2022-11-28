@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <string>
 #include <string_view>
+#include <optional>
 
 using namespace std::string_view_literals;
 using namespace std::string_literals;
@@ -55,11 +56,12 @@ class Application {
    * @param map_id 
    * @param user_name 
    */
-  void JoinGame(std::string_view map_id, std::string_view user_name);
+  model::Token JoinGame(model::Map::Id id, std::string_view user_name);
   
  private:
-  model::Game game_;
   const std::filesystem::path dir_to_content_;
+  model::Game m_game;
+  model::PlayerTokens m_ptoken;
 };
 
 #endif  // __APPLICATION_H__

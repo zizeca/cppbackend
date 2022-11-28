@@ -9,8 +9,8 @@ namespace model {
 class GameSession {
   GameSession(const GameSession&) = delete;
   GameSession& operator=(const GameSession&) = delete;
-  GameSession(GameSession&&) = delete;
-  GameSession& operator=(GameSession&&) = delete;
+  // GameSession(GameSession&&) = delete;
+  // GameSession& operator=(GameSession&&) = delete;
 
  public:
   explicit GameSession(Map& map) : m_map(map) {}

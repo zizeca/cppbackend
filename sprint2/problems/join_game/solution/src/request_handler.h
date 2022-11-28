@@ -15,7 +15,7 @@ namespace http = beast::http;
 namespace json = boost::json;
 using namespace std::literals;
 
-class RequestHandler {
+class RequestHandler : public std::enable_shared_from_this<RequestHandler> {
  public:
   //  explicit RequestHandler(model::Game& game, std::filesystem::path path) : game_{game}, content_path_( std::filesystem::absolute(path)) {
   explicit RequestHandler(Application& app) : app_(app) {}

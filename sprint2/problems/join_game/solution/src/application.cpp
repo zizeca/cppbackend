@@ -4,8 +4,10 @@ Application::Application(std::filesystem::path config, std::filesystem::path dir
   if (!(std::filesystem::exists(config) && std::filesystem::exists(dir_to_content_))) {
     throw std::logic_error("Wrong path");  //? maybe need more output information
   }
-  game_ = json_loader::LoadGame(config);
+  m_game = json_loader::LoadGame(config);
 }
+
+
 
 Application::~Application() {
   // todo
@@ -17,9 +19,15 @@ const std::filesystem::path &Application::GetContentDir() const noexcept {
 }
 
 const model::Map *Application::FindMap(const model::Map::Id &id) const noexcept {
-  return game_.FindMap(id);
+  return m_game.FindMap(id);
 }
 
 const model::Game::Maps &Application::GetMaps() const noexcept {
-  return game_.GetMaps();
+  return m_game.GetMaps();
+}
+
+model::Token Application::JoinGame(model::Map::Id id, std::string_view user_name){
+  // todo  
+
+  return m_ptoken.GetToken();
 }

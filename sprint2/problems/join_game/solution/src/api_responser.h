@@ -189,8 +189,22 @@ class ApiResponseHandler {
       return;
     }
 
-    // m_app.JoinGame();
-    text_response(http::status::ok, "Player name", ContentType::TEXT_HTML, CacheControl::NO_CACHE);
+    model::Token token(""s);
+    try
+    {
+      token =  m_app.JoinGame(model::Map::Id(map_id), user_name);
+    }
+    catch(const std::exception& e)
+    {
+      return text_response(http::status::internal_server_error , "Join Game Error :( call the fixies", ContentType::TEXT_HTML);
+    }
+    
+    boost::json::object object = {
+      {"authToken", *token},
+      {"playerId",0}
+    };
+
+    text_response(http::status::ok, boost::json::serialize(object) , ContentType::APP_JSON, CacheControl::NO_CACHE);
   }
 
  private:
