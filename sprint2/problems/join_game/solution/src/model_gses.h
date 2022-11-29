@@ -13,13 +13,13 @@ class GameSession {
   // GameSession& operator=(GameSession&&) = delete;
 
  public:
-  explicit GameSession(Map& map) : m_map(map) {}
+  explicit GameSession(const Map& map) : m_map(map) {}
   ~GameSession() = default;
 
   void AddDog(Dog dog) { m_dogs.push_back(dog); }
 
  private:
-  Map& m_map;
+  const Map& m_map;
   std::vector<Dog> m_dogs;
 };
 

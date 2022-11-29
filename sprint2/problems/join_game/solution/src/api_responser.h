@@ -162,19 +162,19 @@ class ApiResponseHandler {
       return;
     }
 
-    model::Token token(""s);
+    boost::json::object object;
     try {
-      token = m_app.JoinGame(model::Map::Id(map_id), user_name);
+      auto& player = m_app.JoinGame(model::Map::Id(map_id), user_name);
+
+      object = {
+        {"authToken", *player.GetToken()},
+        {"playerId", player.GetId()}};
+
     } catch (const std::exception& e) {
       // return text_response(http::status::internal_server_error, "Join Game Error :( call the fixies", ContentType::TEXT_HTML);
       text_response(http::status::internal_server_error, "Join Game Error :( call the fixies"sv, ContentType::TEXT_HTML);
       return;
     }
-
-    boost::json::object object = {
-        {"authToken", *token},
-        {"playerId", 0}};
-
     // text_response(http::status::ok, boost::json::serialize(object), ContentType::APP_JSON, CacheControl::NO_CACHE);
     text_response(http::status::ok, boost::json::serialize(object), ContentType::APP_JSON, CacheControl::NO_CACHE);
   }

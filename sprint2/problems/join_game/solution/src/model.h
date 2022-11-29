@@ -9,6 +9,7 @@
 #include "model_map.h"
 #include "model_token.h"
 #include "tagged.h"
+#include "model_player.h"
 
 namespace model {
 
@@ -39,8 +40,21 @@ class Game {
     if (m_sessions.contains(id)) {
       return &m_sessions.at(id);
     }
+    
+    const Map* map = FindMap(id);
+    if(!map) {
+      return nullptr;
+    }
+
+    auto p = m_sessions.emplace(id, *map);
+    if(p.second) {
+      return &p.first->second;
+    }
+
     return nullptr;
   }
+
+
 
  private:
   using MapIdHasher = util::TaggedHasher<Map::Id>;
