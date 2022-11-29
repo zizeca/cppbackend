@@ -130,7 +130,7 @@ class ApiResponseHandler {
     assert(m_target == "/api/v1/game/join");
 
     if (m_req.method() != http::verb::post) {
-      m_send(MakeResponse(http::status::method_not_allowed, ErrStr::POST_INVALID, m_req.version(), m_req.keep_alive(), ContentType::APP_JSON, ""sv, "POST"sv));
+      text_response(http::status::method_not_allowed, ErrStr::POST_INVALID,  ContentType::APP_JSON, ""sv, "POST"sv);
       return;
     }
 
@@ -144,21 +144,21 @@ class ApiResponseHandler {
       map_id = jv.as_object().at("mapId").as_string();
     } catch (...) {
       // text_response(http::status::bad_request, ErrStr::BAD_PARSE, ContentType::APP_JSON, CacheControl::NO_CACHE);
-      m_send(MakeResponse(http::status::bad_request, ErrStr::BAD_PARSE, m_req.version(), m_req.keep_alive(), ContentType::APP_JSON, CacheControl::NO_CACHE));
+      text_response(http::status::bad_request, ErrStr::BAD_PARSE, ContentType::APP_JSON, CacheControl::NO_CACHE);
       return;
     }
 
     // check map id exist
     if (auto map = m_app.FindMap(model::Map::Id(map_id)); map == nullptr) {
       // text_response(http::status::not_found, ErrStr::MAP_NOT_FOUND, ContentType::APP_JSON, CacheControl::NO_CACHE);
-      m_send(MakeResponse(http::status::not_found, ErrStr::MAP_NOT_FOUND, m_req.version(), m_req.keep_alive(), ContentType::APP_JSON, CacheControl::NO_CACHE));
+      text_response(http::status::not_found, ErrStr::MAP_NOT_FOUND,  ContentType::APP_JSON, CacheControl::NO_CACHE);
       return;
     }
 
     // check if userName is empty
     if (user_name.empty()) {
       // text_response(http::status::bad_request, ErrStr::USERNAME_EMPTY, ContentType::APP_JSON, CacheControl::NO_CACHE);
-      m_send(MakeResponse(http::status::bad_request, ErrStr::USERNAME_EMPTY, m_req.version(), m_req.keep_alive(), ContentType::APP_JSON, CacheControl::NO_CACHE));
+      text_response(http::status::bad_request, ErrStr::USERNAME_EMPTY,  ContentType::APP_JSON, CacheControl::NO_CACHE);
       return;
     }
 
@@ -167,7 +167,7 @@ class ApiResponseHandler {
       token = m_app.JoinGame(model::Map::Id(map_id), user_name);
     } catch (const std::exception& e) {
       // return text_response(http::status::internal_server_error, "Join Game Error :( call the fixies", ContentType::TEXT_HTML);
-      m_send(MakeResponse(http::status::internal_server_error, "Join Game Error :( call the fixies"sv, m_req.version(), m_req.keep_alive(), ContentType::TEXT_HTML));
+      text_response(http::status::internal_server_error, "Join Game Error :( call the fixies"sv, ContentType::TEXT_HTML);
       return;
     }
 
@@ -176,7 +176,7 @@ class ApiResponseHandler {
         {"playerId", 0}};
 
     // text_response(http::status::ok, boost::json::serialize(object), ContentType::APP_JSON, CacheControl::NO_CACHE);
-    m_send(MakeResponse(http::status::ok, boost::json::serialize(object), m_req.version(), m_req.keep_alive(), ContentType::APP_JSON, CacheControl::NO_CACHE));
+    text_response(http::status::ok, boost::json::serialize(object), ContentType::APP_JSON, CacheControl::NO_CACHE);
   }
 
  private:
@@ -184,28 +184,11 @@ class ApiResponseHandler {
   Send& m_send;
   std::string m_target;
   Application& m_app;
-
-  void
-  text_response(http::status status, std::string_view body, std::string_view content_type, std::string_view cache_control = std::string_view()) {
-    StringResponse response(status, m_req.version());
-    response.set(http::field::content_type, content_type);
-    response.body() = body;
-    response.prepare_payload();
-    response.keep_alive(m_req.keep_alive());
-    if (!cache_control.empty()) {
-      response.set(http::field::cache_control, cache_control);
-    }
-    m_send(response);
+  
+  void text_response(http::status status, std::string_view body, std::string_view content_type, std::string_view cache_control = std::string_view(), std::string_view allow = std::string_view()){
+    m_send(MakeResponse(http::status::ok, body, m_req.version(), m_req.keep_alive(), content_type, cache_control,allow));
   }
 
-  void file_response(http::status status, http::file_body::value_type& body, std::string_view content_type) {
-    FileResponse response(status, m_req.version());
-    response.set(http::field::content_type, content_type);
-    response.body() = std::move(body);
-    response.prepare_payload();
-    response.keep_alive(m_req.keep_alive());
-    m_send(response);
-  }
 };
 
 }  // namespace http_handler
