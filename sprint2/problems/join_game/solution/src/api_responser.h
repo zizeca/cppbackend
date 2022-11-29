@@ -275,7 +275,7 @@ class ApiResponseHandler {
     // try find player
     const model::Player* p = m_app.FindPlayer(model::Token(auth));
     if (p == nullptr) {
-      text_response(http::status::method_not_allowed,
+      text_response(http::status::unauthorized,
                     R"({"code": "unknownToken", "message": "Player token has not been found"})"sv,
                     ContentType::APP_JSON,
                     CacheControl::NO_CACHE);
