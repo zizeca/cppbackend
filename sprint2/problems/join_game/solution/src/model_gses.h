@@ -43,7 +43,7 @@ class GameSession;
 class Player {
  public:
   Player(const Token& token, const std::string &name, GameSession& gses, Dog& dog) : m_token(token), m_name(name), m_gses(gses), m_dog(dog), m_id(id_counter++) {
-    std::cout << "token \'" << *token << "\' name " << m_name << std::endl; 
+    // std::cout << "token \'" << *token << "\' name " << m_name << std::endl; 
   }
   Token GetToken() const { return m_token; }
   int GetId() const noexcept { return m_id; }
@@ -73,9 +73,9 @@ class PlayerTokens {
       return &m_players.at(it->second);
     }
 
-    for (auto& i : m_player_id_to_index) {
-      std::cout << "Token " << *i.first << " and " << *token << " = " << (*i.first == *token) << std::endl;
-    }
+    // for (auto& i : m_player_id_to_index) {
+    //   // std::cout << "Token " << *i.first << " and " << *token << " = " << (*i.first == *token) << std::endl;
+    // }
     return nullptr;
   }
 
