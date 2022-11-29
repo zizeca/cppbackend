@@ -291,7 +291,7 @@ class ApiResponseHandler {
   Application& m_app;
 
   void text_response(http::status status, std::string_view body, std::string_view content_type, std::string_view cache_control = std::string_view(), std::string_view allow = std::string_view()) {
-    m_send(MakeResponse(http::status::ok, body, m_req.version(), m_req.keep_alive(), content_type, cache_control, allow));
+    m_send(MakeResponse(status, body, m_req.version(), m_req.keep_alive(), content_type, cache_control, allow));
   }
 };
 
