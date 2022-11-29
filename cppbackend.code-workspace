@@ -8,6 +8,10 @@
       "name": "s2_join_game",
       "path": "sprint2/problems/join_game/solution"
     },
+    {
+      "name": "s2_game_state",
+      "path": "sprint2/problems/game_state/solution"
+    },
   ],
   "settings": {
     "C_Cpp.default.includePath": [
