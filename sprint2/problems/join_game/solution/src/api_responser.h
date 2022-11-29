@@ -6,6 +6,7 @@
 #include <boost/json.hpp>
 #include <filesystem>
 #include <functional>
+#include <iostream>
 #include <string_view>
 
 #include "application.h"
@@ -13,7 +14,6 @@
 #include "model.h"
 #include "response_maker.h"
 #include "util.h"
-
 namespace http_handler {
 
 using namespace std::string_view_literals;
@@ -40,6 +40,8 @@ class ApiResponseHandler {
         MapRequest();
       } else if (m_target == "/api/v1/game/join") {
         PlayerJoinRequest();
+      } else if (m_target == "/api/v1/game/players") {
+        PlayerListRequest();
       } else {
         text_response(http::status::bad_request, ErrStr::BAD_REQ, ContentType::APP_JSON);
       }
@@ -130,7 +132,7 @@ class ApiResponseHandler {
     assert(m_target == "/api/v1/game/join");
 
     if (m_req.method() != http::verb::post) {
-      text_response(http::status::method_not_allowed, ErrStr::POST_INVALID,  ContentType::APP_JSON, ""sv, "POST"sv);
+      text_response(http::status::method_not_allowed, ErrStr::POST_INVALID, ContentType::APP_JSON, ""sv, "POST"sv);
       return;
     }
 
@@ -151,32 +153,135 @@ class ApiResponseHandler {
     // check map id exist
     if (auto map = m_app.FindMap(model::Map::Id(map_id)); map == nullptr) {
       // text_response(http::status::not_found, ErrStr::MAP_NOT_FOUND, ContentType::APP_JSON, CacheControl::NO_CACHE);
-      text_response(http::status::not_found, ErrStr::MAP_NOT_FOUND,  ContentType::APP_JSON, CacheControl::NO_CACHE);
+      text_response(http::status::not_found, ErrStr::MAP_NOT_FOUND, ContentType::APP_JSON, CacheControl::NO_CACHE);
       return;
     }
 
     // check if userName is empty
     if (user_name.empty()) {
       // text_response(http::status::bad_request, ErrStr::USERNAME_EMPTY, ContentType::APP_JSON, CacheControl::NO_CACHE);
-      text_response(http::status::bad_request, ErrStr::USERNAME_EMPTY,  ContentType::APP_JSON, CacheControl::NO_CACHE);
+      text_response(http::status::bad_request, ErrStr::USERNAME_EMPTY, ContentType::APP_JSON, CacheControl::NO_CACHE);
       return;
     }
 
     boost::json::object object;
     try {
-      auto& player = m_app.JoinGame(model::Map::Id(map_id), user_name);
+      const model::Player& player = m_app.JoinGame(model::Map::Id(map_id), user_name);
 
       object = {
-        {"authToken", *player.GetToken()},
-        {"playerId", player.GetId()}};
+          {"authToken", *player.GetToken()},
+          {"playerId", player.GetId()}};
 
     } catch (const std::exception& e) {
       // return text_response(http::status::internal_server_error, "Join Game Error :( call the fixies", ContentType::TEXT_HTML);
-      text_response(http::status::internal_server_error, "Join Game Error :( call the fixies"sv, ContentType::TEXT_HTML);
+      text_response(http::status::internal_server_error, "Join Game Error :( call the fixies "s + e.what(), ContentType::TEXT_HTML);
       return;
     }
     // text_response(http::status::ok, boost::json::serialize(object), ContentType::APP_JSON, CacheControl::NO_CACHE);
     text_response(http::status::ok, boost::json::serialize(object), ContentType::APP_JSON, CacheControl::NO_CACHE);
+  }
+
+  /**
+   * @brief
+   * .
+   * - Request
+   *   - GET /api/v1/game/players HTTP/1.1
+   *   - Authorization: Bearer 6516861d89ebfff147bf2eb2b5153ae1
+   *
+   * - Response if ok
+   *  - HTTP/1.1 200 OK
+   *  - Content-Type: application/json
+   *  - Content-Length: 75
+   *  - Cache-Control: no-cache
+   *  - {
+   *  -   "0": {"name": "Harry Potter"},
+   *  -   "1": {"name": "Hermione Granger"}
+   *  - }
+   *
+   * - Response if Authorization empty or not exist
+   *  - HTTP/1.1 401 Unauthorized
+   *  - Content-Type: application/json
+   *  - Content-Length: 70
+   *  - Cache-Control: no-cache
+   *  - {"code": "invalidToken", "message": "Authorization header is missing"}
+   *
+   * - Response if Not GET or HEAD
+   *  - HTTP/1.1 405 Method Not Allowed
+   *  - Content-Type: application/json
+   *  - Allow: GET, HEAD
+   *  - Content-Length: 54
+   *  - Cache-Control: no-cache
+   *  - {"code": "invalidMethod", "message": "Invalid method"}
+   *
+   */
+  void PlayerListRequest() {
+    if (!(m_req.method() == http::verb::get || m_req.method() == http::verb::head)) {
+      text_response(http::status::method_not_allowed, R"({"code": "invalidMethod", "message": "Invalid method"})"sv, ContentType::APP_JSON, CacheControl::NO_CACHE, "GET, HEAD"sv);
+      return;
+    }
+
+    std::string auth;
+
+    // check  has a field Authorization
+    if (m_req.count(http::field::authorization)) {
+      auth = m_req.at(http::field::authorization);
+      // std::transform(auth.begin(), auth.end(), auth.begin(), [](unsigned char c) { return std::tolower(c); });
+    } else {
+      text_response(http::status::method_not_allowed,
+                    R"({"code": "invalidToken", "message": "Authorization header is missing"})"sv,
+                    ContentType::APP_JSON, CacheControl::NO_CACHE);
+      return;
+    }
+
+    // check type Authorization
+    const std::string scode = "Bearer ";
+    if (auth.starts_with(scode)) {
+      auth = auth.substr(scode.size());
+    } else {
+      text_response(http::status::method_not_allowed,
+                    R"({"code": "invalidToken", "message": "Authorization header is missing"})"sv,
+                    ContentType::APP_JSON, CacheControl::NO_CACHE);
+      return;
+    }
+
+    // to lower
+    std::transform(auth.begin(), auth.end(), auth.begin(), [](unsigned char c) { return std::tolower(c); });
+
+    // check is hex simbols
+    if( auth.find_first_not_of("0123456789abcdef") != std::string::npos ) {
+      text_response(http::status::method_not_allowed,
+                    R"({"code": "invalidToken", "message": "Authorization header is missing"})"sv,
+                    ContentType::APP_JSON, CacheControl::NO_CACHE);
+      return;
+    }
+
+    // check length token
+    if( auth.size() != 32 ) {
+      text_response(http::status::method_not_allowed,
+                    R"({"code": "invalidToken", "message": "Authorization header is missing"})"sv,
+                    ContentType::APP_JSON, CacheControl::NO_CACHE);
+      return;
+    }
+
+    // try find player
+    const model::Player* p = m_app.FindPlayer(model::Token(auth));
+    if (p == nullptr) {
+      text_response(http::status::method_not_allowed, R"({"code": "unknownToken", "message": "Player token has not been found"})"sv, ContentType::APP_JSON, CacheControl::NO_CACHE);
+      return;
+    }
+
+    //const model::GameSession& gses = p->GetSession();
+
+
+
+    boost::json::object obj;
+
+    for( auto it = m_app.GetPlayers().cbegin(); it != m_app.GetPlayers().cend(); ++it) {
+      if( &(it->GetSession()) == &(p->GetSession()))
+        obj[std::to_string(it->GetId())] = boost::json::object{{"name", it->GetName()}};
+    }
+
+    text_response(http::status::ok, boost::json::serialize(obj), ContentType::APP_JSON, CacheControl::NO_CACHE);
   }
 
  private:
@@ -184,11 +289,10 @@ class ApiResponseHandler {
   Send& m_send;
   std::string m_target;
   Application& m_app;
-  
-  void text_response(http::status status, std::string_view body, std::string_view content_type, std::string_view cache_control = std::string_view(), std::string_view allow = std::string_view()){
-    m_send(MakeResponse(http::status::ok, body, m_req.version(), m_req.keep_alive(), content_type, cache_control,allow));
-  }
 
+  void text_response(http::status status, std::string_view body, std::string_view content_type, std::string_view cache_control = std::string_view(), std::string_view allow = std::string_view()) {
+    m_send(MakeResponse(http::status::ok, body, m_req.version(), m_req.keep_alive(), content_type, cache_control, allow));
+  }
 };
 
 }  // namespace http_handler

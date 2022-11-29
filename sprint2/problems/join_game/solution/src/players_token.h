@@ -12,7 +12,7 @@ using Token = util::Tagged<std::string, detail::TokenTag>;
 
 class PlayerTokens {
     public:
-//    std::optional<Player> FindPlayerBy(Token token);
+// model::Player* FindPlayerBy(Token token);
 //    void AddPlayer(Player player);
 
 private:

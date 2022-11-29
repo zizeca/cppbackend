@@ -58,15 +58,20 @@ class Application {
    * @param map_id 
    * @param user_name 
    */
-  model::Player& JoinGame(model::Map::Id id, std::string_view user_name);
+  model::Player& JoinGame(model::Map::Id id, const std::string &user_name);
+
+
+  const model::Player* FindPlayer(const model::Token &t);
+
+  const std::vector<model::Player>& GetPlayers() const noexcept;
+
   
  private:
   boost::asio::io_context& m_ioc;
   const std::filesystem::path dir_to_content_;
   model::Game m_game;
-  model::PlayerTokens m_ptoken;
+  model::PlayerTokens m_ptokens;
   
-  std::unordered_map<model::Token, model::Player, model::TokenHasher> m_players;
 };
 
 #endif  // __APPLICATION_H__

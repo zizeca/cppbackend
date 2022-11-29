@@ -6,10 +6,6 @@
 #include <vector>
 
 #include "model_gses.h"
-#include "model_map.h"
-#include "model_token.h"
-#include "tagged.h"
-#include "model_player.h"
 
 namespace model {
 
@@ -31,30 +27,28 @@ class Game {
   }
 
   /**
-   * @brief Get the Session object for existing map
+   * @brief Get the Session object for existing map 
    *
    * @param id model::Map id
-   * @return GameSession* if exist or nullptr
+   * @return GameSession& 
    */
-  GameSession* GetSession(const model::Map::Id& id) {
+  GameSession& GetSession(const model::Map::Id& id) {
     if (m_sessions.contains(id)) {
-      return &m_sessions.at(id);
+      return m_sessions.at(id);
     }
-    
+
     const Map* map = FindMap(id);
-    if(!map) {
-      return nullptr;
+    if (!map) {
+      throw std::invalid_argument("Map"s + *id + "id not exist"s);
     }
 
     auto p = m_sessions.emplace(id, *map);
-    if(p.second) {
-      return &p.first->second;
+    if (!p.second) {
+      throw std::logic_error("Fail to emplace map"s + *id);
     }
 
-    return nullptr;
+    return p.first->second;
   }
-
-
 
  private:
   using MapIdHasher = util::TaggedHasher<Map::Id>;
