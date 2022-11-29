@@ -131,8 +131,9 @@ class ApiResponseHandler {
   void PlayerJoinRequest() {
     assert(m_target == "/api/v1/game/join");
 
+    // check method
     if (m_req.method() != http::verb::post) {
-      text_response(http::status::method_not_allowed, ErrStr::POST_INVALID, ContentType::APP_JSON, ""sv, "POST"sv);
+      text_response(http::status::method_not_allowed, ErrStr::POST_INVALID, ContentType::APP_JSON, CacheControl::NO_CACHE, "POST"sv);
       return;
     }
 
@@ -150,6 +151,13 @@ class ApiResponseHandler {
       return;
     }
 
+    // check if userName is empty
+    if (user_name.empty()) {
+      // text_response(http::status::bad_request, ErrStr::USERNAME_EMPTY, ContentType::APP_JSON, CacheControl::NO_CACHE);
+      text_response(http::status::bad_request, ErrStr::USERNAME_EMPTY, ContentType::APP_JSON, CacheControl::NO_CACHE);
+      return;
+    }
+
     // check map id exist
     if (auto map = m_app.FindMap(model::Map::Id(map_id)); map == nullptr) {
       // text_response(http::status::not_found, ErrStr::MAP_NOT_FOUND, ContentType::APP_JSON, CacheControl::NO_CACHE);
@@ -157,12 +165,7 @@ class ApiResponseHandler {
       return;
     }
 
-    // check if userName is empty
-    if (user_name.empty()) {
-      // text_response(http::status::bad_request, ErrStr::USERNAME_EMPTY, ContentType::APP_JSON, CacheControl::NO_CACHE);
-      text_response(http::status::bad_request, ErrStr::USERNAME_EMPTY, ContentType::APP_JSON, CacheControl::NO_CACHE);
-      return;
-    }
+
 
     boost::json::object object;
     try {
