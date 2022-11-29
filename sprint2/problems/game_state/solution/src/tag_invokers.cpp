@@ -169,8 +169,8 @@ Map tag_invoke(value_to_tag<Map>, value const& jv) {
         map.AddOffice(value_to<Office>(office));
       }
     } else {
-      throw std::logic_error(
-          std::string("Found unknon key").append(i->key_c_str()));
+      //throw std::logic_error(
+      //    std::string("Found unknon key").append(i->key_c_str()));
     }
   }
   return map;
