@@ -1,6 +1,8 @@
 #ifndef __APPLICATION_H__
 #define __APPLICATION_H__
 
+#include <boost/asio/io_context.hpp>
+#include <boost/asio.hpp>
 #include <filesystem>
 #include <string>
 #include <string_view>
@@ -26,7 +28,7 @@ class Application {
    * @param dir_to_content path to directory with a static files
    * @exception std::logic_error if try created object with a wrong path or incorrect files
    */
-  Application(std::filesystem::path config, std::filesystem::path dir_to_content);
+  Application(boost::asio::io_context& ioc, std::filesystem::path config, std::filesystem::path dir_to_content);
   ~Application();
 
   /**
@@ -59,6 +61,7 @@ class Application {
   model::Token JoinGame(model::Map::Id id, std::string_view user_name);
   
  private:
+  boost::asio::io_context& m_ioc;
   const std::filesystem::path dir_to_content_;
   model::Game m_game;
   model::PlayerTokens m_ptoken;

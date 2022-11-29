@@ -11,6 +11,7 @@
 #include "application.h"
 #include "content_type.h"
 #include "model.h"
+#include "response_maker.h"
 #include "util.h"
 
 namespace http_handler {
@@ -22,20 +23,6 @@ namespace json = boost::json;
 
 using StringResponse = http::response<http::string_body>;
 using FileResponse = http::response<http::file_body>;
-
-struct ErrStr {
-  ErrStr() = delete;
-  constexpr static std::string_view MAP_NOT_FOUND = R"({"code": "mapNotFound", "message": "Map not found"})"sv;
-  constexpr static std::string_view BAD_REQ = R"({"code": "badRequest", "message": "Bad request"})"sv;
-  constexpr static std::string_view BAD_PARSE = R"({"code": "invalidArgument", "message": "Join game request parse error"})"sv;
-  constexpr static std::string_view USERNAME_EMPTY = R"({"code": "invalidArgument", "message": "Invalid name"})"sv;
-  constexpr static std::string_view POST_INVALID = R"({"code": "invalidMethod", "message": "Only POST method is expected"})"sv;
-};
-
-struct CacheControl {
-  CacheControl() = delete;
-  constexpr static std::string_view NO_CACHE = "no-cache"sv;
-};
 
 template <typename Body, typename Allocator, typename Send>
 class ApiResponseHandler {
@@ -49,31 +36,26 @@ class ApiResponseHandler {
 
   void Execute() {
     try {
-      if (m_req.method() == http::verb::get || m_req.method() == http::verb::head) {
-        if (m_target.starts_with("/api/")) {
-          ApiRequest();
-        } else if (m_target == "/api/v1/game/join") {
-          return text_response(http::status::method_not_allowed, ErrStr::POST_INVALID, ContentType::APP_JSON);
-        } else {
-          FileRequest();
-        }
-      } else if (m_req.method() == http::verb::post) {
-        if (m_req.count(http::field::content_type) && m_req.at(http::field::content_type) == ContentType::APP_JSON && m_target == "/api/v1/game/join") {
-          PlayerJoinRequestPost();
-        } else {
-          text_response(http::status::method_not_allowed, ErrStr::BAD_REQ, ContentType::APP_JSON);
-        }
+      if (m_target.starts_with("/api/v1/maps")) {
+        MapRequest();
+      } else if (m_target == "/api/v1/game/join") {
+        PlayerJoinRequest();
       } else {
-        text_response(http::status::method_not_allowed, ErrStr::BAD_REQ, ContentType::APP_JSON);
+        text_response(http::status::bad_request, ErrStr::BAD_REQ, ContentType::APP_JSON);
       }
-
     } catch (const std::exception& e) {
-      text_response(http::status::internal_server_error, "server request error", ContentType::TEXT_HTML);
+      text_response(http::status::internal_server_error, "server request error"sv, ContentType::TEXT_HTML);
       throw;
     }
   }
 
-  void ApiRequest() {
+  void MapRequest() {
+    assert(m_target.starts_with("/api/v1/maps"));
+    if (m_req.method() != http::verb::post) {
+      m_send(MakeResponse(http::status::method_not_allowed, ErrStr::GET_INVALID, m_req.version(), m_req.keep_alive(), ContentType::APP_JSON, ""sv, "GET"sv));
+      return;
+    }
+
     if (m_target == "/api/v1/maps") {
       json::array arr;
       for (auto i : m_app.GetMaps()) {
@@ -98,32 +80,6 @@ class ApiResponseHandler {
       }
     }
     text_response(http::status::bad_request, ErrStr::BAD_REQ, ContentType::APP_JSON);
-  }
-
-  void FileRequest() {
-    std::filesystem::path pf = m_app.GetContentDir();
-    pf += m_target;
-
-    if (!util::IsSubPath(pf, m_app.GetContentDir())) {
-      return text_response(http::status::bad_request, "Permission deny, or incorrect url request", ContentType::TEXT_PLAIN);
-    }
-
-    if (!std::filesystem::exists(pf) || !std::filesystem::is_regular_file(pf)) {
-      return text_response(http::status::not_found, "Not found resource, or wrong request", ContentType::TEXT_PLAIN);
-    }
-
-    boost::beast::http::file_body::value_type file;
-
-    if (boost::system::error_code ec; file.open(pf.c_str(), boost::beast::file_mode::read, ec), ec) {
-      throw std::logic_error("Wrong open file"s.append(ec.message()));
-    }
-
-    std::string ext = pf.extension().string();
-    std::transform(ext.begin(), ext.end(), ext.begin(), [](unsigned char c) { return std::tolower(c); });
-
-    std::string_view content_type = ContentType::DICT.count(ext) ? ContentType::DICT.at(ext) : ContentType::MEDIA_UNKNOWN;
-
-    return file_response(http::status::ok, file, content_type);
   }
 
   /**
@@ -162,8 +118,22 @@ class ApiResponseHandler {
    *  - Cache-Control: no-cache
    *  - body = {"code": "invalidArgument", "message": "Join game request parse error"}
    * .
+   * - Response if not POST
+   *  - HTTP/1.1 405 Method Not Allowed
+   *  - Content-Type: application/json
+   *  - Allow: POST
+   *  - Content-Length: 68
+   *  - Cache-Control: no-cache
+   *  - {"code": "invalidMethod", "message": "Only POST method is expected"}
    */
-  void PlayerJoinRequestPost() {
+  void PlayerJoinRequest() {
+    assert(m_target == "/api/v1/game/join");
+
+    if (m_req.method() != http::verb::post) {
+      m_send(MakeResponse(http::status::method_not_allowed, ErrStr::POST_INVALID, m_req.version(), m_req.keep_alive(), ContentType::APP_JSON, ""sv, "POST"sv));
+      return;
+    }
+
     std::string user_name;
     std::string map_id;
 
@@ -173,38 +143,40 @@ class ApiResponseHandler {
       user_name = jv.as_object().at("userName").as_string();
       map_id = jv.as_object().at("mapId").as_string();
     } catch (...) {
-      text_response(http::status::bad_request, ErrStr::BAD_PARSE, ContentType::APP_JSON, CacheControl::NO_CACHE);
+      // text_response(http::status::bad_request, ErrStr::BAD_PARSE, ContentType::APP_JSON, CacheControl::NO_CACHE);
+      m_send(MakeResponse(http::status::bad_request, ErrStr::BAD_PARSE, m_req.version(), m_req.keep_alive(), ContentType::APP_JSON, CacheControl::NO_CACHE));
       return;
     }
 
     // check map id exist
     if (auto map = m_app.FindMap(model::Map::Id(map_id)); map == nullptr) {
-      text_response(http::status::not_found, ErrStr::MAP_NOT_FOUND, ContentType::APP_JSON, CacheControl::NO_CACHE);
+      // text_response(http::status::not_found, ErrStr::MAP_NOT_FOUND, ContentType::APP_JSON, CacheControl::NO_CACHE);
+      m_send(MakeResponse(http::status::not_found, ErrStr::MAP_NOT_FOUND, m_req.version(), m_req.keep_alive(), ContentType::APP_JSON, CacheControl::NO_CACHE));
       return;
     }
 
     // check if userName is empty
     if (user_name.empty()) {
-      text_response(http::status::bad_request, ErrStr::USERNAME_EMPTY, ContentType::APP_JSON, CacheControl::NO_CACHE);
+      // text_response(http::status::bad_request, ErrStr::USERNAME_EMPTY, ContentType::APP_JSON, CacheControl::NO_CACHE);
+      m_send(MakeResponse(http::status::bad_request, ErrStr::USERNAME_EMPTY, m_req.version(), m_req.keep_alive(), ContentType::APP_JSON, CacheControl::NO_CACHE));
       return;
     }
 
     model::Token token(""s);
-    try
-    {
-      token =  m_app.JoinGame(model::Map::Id(map_id), user_name);
+    try {
+      token = m_app.JoinGame(model::Map::Id(map_id), user_name);
+    } catch (const std::exception& e) {
+      // return text_response(http::status::internal_server_error, "Join Game Error :( call the fixies", ContentType::TEXT_HTML);
+      m_send(MakeResponse(http::status::internal_server_error, "Join Game Error :( call the fixies"sv, m_req.version(), m_req.keep_alive(), ContentType::TEXT_HTML));
+      return;
     }
-    catch(const std::exception& e)
-    {
-      return text_response(http::status::internal_server_error , "Join Game Error :( call the fixies", ContentType::TEXT_HTML);
-    }
-    
-    boost::json::object object = {
-      {"authToken", *token},
-      {"playerId",0}
-    };
 
-    text_response(http::status::ok, boost::json::serialize(object) , ContentType::APP_JSON, CacheControl::NO_CACHE);
+    boost::json::object object = {
+        {"authToken", *token},
+        {"playerId", 0}};
+
+    // text_response(http::status::ok, boost::json::serialize(object), ContentType::APP_JSON, CacheControl::NO_CACHE);
+    m_send(MakeResponse(http::status::ok, boost::json::serialize(object), m_req.version(), m_req.keep_alive(), ContentType::APP_JSON, CacheControl::NO_CACHE));
   }
 
  private:

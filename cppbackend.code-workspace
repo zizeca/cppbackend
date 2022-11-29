@@ -111,6 +111,11 @@
       "**/sratic": true,
       "**/precode": true,
       "cpp-backend-tests-practicum/**": true
-    }
+    },
+    "C_Cpp.files.exclude": {
+      "**/build": true,
+      "**/.vscode": true,
+      "**/.vs": true
+    },
   },
 }

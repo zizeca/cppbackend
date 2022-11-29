@@ -1,6 +1,6 @@
 #include "application.h"
 
-Application::Application(std::filesystem::path config, std::filesystem::path dir_to_content) : dir_to_content_(dir_to_content) {
+Application::Application(boost::asio::io_context &ioc, std::filesystem::path config, std::filesystem::path dir_to_content) : m_ioc(ioc), dir_to_content_(dir_to_content) {
   if (!(std::filesystem::exists(config) && std::filesystem::exists(dir_to_content_))) {
     throw std::logic_error("Wrong path");  //? maybe need more output information
   }

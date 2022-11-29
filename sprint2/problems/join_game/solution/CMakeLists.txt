@@ -21,6 +21,7 @@ set(SRC
 	${SRCDIR}/tag_invokers.cpp
   ${SRCDIR}/util.cpp
   ${SRCDIR}/application.cpp
+  ${SRCDIR}/response_maker.cpp
 	#${SRCDIR}/request_handler.cpp
 )
 
@@ -38,6 +39,8 @@ set(HEADER
   ${SRCDIR}/content_type.h
   ${SRCDIR}/util.h
   ${SRCDIR}/api_responser.h
+  ${SRCDIR}/response_maker.h
+
 )
 
 

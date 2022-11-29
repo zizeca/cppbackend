@@ -3,7 +3,7 @@
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/signal_set.hpp>
 #include <thread>
-
+#include <boost/asio.hpp>
 #include "json_loader.h"
 #include "request_handler.h"
 #include "logger.h"
@@ -42,11 +42,12 @@ int main(int argc, const char* argv[]) {
   
   try {
     
-    Application app(argv[1], argv[2]);
-
     // 2. Инициализируем io_context
     const unsigned num_threads = std::thread::hardware_concurrency();
     net::io_context ioc(num_threads);
+
+    Application app(ioc, argv[1], argv[2]);
+
 
     // 3. Добавляем асинхронный обработчик сигналов SIGINT и SIGTERM
     net::signal_set signals(ioc, SIGINT, SIGTERM);
@@ -58,9 +59,9 @@ int main(int argc, const char* argv[]) {
     });
 
     // 4. Создаём обработчик HTTP-запросов и связываем его с моделью игры
-    http_handler::RequestHandler handler{app};
+    std::shared_ptr<http_handler::RequestHandler> handler = std::make_shared<http_handler::RequestHandler>(ioc, app);
 
-    LogRequestHandler<http_handler::RequestHandler> loghandler{handler};
+    LogRequestHandler<http_handler::RequestHandler> loghandler{*handler};
 
     // 5. Запустить обработчик HTTP-запросов, делегируя их обработчику запросов
     /**/

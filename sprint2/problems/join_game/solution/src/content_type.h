@@ -7,6 +7,23 @@
 namespace http_handler {
 using namespace std::string_view_literals;
 
+
+struct ErrStr {
+  ErrStr() = delete;
+  constexpr static std::string_view MAP_NOT_FOUND = R"({"code": "mapNotFound", "message": "Map not found"})"sv;
+  constexpr static std::string_view BAD_REQ = R"({"code": "badRequest", "message": "Bad request"})"sv;
+  constexpr static std::string_view BAD_PARSE = R"({"code": "invalidArgument", "message": "Join game request parse error"})"sv;
+  constexpr static std::string_view USERNAME_EMPTY = R"({"code": "invalidArgument", "message": "Invalid name"})"sv;
+  constexpr static std::string_view POST_INVALID = R"({"code": "invalidMethod", "message": "Only POST method is expected"})"sv;
+  constexpr static std::string_view GET_INVALID = R"({"code": "invalidMethod", "message": "Only GET method is expected"})"sv;
+};
+
+struct CacheControl {
+  CacheControl() = delete;
+  constexpr static std::string_view NO_CACHE = "no-cache"sv;
+};
+
+
 struct ContentType {
   ContentType() = delete;
   constexpr static std::string_view TEXT_HTML = "text/html"sv;
