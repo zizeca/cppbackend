@@ -33,9 +33,9 @@ class RequestHandler : public std::enable_shared_from_this<RequestHandler> {
     std::string target(req.target());
     if (target.starts_with("/api/")) {
 
-      auto a = std::make_shared<ApiResponseHandler<Body,Allocator,Send>>(req,send, m_app);
+     // auto a = std::make_shared<ApiResponseHandler<Body,Allocator,Send>>(req,send, m_app);
 
-      return boost::asio::dispatch(m_strand, [self = shared_from_this(), a] {
+      return boost::asio::dispatch(m_strand, [self = shared_from_this(), a = std::make_shared<ApiResponseHandler<Body,Allocator,Send>>(req,send, m_app) ] {
         // Этот assert не выстрелит, так как лямбда-функция будет выполняться внутри strand
         assert(self->m_strand.running_in_this_thread());
         // ApiResponseHandler a(req, send, self->m_app);

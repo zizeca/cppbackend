@@ -1,6 +1,8 @@
 #ifndef __MODEL_GSES_H__
 #define __MODEL_GSES_H__
 
+#include <cassert>
+#include <iomanip>
 #include <iostream>
 #include <random>
 #include <sstream>
@@ -42,14 +44,14 @@ class GameSession;
 
 class Player {
  public:
-  Player(const Token& token, const std::string &name, GameSession& gses, Dog& dog) : m_token(token), m_name(name), m_gses(gses), m_dog(dog), m_id(id_counter++) {
-    // std::cout << "token \'" << *token << "\' name " << m_name << std::endl; 
+  Player(const Token& token, const std::string& name, GameSession& gses, Dog& dog) : m_token(token), m_name(name), m_gses(gses), m_dog(dog), m_id(id_counter++) {
+    // std::cout << "token \'" << *token << "\' name " << m_name << std::endl;
   }
   Token GetToken() const { return m_token; }
   int GetId() const noexcept { return m_id; }
 
   const GameSession& GetSession() const noexcept { return m_gses; }
-  std::string GetName() const { return std::string(m_name);}
+  std::string GetName() const { return std::string(m_name); }
 
  private:
   Token m_token;
@@ -64,7 +66,10 @@ class PlayerTokens {
  public:
   Token GetToken() {
     std::stringstream ss;
-    ss << std::hex << m_gen1() << m_gen2();
+    ss << std::setw(16) << std::setfill('0') << std::hex << m_gen1();
+    ss << std::setw(16) << std::setfill('0') << std::hex << m_gen2();
+    std::string res = ss.str();
+    assert(res.size() == 32);
     return Token(ss.str());
   }
 
