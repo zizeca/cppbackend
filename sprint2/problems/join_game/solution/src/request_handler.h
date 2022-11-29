@@ -66,6 +66,9 @@ class RequestHandler : public std::enable_shared_from_this<RequestHandler> {
     };
 
     std::string target(req.target());
+    if(target == "/")
+      target = "/index.html";
+
     std::filesystem::path pf = m_app.GetContentDir();
     pf += target;
 

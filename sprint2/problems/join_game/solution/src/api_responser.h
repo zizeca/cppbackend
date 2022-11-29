@@ -51,7 +51,7 @@ class ApiResponseHandler {
 
   void MapRequest() {
     assert(m_target.starts_with("/api/v1/maps"));
-    if (m_req.method() != http::verb::post) {
+    if (m_req.method() != http::verb::get) {
       m_send(MakeResponse(http::status::method_not_allowed, ErrStr::GET_INVALID, m_req.version(), m_req.keep_alive(), ContentType::APP_JSON, ""sv, "GET"sv));
       return;
     }
