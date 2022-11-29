@@ -244,7 +244,7 @@ class ApiResponseHandler {
     if (auth.starts_with(scode)) {
       auth = auth.substr(scode.size());
     } else {
-      text_response(http::status::method_not_allowed,
+      text_response(http::status::unauthorized,
                     R"({"code": "invalidToken", "message": "Authorization header is missing"})"sv,
                     ContentType::APP_JSON,
                     CacheControl::NO_CACHE);
@@ -256,7 +256,7 @@ class ApiResponseHandler {
 
     // check is hex simbols
     if (auth.find_first_not_of("0123456789abcdef") != std::string::npos) {
-      text_response(http::status::method_not_allowed,
+      text_response(http::status::unauthorized,
                     R"({"code": "invalidToken", "message": "Authorization header is missing"})"sv,
                     ContentType::APP_JSON,
                     CacheControl::NO_CACHE);
@@ -265,7 +265,7 @@ class ApiResponseHandler {
 
     // check length token
     if (auth.size() != 32) {
-      text_response(http::status::method_not_allowed,
+      text_response(http::status::unauthorized,
                     R"({"code": "invalidToken", "message": "Authorization header is missing"})"sv,
                     ContentType::APP_JSON,
                     CacheControl::NO_CACHE);
