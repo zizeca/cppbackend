@@ -165,8 +165,6 @@ class ApiResponseHandler {
       return;
     }
 
-
-
     boost::json::object object;
     try {
       const model::Player& player = m_app.JoinGame(model::Map::Id(map_id), user_name);
@@ -219,7 +217,11 @@ class ApiResponseHandler {
    */
   void PlayerListRequest() {
     if (!(m_req.method() == http::verb::get || m_req.method() == http::verb::head)) {
-      text_response(http::status::method_not_allowed, R"({"code": "invalidMethod", "message": "Invalid method"})"sv, ContentType::APP_JSON, CacheControl::NO_CACHE, "GET, HEAD"sv);
+      text_response(http::status::method_not_allowed,
+                    R"({"code": "invalidMethod", "message": "Invalid method"})"sv,
+                    ContentType::APP_JSON,
+                    CacheControl::NO_CACHE,
+                    "GET, HEAD"sv);
       return;
     }
 
@@ -230,9 +232,10 @@ class ApiResponseHandler {
       auth = m_req.at(http::field::authorization);
       // std::transform(auth.begin(), auth.end(), auth.begin(), [](unsigned char c) { return std::tolower(c); });
     } else {
-      text_response(http::status::method_not_allowed,
+      text_response(http::status::unauthorized,
                     R"({"code": "invalidToken", "message": "Authorization header is missing"})"sv,
-                    ContentType::APP_JSON, CacheControl::NO_CACHE);
+                    ContentType::APP_JSON,
+                    CacheControl::NO_CACHE);
       return;
     }
 
@@ -243,7 +246,8 @@ class ApiResponseHandler {
     } else {
       text_response(http::status::method_not_allowed,
                     R"({"code": "invalidToken", "message": "Authorization header is missing"})"sv,
-                    ContentType::APP_JSON, CacheControl::NO_CACHE);
+                    ContentType::APP_JSON,
+                    CacheControl::NO_CACHE);
       return;
     }
 
@@ -251,40 +255,46 @@ class ApiResponseHandler {
     std::transform(auth.begin(), auth.end(), auth.begin(), [](unsigned char c) { return std::tolower(c); });
 
     // check is hex simbols
-    if( auth.find_first_not_of("0123456789abcdef") != std::string::npos ) {
+    if (auth.find_first_not_of("0123456789abcdef") != std::string::npos) {
       text_response(http::status::method_not_allowed,
                     R"({"code": "invalidToken", "message": "Authorization header is missing"})"sv,
-                    ContentType::APP_JSON, CacheControl::NO_CACHE);
+                    ContentType::APP_JSON,
+                    CacheControl::NO_CACHE);
       return;
     }
 
     // check length token
-    if( auth.size() != 32 ) {
+    if (auth.size() != 32) {
       text_response(http::status::method_not_allowed,
                     R"({"code": "invalidToken", "message": "Authorization header is missing"})"sv,
-                    ContentType::APP_JSON, CacheControl::NO_CACHE);
+                    ContentType::APP_JSON,
+                    CacheControl::NO_CACHE);
       return;
     }
 
     // try find player
     const model::Player* p = m_app.FindPlayer(model::Token(auth));
     if (p == nullptr) {
-      text_response(http::status::method_not_allowed, R"({"code": "unknownToken", "message": "Player token has not been found"})"sv, ContentType::APP_JSON, CacheControl::NO_CACHE);
+      text_response(http::status::method_not_allowed,
+                    R"({"code": "unknownToken", "message": "Player token has not been found"})"sv,
+                    ContentType::APP_JSON,
+                    CacheControl::NO_CACHE);
       return;
     }
 
-    //const model::GameSession& gses = p->GetSession();
-
-
+    // const model::GameSession& gses = p->GetSession();
 
     boost::json::object obj;
 
-    for( auto it = m_app.GetPlayers().cbegin(); it != m_app.GetPlayers().cend(); ++it) {
-      if( &(it->GetSession()) == &(p->GetSession()))
+    for (auto it = m_app.GetPlayers().cbegin(); it != m_app.GetPlayers().cend(); ++it) {
+      if (&(it->GetSession()) == &(p->GetSession()))
         obj[std::to_string(it->GetId())] = boost::json::object{{"name", it->GetName()}};
     }
 
-    text_response(http::status::ok, boost::json::serialize(obj), ContentType::APP_JSON, CacheControl::NO_CACHE);
+    text_response(http::status::ok,
+                  boost::json::serialize(obj),
+                  ContentType::APP_JSON,
+                  CacheControl::NO_CACHE);
   }
 
  private:
