@@ -24,21 +24,21 @@ using namespace std::literals;
 
 class Dog {
  public:
-  explicit Dog(Token token) : m_id(++id_counter), m_player_token(token), m_dir(Dir::NORTH) {
+  explicit Dog(Token token) : m_id(++id_counter), m_player_token(token), m_dir("U"), m_position{0.0, 0.0}, m_speed{0.0, 0.0} {
   }
 
-  enum Dir {
-    NORTH,
-    EAST,
-    SOUTH,
-    WEST
-  };
+  // enum Dir {
+  //   NORTH,
+  //   EAST,
+  //   SOUTH,
+  //   WEST
+  // };
 
   int GetId() const noexcept { return m_id; }
   const std::string& GetName() const noexcept { return m_name; }
   void SetName(std::string name) { m_name = name; }
-  Token GetToken() const { return m_player_token; }
-  void SetToken(Token token) { m_player_token = token; }
+  const Token& GetToken() const { return m_player_token; }
+  // void SetToken(Token token) { m_player_token = token; }
 
   void SetPosition(Vector2d pos) { m_position = pos; }
   void SetSpeed(Vector2d speed) { m_speed = speed; }
@@ -46,14 +46,17 @@ class Dog {
   Vector2d GetPosition() const { return m_position; }
   Vector2d GetSpeed() const { return m_speed; }
 
+  const std::string& GetDir() const { return m_dir; }
+
  private:
-  Vector2d m_position;
-  Vector2d m_speed;
   int m_id;
   std::string m_name;
   Token m_player_token;
   static int id_counter;
-  Dir m_dir;
+  // Dir m_dir;
+  std::string m_dir;
+  Vector2d m_position;
+  Vector2d m_speed;
 };
 
 class GameSession;

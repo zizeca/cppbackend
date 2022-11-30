@@ -18,6 +18,10 @@ using namespace std::literals;
 using StringResponse = http::response<http::string_body>;
 using StringRequest = http::request<http::string_body>;
 
+json::value JsAnswer(std::string code, std::string message) {
+  return json::object{{"code", code}, {"message", message}};
+}
+
 class ApiHandler {
  public:
   ApiHandler(Application& app, const StringRequest& req) : m_app(app), m_req(req), m_target(req.target()) {
@@ -34,7 +38,7 @@ class ApiHandler {
         return PlayerListRequest();
       } else if (m_target == "/api/v1/game/state") {
         // todo
-        // GetState();
+        return GetGameState();
       } else {
         return MakeJsonResponse(http::status::bad_request, {{"code", "badRequest"}, {"message", "Bad request"}});
       }
@@ -53,7 +57,7 @@ class ApiHandler {
   StringResponse MapRequest() {
     assert(m_target.starts_with("/api/v1/maps"));
     if (m_req.method() != http::verb::get) {
-      return MakeJsonResponse(http::status::method_not_allowed, {{"code", "invalidMethod"}, {"message", "Only GET method is expected"}}, ""sv, "GET"sv);
+      return MakeJsonResponse(http::status::method_not_allowed, JsAnswer("invalidMethod", "Only GET method is expected"), ""sv, "GET"sv);
     }
 
     if (m_target == "/api/v1/maps"s) {
@@ -71,10 +75,10 @@ class ApiHandler {
       if (m) {
         return MakeJsonResponse(http::status::ok, json::value_from(*m));
       } else {
-        return MakeJsonResponse(http::status::not_found, {{"code", "mapNotFound"}, {"message", "Map not found"}});
+        return MakeJsonResponse(http::status::not_found, JsAnswer("mapNotFound", "Map not found"));
       }
     }
-    return MakeJsonResponse(http::status::bad_request, {{"code", "badRequest"}, {"message", "Bad request"}});
+    return MakeJsonResponse(http::status::bad_request, JsAnswer("badRequest", "Bad request"));
   }
 
   StringResponse PlayerJoinRequest() {
@@ -124,7 +128,7 @@ class ApiHandler {
   StringResponse PlayerListRequest() {
     if (!(m_req.method() == http::verb::get || m_req.method() == http::verb::head)) {
       return MakeJsonResponse(http::status::method_not_allowed,
-                              {{"code", "invalidMethod"}, {"message", "Invalid method"}},
+                              JsAnswer("invalidMethod", "Invalid method"),
                               CacheControl::NO_CACHE,
                               "GET, HEAD"sv);
     }
@@ -134,7 +138,29 @@ class ApiHandler {
 
       for (auto it = m_app.GetPlayers().cbegin(); it != m_app.GetPlayers().cend(); ++it) {
         if (&(it->GetSession()) == &(p.GetSession()))
-          obj[std::to_string(it->GetId())] = boost::json::object{{"name", it->GetName()}};
+          obj[std::to_string(it->GetId())] = {{"name", it->GetName()}};
+      }
+
+      return MakeJsonResponse(http::status::ok,
+                              obj,
+                              CacheControl::NO_CACHE);
+    });
+  }
+
+  StringResponse GetGameState() {
+    if (!(m_req.method() == http::verb::get || m_req.method() == http::verb::head)) {
+      return MakeJsonResponse(http::status::method_not_allowed,
+                              JsAnswer("invalidMethod", "Invalid method"),
+                              CacheControl::NO_CACHE,
+                              "GET, HEAD"sv);
+    }
+
+    return ExecuteAuthorized([this](model::Player& p) {
+      boost::json::object obj;
+
+      for (auto it = m_app.GetPlayers().cbegin(); it != m_app.GetPlayers().cend(); ++it) {
+        if (&(it->GetSession()) == &(p.GetSession()))
+          obj[std::to_string(it->GetId())] = {{"name", it->GetName()}};
       }
 
       return MakeJsonResponse(http::status::ok,
