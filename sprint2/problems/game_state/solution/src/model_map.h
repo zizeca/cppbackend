@@ -6,6 +6,7 @@
 #include <vector>
 #include <unordered_map>
 #include <stdexcept>
+#include "dir_vector.h"
 
 namespace model {
 
@@ -122,6 +123,8 @@ class Map {
 
   OfficeIdToIndex warehouse_id_to_index_;
   Offices offices_;
+
+  Vector2d m_dog_speed;
 };
 
 
