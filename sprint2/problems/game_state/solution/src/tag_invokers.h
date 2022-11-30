@@ -48,6 +48,9 @@ struct MapKey {
   constexpr static string_view roads = "roads";
   constexpr static string_view buildings = "buildings";
   constexpr static string_view offices = "offices";
+  constexpr static string_view defaultDogSpeed = "defaultDogSpeed";
+  constexpr static string_view dogSpeed = "dogSpeed";
+
 };
 
 };  // namespace model
