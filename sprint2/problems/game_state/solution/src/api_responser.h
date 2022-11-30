@@ -212,46 +212,16 @@ class ApiResponseHandler {
                     "GET, HEAD"sv);
     }
 
-    std::string auth;
-
-    // check  has a field Authorization
-    if (m_req.count(http::field::authorization)) {
-      auth = m_req.at(http::field::authorization);
-    } else {
+    auto token = TryExtractToken();
+    if(!token) {
       return text_response(http::status::unauthorized,
-                    R"({"code": "invalidToken", "message": "Authorization header is missing"})"sv,
-                    CacheControl::NO_CACHE);
+              R"({"code": "invalidToken", "message": "Authorization header is missing"})"sv,
+              CacheControl::NO_CACHE);
     }
 
-    // check type Authorization
-    const std::string scode = "Bearer ";
-    if (auth.starts_with(scode)) {
-      auth = auth.substr(scode.size());
-    } else {
-      return text_response(http::status::unauthorized,
-                    R"({"code": "invalidToken", "message": "Authorization header is missing"})"sv,
-                    CacheControl::NO_CACHE);
-    }
-
-    // to lower
-    std::transform(auth.begin(), auth.end(), auth.begin(), [](unsigned char c) { return std::tolower(c); });
-
-    // check is hex simbols
-    if (auth.find_first_not_of("0123456789abcdef") != std::string::npos) {
-      return text_response(http::status::unauthorized,
-                    R"({"code": "invalidToken", "message": "Authorization header is missing"})"sv,
-                    CacheControl::NO_CACHE);
-    }
-
-    // check length token
-    if (auth.size() != 32) {
-      return text_response(http::status::unauthorized,
-                    R"({"code": "invalidToken", "message": "Authorization header is missing"})"sv,
-                    CacheControl::NO_CACHE);
-    }
 
     // try find player
-    const model::Player* p = m_app.FindPlayer(model::Token(auth));
+    const model::Player* p = m_app.FindPlayer(*token);
     if (p == nullptr) {
       return text_response(http::status::unauthorized,
                     R"({"code": "unknownToken", "message": "Player token has not been found"})"sv,
@@ -277,6 +247,44 @@ class ApiResponseHandler {
   Send& m_send;
   std::string m_target;
   Application& m_app;
+
+
+  std::optional<model::Token> TryExtractToken(){
+    std::string auth;  // for return value
+
+    // check field
+    if (m_req.count(http::field::authorization)) {
+      auth = m_req.at(http::field::authorization);
+    } else {
+      return std::nullopt;
+    }
+
+    // check type Authorization
+    const std::string scode = "Bearer ";
+    if (auth.starts_with(scode)) {
+      auth = auth.substr(scode.size());
+    } else {
+      return std::nullopt;
+    }
+
+    // to lower
+    std::transform(auth.begin(), auth.end(), auth.begin(), [](unsigned char c) { return std::tolower(c); });
+
+    // check is hex simbols
+    if (auth.find_first_not_of("0123456789abcdef") != std::string::npos) {
+      return std::nullopt;
+    }
+
+    // check length token
+    if (auth.size() != 32) {
+      return std::nullopt;
+    }
+    return model::Token(auth);
+  }
+
+    
+
+
 
   StringResponse text_response(http::status status, std::string_view body, std::string_view cache_control = std::string_view(), std::string_view allow = std::string_view()) {
     return MakeResponse(status, body, m_req.version(), m_req.keep_alive(), ContentType::APP_JSON, cache_control, allow);
