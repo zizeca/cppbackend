@@ -61,7 +61,7 @@ class Application {
   model::Player& JoinGame(model::Map::Id id, const std::string &user_name);
 
 
-  const model::Player* FindPlayer(const model::Token &t);
+  model::Player* FindPlayer(const model::Token &t);
 
   const std::vector<model::Player>& GetPlayers() const noexcept;
 

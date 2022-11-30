@@ -41,6 +41,8 @@ class ApiHandler {
     } catch (const std::exception& e) {
       return MakeJsonResponse(http::status::internal_server_error, {{"code", "exception"}, {"message", "Has except"}});
     }
+
+    return MakeJsonResponse(http::status::bad_request, {{"code", "badRequest"}, {"message", "Bad request"}});
   }
 
  private:
@@ -127,31 +129,18 @@ class ApiHandler {
                               "GET, HEAD"sv);
     }
 
-    auto token = TryExtractToken();
-    if (!token) {
-      return MakeJsonResponse(http::status::unauthorized,
-                           {{"code", "invalidToken"}, {"message", "Authorization header is missing"}},
-                           CacheControl::NO_CACHE);
-    }
+    return ExecuteAuthorized([this](model::Player& p) {
+      boost::json::object obj;
 
-    // try find player
-    const model::Player* p = m_app.FindPlayer(*token);
-    if (p == nullptr) {
-      return MakeJsonResponse(http::status::unauthorized,
-                           {{"code", "unknownToken"}, {"message", "Player token has not been found"}},
-                           CacheControl::NO_CACHE);
-    }
+      for (auto it = m_app.GetPlayers().cbegin(); it != m_app.GetPlayers().cend(); ++it) {
+        if (&(it->GetSession()) == &(p.GetSession()))
+          obj[std::to_string(it->GetId())] = boost::json::object{{"name", it->GetName()}};
+      }
 
-    boost::json::object obj;
-
-    for (auto it = m_app.GetPlayers().cbegin(); it != m_app.GetPlayers().cend(); ++it) {
-      if (&(it->GetSession()) == &(p->GetSession()))
-        obj[std::to_string(it->GetId())] = boost::json::object{{"name", it->GetName()}};
-    }
-
-    return MakeJsonResponse(http::status::ok,
-                         obj,
-                         CacheControl::NO_CACHE);
+      return MakeJsonResponse(http::status::ok,
+                              obj,
+                              CacheControl::NO_CACHE);
+    });
   }
 
   /**
@@ -189,6 +178,24 @@ class ApiHandler {
       return std::nullopt;
     }
     return model::Token(auth);
+  }
+
+  template <typename Fn>
+  StringResponse ExecuteAuthorized(Fn&& action) {
+    if (auto token = this->TryExtractToken()) {
+      model::Player* p = m_app.FindPlayer(*token);
+      if (p == nullptr) {
+        return MakeJsonResponse(http::status::unauthorized,
+                                {{"code", "unknownToken"}, {"message", "Player token has not been found"}},
+                                CacheControl::NO_CACHE);
+      }
+
+      return action(*p);
+    } else {
+      return MakeJsonResponse(http::status::unauthorized,
+                              {{"code", "invalidToken"}, {"message", "Authorization header is missing"}},
+                              CacheControl::NO_CACHE);
+    }
   }
 
   /**

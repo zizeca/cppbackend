@@ -41,7 +41,7 @@ model::Player& Application::JoinGame(model::Map::Id id, const std::string &user_
 }
 
 
-const model::Player* Application::FindPlayer(const model::Token &t) {
+model::Player* Application::FindPlayer(const model::Token &t) {
 
   return m_ptokens.FindPlayer(t);
   

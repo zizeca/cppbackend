@@ -40,7 +40,6 @@ set(HEADER
   ${SRCDIR}/request_handler.h
   ${SRCDIR}/content_type.h
   ${SRCDIR}/util.h
-  ${SRCDIR}/api_responser.h
   ${SRCDIR}/response_maker.h
 
 )

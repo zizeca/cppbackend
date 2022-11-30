@@ -89,14 +89,10 @@ class PlayerTokens {
     return Token(ss.str());
   }
 
-  const Player* FindPlayer(const Token& token) const noexcept {
+  Player* FindPlayer(const Token& token) noexcept {
     if (auto it = m_player_id_to_index.find(token); it != m_player_id_to_index.end()) {
       return &m_players.at(it->second);
     }
-
-    // for (auto& i : m_player_id_to_index) {
-    //   // std::cout << "Token " << *i.first << " and " << *token << " = " << (*i.first == *token) << std::endl;
-    // }
     return nullptr;
   }
 
