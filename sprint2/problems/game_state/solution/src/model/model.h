@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "model_gses.h"
+#include "game_session.h"
 
 namespace model {
 
