@@ -1,18 +1,19 @@
 #pragma once
 
-#include <boost/asio/dispatch.hpp>
-#include <boost/asio/strand.hpp>
-#include <boost/asio/io_context.hpp>
 #include <boost/asio.hpp>
+#include <boost/asio/dispatch.hpp>
+#include <boost/asio/io_context.hpp>
+#include <boost/asio/strand.hpp>
 #include <boost/json.hpp>
 #include <filesystem>
 #include <string_view>
 
-#include "api_responser.h"
+#include "api_handler.h"
 #include "application.h"
 #include "http_server.h"
 #include "model.h"
 #include "response_maker.h"
+#include "util.h"
 
 namespace http_handler {
 namespace beast = boost::beast;
@@ -23,7 +24,7 @@ using namespace std::literals;
 class RequestHandler : public std::enable_shared_from_this<RequestHandler> {
  public:
   //  explicit RequestHandler(model::Game& game, std::filesystem::path path) : game_{game}, content_path_( std::filesystem::absolute(path)) {
-  explicit RequestHandler(boost::asio::io_context& ioc, Application& app) : m_ioc(ioc), m_app(app), m_strand( boost::asio::make_strand(ioc)) {}
+  explicit RequestHandler(boost::asio::io_context& ioc, Application& app) : m_ioc(ioc), m_app(app), m_strand(boost::asio::make_strand(ioc)) {}
 
   RequestHandler(const RequestHandler&) = delete;
   RequestHandler& operator=(const RequestHandler&) = delete;
@@ -32,27 +33,22 @@ class RequestHandler : public std::enable_shared_from_this<RequestHandler> {
   void operator()(http::request<Body, http::basic_fields<Allocator>>&& req, Send&& send) {
     std::string target(req.target());
     if (target.starts_with("/api/")) {
+      // auto a = std::make_shared<ApiResponseHandler<Body,Allocator,Send>>(req,send, m_app);
 
-     // auto a = std::make_shared<ApiResponseHandler<Body,Allocator,Send>>(req,send, m_app);
-
-      return boost::asio::dispatch(m_strand, [self = shared_from_this(), a = std::make_shared<ApiResponseHandler<Body,Allocator,Send>>(req,send, m_app) ] {
+      return boost::asio::dispatch(m_strand, [self = shared_from_this(), req = std::move(req), send = std::move(send)] {
         // Этот assert не выстрелит, так как лямбда-функция будет выполняться внутри strand
         assert(self->m_strand.running_in_this_thread());
-        // ApiResponseHandler a(req, send, self->m_app);
-        a->Execute();
+        ApiHandler a(self->m_app, req);
+        send(a.Response());
       });
-      return;
     } else {
       if (req.method() == http::verb::get || req.method() == http::verb::head) {
         FileRequest(req, send);
         return;
       }
-
     }
 
     send(MakeResponse(http::status::bad_request, ErrStr::BAD_REQ, req.version(), req.keep_alive()));
-
-
   }
 
   template <typename Body, typename Allocator, typename Send>
@@ -66,7 +62,7 @@ class RequestHandler : public std::enable_shared_from_this<RequestHandler> {
     };
 
     std::string target(req.target());
-    if(target == "/")
+    if (target == "/")
       target = "/index.html";
 
     std::filesystem::path pf = m_app.GetContentDir();
