@@ -8,9 +8,9 @@
 #include <sstream>
 #include <string>
 
+#include "dir_vector.h"
 #include "model_map.h"
 #include "tagged.h"
-
 namespace model {
 
 namespace detail {
@@ -24,8 +24,15 @@ using namespace std::literals;
 
 class Dog {
  public:
-  explicit Dog(Token token) : m_id(++id_counter), m_player_token(token) {
+  explicit Dog(Token token) : m_id(++id_counter), m_player_token(token), m_dir(Dir::NORTH) {
   }
+
+  enum Dir {
+    NORTH,
+    EAST,
+    SOUTH,
+    WEST
+  };
 
   int GetId() const noexcept { return m_id; }
   const std::string& GetName() const noexcept { return m_name; }
@@ -33,11 +40,20 @@ class Dog {
   Token GetToken() const { return m_player_token; }
   void SetToken(Token token) { m_player_token = token; }
 
+  void SetPosition(Vector2d pos) { m_position = pos; }
+  void SetSpeed(Vector2d speed) { m_speed = speed; }
+
+  Vector2d GetPosition() const { return m_position; }
+  Vector2d GetSpeed() const { return m_speed; }
+
  private:
+  Vector2d m_position;
+  Vector2d m_speed;
   int m_id;
   std::string m_name;
   Token m_player_token;
   static int id_counter;
+  Dir m_dir;
 };
 
 class GameSession;

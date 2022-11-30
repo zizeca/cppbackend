@@ -26,11 +26,14 @@ class Game {
     return nullptr;
   }
 
+  void SetDefaultSpeed(Vector2d speed) { m_default_speed = speed; }
+  Vector2d GetDefaultSpeed() const { return m_default_speed; }
+
   /**
-   * @brief Get the Session object for existing map 
+   * @brief Get the Session object for existing map
    *
    * @param id model::Map id
-   * @return GameSession& 
+   * @return GameSession&
    */
   GameSession& GetSession(const model::Map::Id& id) {
     if (m_sessions.contains(id)) {
@@ -60,6 +63,8 @@ class Game {
   // first -> map name or map id
   // second -> array of GameSession on this map
   std::unordered_map<Map::Id, GameSession, util::TaggedHasher<Map::Id>> m_sessions;
+
+  Vector2d m_default_speed = Vector2d{1.0, 1.0};
 };
 
 }  // namespace model
