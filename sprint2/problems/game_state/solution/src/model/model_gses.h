@@ -10,7 +10,7 @@
 
 #include "dir_vector.h"
 #include "model_map.h"
-#include "tagged.h"
+#include "../tagged.h"
 namespace model {
 
 namespace detail {

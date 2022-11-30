@@ -1,7 +1,7 @@
 #ifndef __MODEL_MAP_H__
 #define __MODEL_MAP_H__
 
-#include "tagged.h"
+#include "../tagged.h"
 #include <string>
 #include <vector>
 #include <unordered_map>

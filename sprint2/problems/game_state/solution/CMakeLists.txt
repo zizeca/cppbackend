@@ -16,10 +16,7 @@ set(SRC
   ${SRCDIR}/logger.cpp
 	${SRCDIR}/boost_json.cpp
 	${SRCDIR}/json_loader.cpp
-  ${SRCDIR}/model_map.cpp
-  ${SRCDIR}/model_gses.cpp
-  ${SRCDIR}/model.cpp
-	${SRCDIR}/tag_invokers.cpp
+#	${SRCDIR}/tag_invokers.cpp
   ${SRCDIR}/util.cpp
   ${SRCDIR}/application.cpp
   ${SRCDIR}/response_maker.cpp
@@ -32,10 +29,7 @@ set(HEADER
   ${SRCDIR}/json_loader.h
   ${SRCDIR}/http_server.h
   ${SRCDIR}/tagged.h
-  ${SRCDIR}/model_map.h
-  ${SRCDIR}/model_gses.h
-  ${SRCDIR}/model.h
-  ${SRCDIR}/tag_invokers.h
+#  ${SRCDIR}/tag_invokers.h
   ${SRCDIR}/application.h
   ${SRCDIR}/request_handler.h
   ${SRCDIR}/content_type.h
@@ -61,3 +55,4 @@ add_executable(${EXECUTE} ${SRC} ${HEADER})
 target_include_directories(${EXECUTE} PRIVATE CONAN_PKG::boost)
 target_link_libraries(${EXECUTE} PRIVATE Threads::Threads CONAN_PKG::boost)
 add_subdirectory(${SRCDIR}/http_server)
+add_subdirectory(${SRCDIR}/model)

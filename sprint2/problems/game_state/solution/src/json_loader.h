@@ -3,8 +3,8 @@
 
 #include <filesystem>
 
-#include "model.h"
-#include "tag_invokers.h"
+#include "model/model.h"
+#include "model/tag_invokers.h"
 
 namespace json_loader {
 
