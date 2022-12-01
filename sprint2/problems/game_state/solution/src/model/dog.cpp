@@ -4,7 +4,7 @@ namespace model {
 
 int Dog::ID_COUNTER = 0;
 
-Dog::Dog(const Token& token) : m_token(token), m_id(ID_COUNTER++), m_pos(0.f, 0.f), m_speed(0.f, 0.f) {
+Dog::Dog(const Token& token) : m_token(token), m_id(ID_COUNTER++), m_pos(0.f, 0.f), m_speed(0.f, 0.f), m_dir("U"s) {
 }
 
 bool Dog::SetToken(const Token& token) {
