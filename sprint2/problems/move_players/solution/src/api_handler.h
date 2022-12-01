@@ -18,8 +18,6 @@ using namespace std::literals;
 using StringResponse = http::response<http::string_body>;
 using StringRequest = http::request<http::string_body>;
 
-
-
 class ApiHandler {
  public:
   ApiHandler(Application& app, const StringRequest& req);
@@ -38,6 +36,8 @@ class ApiHandler {
   StringResponse PlayerListRequest();
 
   StringResponse GetGameState();
+
+  StringResponse PostAction();
 
   /**
    * @brief

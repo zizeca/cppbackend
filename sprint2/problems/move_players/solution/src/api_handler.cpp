@@ -2,15 +2,13 @@
 
 #include "content_type.h"
 
-
 namespace http_handler {
 
 json::value JsAnswer(std::string code, std::string message) {
   return json::object{{"code", code}, {"message", message}};
 }
 
-
-ApiHandler::ApiHandler(Application& app, const StringRequest& req) : m_app(app), m_req(req), m_target(req.target()) {
+ApiHandler::ApiHandler(Application &app, const StringRequest &req) : m_app(app), m_req(req), m_target(req.target()) {
   assert(m_target.starts_with("/api/"));
 }
 
@@ -23,12 +21,13 @@ StringResponse ApiHandler::Response() {
     } else if (m_target == "/api/v1/game/players") {
       return PlayerListRequest();
     } else if (m_target == "/api/v1/game/state") {
-      // todo
       return GetGameState();
+    } else if (m_target == "/api/v1/game/player/action") {
+      return PostAction();
     } else {
       return MakeJsonResponse(http::status::bad_request, {{"code", "badRequest"}, {"message", "Bad request"}});
     }
-  } catch (const std::exception& e) {
+  } catch (const std::exception &e) {
     return MakeJsonResponse(http::status::internal_server_error, {{"code", "exception"}, {"message", "Has except"}});
   }
 
@@ -94,13 +93,12 @@ StringResponse ApiHandler::PlayerJoinRequest() {
 
   boost::json::object object;
   try {
-    const model::Player& player = m_app.JoinGame(model::Map::Id(map_id), user_name);
+    const model::Player &player = m_app.JoinGame(model::Map::Id(map_id), user_name);
 
     object = {
         {"authToken", *player.GetToken()},
         {"playerId", player.GetId()}};
-
-  } catch (const std::exception& e) {
+  } catch (const std::exception &e) {
     return MakeJsonResponse(http::status::internal_server_error, JsAnswer("exception", "Join Game Error :( call the fixies "s + e.what()));
   }
   return MakeJsonResponse(http::status::ok, object, CacheControl::NO_CACHE);
@@ -114,7 +112,7 @@ StringResponse ApiHandler::PlayerListRequest() {
                             "GET, HEAD"sv);
   }
 
-  return ExecuteAuthorized([this](model::Player& p) {
+  return ExecuteAuthorized([this](model::Player &p) {
     boost::json::object obj;
 
     for (auto it = m_app.GetPlayers().cbegin(); it != m_app.GetPlayers().cend(); ++it) {
@@ -124,8 +122,7 @@ StringResponse ApiHandler::PlayerListRequest() {
 
     return MakeJsonResponse(http::status::ok,
                             obj,
-                            CacheControl::NO_CACHE);
-  });
+                            CacheControl::NO_CACHE); });
 }
 
 StringResponse ApiHandler::GetGameState() {
@@ -136,27 +133,42 @@ StringResponse ApiHandler::GetGameState() {
                             "GET, HEAD"sv);
   }
 
-  return ExecuteAuthorized([this](model::Player& p) {
+  return ExecuteAuthorized([this](model::Player &p) {
     boost::json::object obj;
 
-
     for (auto it = m_app.GetPlayers().cbegin(); it != m_app.GetPlayers().cend(); ++it) {
-      if (it->second.GetSession() == p.GetSession()){
+      if (it->second.GetSession() == p.GetSession()) {
         obj[std::to_string(it->second.GetId())] = {
-          {"pos",  {it->second.GetDog()->GetPosition().x, it->second.GetDog()->GetPosition().y}},
-          {"speed",  {it->second.GetDog()->GetSpeed().x, it->second.GetDog()->GetSpeed().y}},
-          {"dir",  it->second.GetDog()->GetDir()}
-          };
-
+            {"pos", {it->second.GetDog()->GetPosition().x, it->second.GetDog()->GetPosition().y}},
+            {"speed", {it->second.GetDog()->GetSpeed().x, it->second.GetDog()->GetSpeed().y}},
+            {"dir", it->second.GetDog()->GetDir()}};
       }
     }
 
+    return MakeJsonResponse(http::status::ok,
+                            {{"players", obj}},
+                            CacheControl::NO_CACHE); });
+}
+
+StringResponse ApiHandler::PostAction() {
+  assert(m_target == "/api/v1/game/player/action");
+
+  // check method
+  if (m_req.method() != http::verb::post) {
+    return MakeJsonResponse(http::status::method_not_allowed,
+                            JsAnswer("invalidMethod", "Invalid method"),
+                            CacheControl::NO_CACHE,
+                            "POST"sv);
+  }
+
+  return ExecuteAuthorized([this](model::Player &p) {
+    boost::json::object obj;
+    // todo
 
 
     return MakeJsonResponse(http::status::ok,
-                            {{ "players", obj}},
-                            CacheControl::NO_CACHE);
-  });
+                            {{"players", "obj"}},
+                            CacheControl::NO_CACHE); });
 }
 
 std::optional<model::Token> ApiHandler::TryExtractToken() {
@@ -192,10 +204,10 @@ std::optional<model::Token> ApiHandler::TryExtractToken() {
   return model::Token(auth);
 }
 
-StringResponse ApiHandler::MakeJsonResponse(const http::status& status,
-                                            const json::value& val,
+StringResponse ApiHandler::MakeJsonResponse(const http::status &status,
+                                            const json::value &val,
                                             std::string_view cache_control,
-                                            std::string_view allow ) {
+                                            std::string_view allow) {
   StringResponse response(status, m_req.version());
   response.set(http::field::content_type, "application/json"sv);
   response.body() = json::serialize(val);
@@ -210,23 +222,21 @@ StringResponse ApiHandler::MakeJsonResponse(const http::status& status,
   return response;
 }
 
-
-  StringResponse ApiHandler::ExecuteAuthorized(std::function<StringResponse(model::Player& player)> action) {
-    if (auto token = this->TryExtractToken()) {
-      model::Player* p = m_app.FindPlayer(*token);
-      if (p == nullptr) {
-        return MakeJsonResponse(http::status::unauthorized,
-                                {{"code", "unknownToken"}, {"message", "Player token has not been found"}},
-                                CacheControl::NO_CACHE);
-      }
-
-      return action(*p);
-    } else {
+StringResponse ApiHandler::ExecuteAuthorized(std::function<StringResponse(model::Player &player)> action) {
+  if (auto token = this->TryExtractToken()) {
+    model::Player *p = m_app.FindPlayer(*token);
+    if (p == nullptr) {
       return MakeJsonResponse(http::status::unauthorized,
-                              {{"code", "invalidToken"}, {"message", "Authorization header is missing"}},
+                              {{"code", "unknownToken"}, {"message", "Player token has not been found"}},
                               CacheControl::NO_CACHE);
     }
-  }
 
+    return action(*p);
+  } else {
+    return MakeJsonResponse(http::status::unauthorized,
+                            {{"code", "invalidToken"}, {"message", "Authorization header is missing"}},
+                            CacheControl::NO_CACHE);
+  }
+}
 
 }  // namespace http_handler
