@@ -1,16 +1,15 @@
 #ifndef __MODEL_MAP_H__
 #define __MODEL_MAP_H__
 
-#include "../tagged.h"
-#include <string>
-#include <vector>
-#include <unordered_map>
 #include <stdexcept>
+#include <string>
+#include <unordered_map>
+#include <vector>
+
+#include "../tagged.h"
 #include "model_types.h"
 
 namespace model {
-
-
 
 class Road {
   struct HorizontalTag {
@@ -77,7 +76,7 @@ class Map {
   using Buildings = std::vector<Building>;
   using Offices = std::vector<Office>;
 
-  Map(Id id, std::string name) noexcept : id_(std::move(id)), name_(std::move(name)) {}
+  Map(Id id, std::string name) noexcept : id_(std::move(id)), name_(std::move(name)), m_dog_speed(1.0) {}
 
   const Id& GetId() const noexcept { return id_; }
 
@@ -95,6 +94,8 @@ class Map {
 
   void AddOffice(Office office);
 
+  Vector2d GetRandPoint();
+
  private:
   using OfficeIdToIndex = std::unordered_map<Office::Id, size_t, util::TaggedHasher<Office::Id>>;
 
@@ -106,11 +107,9 @@ class Map {
   OfficeIdToIndex warehouse_id_to_index_;
   Offices offices_;
 
-  Vector2d m_dog_speed;
+  double m_dog_speed;
 };
 
+}  // namespace model
 
-
-}
-
-#endif // __MODEL_MAP_H__
+#endif  // __MODEL_MAP_H__
