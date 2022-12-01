@@ -19,4 +19,21 @@ void Game::AddMap(Map map) {
   }
 }
 
+std::shared_ptr<GameSession> Game::GetSession(const model::Map::Id& id) {
+  const Map* map = FindMap(id);
+  if (!map) {
+    throw std::invalid_argument("Map"s + *id + "id not exist"s);
+  }
+
+  for (auto& it : m_sess) {
+    if (it->GetMapId() == id) {
+      return it;
+    }
+  }
+
+  auto gs = std::make_shared<GameSession>(id);
+  m_sess.push_back(gs);
+   return gs;
+  }
+
 }  // namespace model

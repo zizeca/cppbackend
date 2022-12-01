@@ -8,7 +8,7 @@
 
 #include "application.h"
 #include "content_type.h"
-
+#include "model/player_list.h"
 namespace http_handler {
 namespace beast = boost::beast;
 namespace http = beast::http;
@@ -137,8 +137,8 @@ class ApiHandler {
       boost::json::object obj;
 
       for (auto it = m_app.GetPlayers().cbegin(); it != m_app.GetPlayers().cend(); ++it) {
-        if (&(it->GetSession()) == &(p.GetSession()))
-          obj[std::to_string(it->GetId())] = {{"name", it->GetName()}};
+        if (it->second.GetSession() == p.GetSession())
+          obj[std::to_string(it->second.GetId())] = {{"name", it->second.GetName()}};
       }
 
       return MakeJsonResponse(http::status::ok,
@@ -159,8 +159,8 @@ class ApiHandler {
       boost::json::object obj;
 
       for (auto it = m_app.GetPlayers().cbegin(); it != m_app.GetPlayers().cend(); ++it) {
-        if (&(it->GetSession()) == &(p.GetSession()))
-          obj[std::to_string(it->GetId())] = {{"name", it->GetName()}};
+        if (it->second.GetSession() == p.GetSession())
+          obj[std::to_string(it->second.GetId())] = {{"name", it->second.GetName()}};
       }
 
       return MakeJsonResponse(http::status::ok,

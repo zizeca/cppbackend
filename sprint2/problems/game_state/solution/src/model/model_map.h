@@ -6,29 +6,11 @@
 #include <vector>
 #include <unordered_map>
 #include <stdexcept>
-#include "dir_vector.h"
+#include "model_types.h"
 
 namespace model {
 
-  using Dimension = int;
-using Coord = Dimension;
 
-struct Point {
-  Coord x, y;
-};
-
-struct Size {
-  Dimension width, height;
-};
-
-struct Rectangle {
-  Point position;
-  Size size;
-};
-
-struct Offset {
-  Dimension dx, dy;
-};
 
 class Road {
   struct HorizontalTag {

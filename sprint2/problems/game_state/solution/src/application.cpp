@@ -28,25 +28,26 @@ const model::Game::Maps &Application::GetMaps() const noexcept {
 
 model::Player& Application::JoinGame(model::Map::Id id, const std::string &user_name){
 
-  auto& sess = m_game.GetSession(id);
+  auto sess = m_game.GetSession(id);
+  if(!sess){
+    throw std::runtime_error("Fail to open or create ssesion");
+  }
 
+  auto& player = m_player_list.CreatePlayer(user_name);
 
-  model::Token token = m_ptokens.GetToken();
-
-  model::Dog dog(token);
-  model::Player player(token, user_name , sess, dog);
+  sess->AddDog(player.GetDog());
   
-  return m_ptokens.AddPlayer(player);
+  return player;
  
 }
 
 
 model::Player* Application::FindPlayer(const model::Token &t) {
 
-  return m_ptokens.FindPlayer(t);
+  return m_player_list.FindPlayer(t);
   
 }
 
-const std::vector<model::Player>& Application::GetPlayers() const noexcept { 
-  return m_ptokens.GetPlayers(); 
+const model::PlayerList::Container& Application::GetPlayers() const noexcept { 
+  return m_player_list.GetContainer(); 
 }

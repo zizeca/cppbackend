@@ -13,6 +13,7 @@ using namespace std::string_literals;
 
 #include "json_loader.h"
 #include "model/model.h"
+#include "model/player_list.h"
 
 class Application {
   Application() = delete;
@@ -36,14 +37,15 @@ class Application {
 
   model::Player* FindPlayer(const model::Token &t);
 
-  const std::vector<model::Player>& GetPlayers() const noexcept;
+  const model::PlayerList::Container& GetPlayers() const noexcept;
+
 
   
  private:
   boost::asio::io_context& m_ioc;
   const std::filesystem::path dir_to_content_;
   model::Game m_game;
-  model::PlayerTokens m_ptokens;
+  model::PlayerList m_player_list;
   
 };
 
