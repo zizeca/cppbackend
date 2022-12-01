@@ -154,7 +154,7 @@ StringResponse ApiHandler::GetGameState() {
 
 
     return MakeJsonResponse(http::status::ok,
-                            {{ "player", obj}},
+                            {{ "players", obj}},
                             CacheControl::NO_CACHE);
   });
 }
