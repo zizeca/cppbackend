@@ -20,6 +20,8 @@ set(SRC
   ${SRCDIR}/util.cpp
   ${SRCDIR}/application.cpp
   ${SRCDIR}/response_maker.cpp
+  ${SRCDIR}/api_handler.cpp
+  ${SRCDIR}/content_type.cpp
 	#${SRCDIR}/request_handler.cpp
 )
 

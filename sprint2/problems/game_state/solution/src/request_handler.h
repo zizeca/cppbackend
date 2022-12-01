@@ -14,6 +14,8 @@
 #include "model/model.h"
 #include "response_maker.h"
 #include "util.h"
+#include "content_type.h"
+
 
 namespace http_handler {
 namespace beast = boost::beast;
