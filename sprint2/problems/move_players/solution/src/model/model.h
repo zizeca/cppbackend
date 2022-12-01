@@ -26,8 +26,8 @@ class Game {
     return nullptr;
   }
 
-  void SetDefaultSpeed(Vector2d speed) { m_default_speed = speed; }
-  Vector2d GetDefaultSpeed() const { return m_default_speed; }
+  void SetDefaultSpeed(double speed) { m_default_speed = speed; }
+  double GetDefaultSpeed() const { return m_default_speed; }
 
   // get exist or create new & return pointer
   std::shared_ptr<GameSession> GetSession(const model::Map::Id& id);
@@ -41,7 +41,7 @@ class Game {
 
   std::vector<std::shared_ptr<GameSession>> m_sess;
 
-  Vector2d m_default_speed = Vector2d{1.0, 1.0};
+  double m_default_speed = 1.0;
 };
 
 }  // namespace model
