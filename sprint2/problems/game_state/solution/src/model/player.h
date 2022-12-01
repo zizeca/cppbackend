@@ -12,7 +12,7 @@ class GameSession;
 
 class Player {
  public:
-  explicit Player(const Token& token);
+  explicit Player(const Token& token, const std::string &name);
 
   int GetId() const noexcept;
 

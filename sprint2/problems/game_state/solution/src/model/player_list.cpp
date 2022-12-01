@@ -17,7 +17,7 @@ Player* PlayerList::FindPlayer(const Token& token) {
 
 Player& PlayerList::CreatePlayer(const std::string& name) {
   Token token = GenerateToken();
-  auto pr = m_players.emplace(token, token);
+  auto pr = m_players.emplace(token, Player(token, name));
   if (pr.second) {
     return m_players.at(token);
   }

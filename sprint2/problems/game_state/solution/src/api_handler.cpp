@@ -79,17 +79,17 @@ StringResponse ApiHandler::PlayerJoinRequest() {
     user_name = jv.as_object().at("userName").as_string();
     map_id = jv.as_object().at("mapId").as_string();
   } catch (...) {
-    return MakeJsonResponse(http::status::bad_request, {{"code", "invalidArgument"}, {"message", "Join game request parse error"}}, CacheControl::NO_CACHE);
+    return MakeJsonResponse(http::status::bad_request, JsAnswer("invalidArgument", "Join game request parse error"), CacheControl::NO_CACHE);
   }
 
   // check if userName is empty
   if (user_name.empty()) {
-    return MakeJsonResponse(http::status::bad_request, {{"code", "invalidArgument"}, {"message", "Invalid name"}}, CacheControl::NO_CACHE);
+    return MakeJsonResponse(http::status::bad_request, JsAnswer("invalidArgument", "Invalid name"), CacheControl::NO_CACHE);
   }
 
   // check map id exist
   if (auto map = m_app.FindMap(model::Map::Id(map_id)); map == nullptr) {
-    return MakeJsonResponse(http::status::not_found, {{"code", "mapNotFound"}, {"message", "Map not found"}}, CacheControl::NO_CACHE);
+    return MakeJsonResponse(http::status::not_found, JsAnswer("mapNotFound", "Map not found"), CacheControl::NO_CACHE);
   }
 
   boost::json::object object;
@@ -101,7 +101,7 @@ StringResponse ApiHandler::PlayerJoinRequest() {
         {"playerId", player.GetId()}};
 
   } catch (const std::exception& e) {
-    return MakeJsonResponse(http::status::internal_server_error, {{"code", "exception"}, {"message", "Join Game Error :( call the fixies "s + e.what()}});
+    return MakeJsonResponse(http::status::internal_server_error, JsAnswer("exception", "Join Game Error :( call the fixies "s + e.what()));
   }
   return MakeJsonResponse(http::status::ok, object, CacheControl::NO_CACHE);
 }
