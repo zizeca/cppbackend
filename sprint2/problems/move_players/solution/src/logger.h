@@ -37,6 +37,8 @@ class Logger final {
   static void LogErr(const boost::system::error_code& ec, std::string_view where);
   static void LogErr(const boost::system::error_code& ec, const Where& where);
 
+  static void LogDebug(const std::string& deb, const std::string& where);
+
   static void Init();
 
 

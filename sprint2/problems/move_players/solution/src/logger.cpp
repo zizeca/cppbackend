@@ -56,3 +56,11 @@ void Logger::Init() {
       boost::log::keywords::auto_flush = true,
       boost::log::keywords::format = &LogFormatter);
 }
+
+void Logger::LogDebug(const std::string& deb,const std::string& where){
+  boost::json::object obj = {
+      {"text", deb},
+      {"where", where},
+  };
+  BOOST_LOG_TRIVIAL(debug) << boost::log::add_value(additional_data, obj) << "debug"sv;
+}
