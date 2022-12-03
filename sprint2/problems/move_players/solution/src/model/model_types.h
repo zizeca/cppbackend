@@ -25,7 +25,7 @@ struct Offset {
 
 template <typename T>
 struct Vector2 {
-  Vector2() = default;
+  Vector2() : x(static_cast<T>(0)), y(static_cast<T>(0)) {}
   Vector2(const T& X, const T& Y) : x(X), y(Y) {}
   T x;
   T y;
