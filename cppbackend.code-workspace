@@ -12,9 +12,13 @@
     //   "name": "s2_game_state",
     //   "path": "sprint2/problems/game_state/solution"
     // },
+    // {
+    //   "name": "s3_move_players",
+    //   "path": "sprint2/problems/move_players/solution"
+    // },
     {
-      "name": "s3_move_players",
-      "path": "sprint2/problems/move_players/solution"
+      "name": "s3_time_control",
+      "path": "sprint2/problems/time_control/solution"
     }
   ],
   "settings": {
