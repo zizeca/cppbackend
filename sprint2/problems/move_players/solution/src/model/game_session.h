@@ -18,7 +18,7 @@ class GameSession {
   explicit GameSession(const Map& map);
   ~GameSession();
 
-  const Map::Id& GetMapId() const noexcept;
+  const Map& GetMap() const noexcept;
 
   std::vector<std::shared_ptr<Dog>> GetDogs();
 

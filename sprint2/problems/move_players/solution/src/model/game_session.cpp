@@ -1,14 +1,14 @@
 #include "game_session.h"
 
 namespace model {
-GameSession::GameSession(const Map::Id& id) : m_mapId(id) {
+GameSession::GameSession(const Map& map) : m_map(map) {
 }
 
 GameSession::~GameSession() {
 }
 
-const Map::Id& GameSession::GetMapId() const noexcept {
-  return m_mapId;
+const Map& GameSession::GetMap() const noexcept {
+  return m_map;
 }
 
 std::vector<std::shared_ptr<Dog>> GameSession::GetDogs() {

@@ -26,14 +26,15 @@ std::shared_ptr<GameSession> Game::GetSession(const model::Map::Id& id) {
   }
 
   for (auto& it : m_sess) {
-    if (it->GetMapId() == id) {
+    if (it->GetMap().GetId() == id) {
       return it;
     }
   }
 
-  auto gs = std::make_shared<GameSession>(id);
-  m_sess.push_back(gs);
-   return gs;
+  auto sess = std::make_shared<GameSession>(*map);
+  m_sess.push_back(sess);
+
+   return sess;
   }
 
 }  // namespace model

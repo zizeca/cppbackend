@@ -11,7 +11,7 @@
 #include "api_handler.h"
 #include "application.h"
 #include "http_server.h"
-#include "model/model.h"
+#include "model.h"
 #include "response_maker.h"
 #include "util.h"
 #include "content_type.h"

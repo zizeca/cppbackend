@@ -7,7 +7,7 @@ set(SRC_MODEL
   tag_invokers.cpp
   dog.cpp
   game_session.cpp
-  model.cpp
+  game.cpp
   model_map.cpp
   token_generator.cpp
 )
@@ -16,7 +16,7 @@ message(${SRCDIR})
 set(HEADER_MODEL 
   dog.h
   game_session.h
-  model.h
+  game.h
   model_map.h
   token_generator.h
   model_types.h
