@@ -54,4 +54,8 @@ const std::shared_ptr<GameSession> Player::GetSession() const {
   return m_gs;
 }
 
+void Player::SetSession(std::shared_ptr<GameSession> sess) {
+  m_gs = sess;
+}
+
 }  // namespace model

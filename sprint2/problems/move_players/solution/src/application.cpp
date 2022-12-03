@@ -27,14 +27,14 @@ const model::Game::Maps &Application::GetMaps() const noexcept {
 }
 
 model::Player& Application::JoinGame(model::Map::Id id, const std::string &user_name){
-
+  //  get if exist or get created session
   auto sess = m_game.GetSession(id);
   if(!sess){
     throw std::runtime_error("Fail to open or create ssesion");
   }
 
   auto& player = m_player_list.CreatePlayer(user_name);
-
+  player.SetSession(sess);
   sess->AddDog(player.GetDog());
   
   return player;

@@ -27,6 +27,8 @@ class Player {
 
   std::shared_ptr<GameSession> GetSession();
   const std::shared_ptr<GameSession> GetSession() const;
+  
+  void SetSession(std::shared_ptr<GameSession> sess);
 
  private:
   int m_id;
