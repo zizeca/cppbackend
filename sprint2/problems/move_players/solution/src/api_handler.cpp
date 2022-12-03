@@ -28,7 +28,7 @@ StringResponse ApiHandler::Response() {
       return MakeJsonResponse(http::status::bad_request, {{"code", "badRequest"}, {"message", "Bad request"}});
     }
   } catch (const std::exception &e) {
-    return MakeJsonResponse(http::status::internal_server_error, {{"code", "exception"}, {"message", "Has except"}});
+    return MakeJsonResponse(http::status::internal_server_error, JsAnswer("exception", "Response except = \""s + e.what() + "\""));
   }
 
   return MakeJsonResponse(http::status::bad_request, {{"code", "badRequest"}, {"message", "Bad request"}});
@@ -164,10 +164,18 @@ StringResponse ApiHandler::PostAction() {
   return ExecuteAuthorized([this](model::Player &p) {
     boost::json::object obj;
     // todo
+    
+    try{
+      boost::json::value jv = boost::json::parse(m_req.body());
+      
+      p.GetDog()->SetDir( static_cast<std::string>(jv.as_object().at("move").as_string()));
 
+    } catch (...) {
+      return MakeJsonResponse(http::status::bad_request, JsAnswer("invalidArgument","Failed to parse action"),CacheControl::NO_CACHE );
+    }
 
     return MakeJsonResponse(http::status::ok,
-                            {{"players", "obj"}},
+                            json::object(),
                             CacheControl::NO_CACHE); });
 }
 
@@ -227,14 +235,20 @@ StringResponse ApiHandler::ExecuteAuthorized(std::function<StringResponse(model:
     model::Player *p = m_app.FindPlayer(*token);
     if (p == nullptr) {
       return MakeJsonResponse(http::status::unauthorized,
-                              {{"code", "unknownToken"}, {"message", "Player token has not been found"}},
+                              JsAnswer("unknownToken", "Player token has not been found"),
+                              CacheControl::NO_CACHE);
+    }
+
+    if ( !m_req.count(http::field::content_type) || m_req.at(http::field::content_type) != "application/json"sv) {
+      return MakeJsonResponse(http::status::unauthorized,
+                              JsAnswer("invalidArgument", "Invalid content type"),
                               CacheControl::NO_CACHE);
     }
 
     return action(*p);
   } else {
     return MakeJsonResponse(http::status::unauthorized,
-                            {{"code", "invalidToken"}, {"message", "Authorization header is missing"}},
+                            JsAnswer("invalidToken", "Authorization header is missing"),
                             CacheControl::NO_CACHE);
   }
 }
