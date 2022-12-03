@@ -24,7 +24,7 @@ void Map::AddOffice(Office office) {
   }
 }
 
-Vector2d Map::GetRandPoint() const {
+Point2d Map::GetRandPoint() const {
   if (roads_.size() == 0) {
     throw std::logic_error("Must be one or mode roads");
   }
@@ -39,10 +39,10 @@ Vector2d Map::GetRandPoint() const {
 
   Road road = roads_.at(num_r);
 
-  Point start = road.GetStart();
-  Point end = road.GetEnd();
+  Point2i start = road.GetStart();
+  Point2i end = road.GetEnd();
 
-  Vector2d ret{static_cast<double>(start.x), static_cast<double>(start.y)};
+  Point2d ret{static_cast<double>(start.x), static_cast<double>(start.y)};
 
   double width;
   {
@@ -77,14 +77,13 @@ double Map::GetDogSpeed() const noexcept {
   return m_dog_speed;
 }
 
-bool Road::CheckInside(const double& x, const double& y, const double& wide) {
-
-  Vector2d s(start_.x, start_.y);
-  Vector2d e(end_.x, end_.y);
-  s-=wide;
-  e+=wide;
+bool Road::CheckInside(const Point2d& point, const double& wide) const {
+  Point2d s(start_);
+  Point2d e(end_);
+  s -= wide;
+  e += wide;
   Rect<double> rect(s, e);
-  return rect.contains({x, y});
+  return rect.contains(point);
 }
 
 }  // namespace model

@@ -15,20 +15,20 @@ bool Dog::SetToken(const Token& token) {
   return false;  // if preset
 }
 
-const Vector2d& Dog::GetPosition() const {
+const Point2d& Dog::GetPosition() const {
   return m_pos;
 }
 
-void Dog::SetPosition(const Vector2d& pos) {
+void Dog::SetPosition(const Point2d& pos) {
   m_pos.x = pos.x;
   m_pos.y = pos.y;
 }
 
-const Vector2d& Dog::GetSpeed() const {
+const Point2d& Dog::GetSpeed() const {
   return m_speed;
 }
 
-void Dog::SetSpeed(const Vector2d& vspeed) {
+void Dog::SetSpeed(const Point2d& vspeed) {
   m_speed.x = vspeed.x;
   m_speed.y = vspeed.y;
 }
@@ -53,12 +53,12 @@ void Dog::SetDir(const std::string& dir) {
   } else if (dir == "") {
     m_speed = {0.0, 0.0};
   } else {
-    throw std::invalid_argument("Argumen\'"s + dir +"\' must be 'U', 'R', 'D', 'L' or \"\"."s);
+    throw std::invalid_argument("Argumen\'"s + dir + "\' must be 'U', 'R', 'D', 'L' or \"\"."s);
   }
   m_dir = dir;
 }
 
-void Dog::Move(const Vector2d& offset) {
+void Dog::Move(const Point2d& offset) {
   m_pos.x += offset.x;
   m_pos.y += offset.y;
 }

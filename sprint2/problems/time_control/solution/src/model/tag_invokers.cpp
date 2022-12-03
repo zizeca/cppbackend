@@ -1,7 +1,7 @@
 #include "tag_invokers.h"
 
 namespace model {
-
+using namespace gm;
 namespace {
 
 template <typename T>
@@ -109,14 +109,14 @@ Office tag_invoke(value_to_tag<Office>, value const& jv) {
   const Dimension& ofX = extruct<Dimension>(jv, MapKey::offset_X);
   const Dimension& ofY = extruct<Dimension>(jv, MapKey::offset_Y);
 
-  Point position{x, y};
+  Point2i position{x, y};
   Offset offset{ofX, ofY};
 
   return {id, position, offset};
 }
 
 Road tag_invoke(value_to_tag<Road>, value const& jv) {
-  Point start{};
+  Point2i start{};
   Coord finish{};
 
   auto& road = jv.as_object();

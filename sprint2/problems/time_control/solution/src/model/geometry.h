@@ -4,94 +4,94 @@
 namespace gm {
 
 template <typename T>
-struct Vector2 {
-  Vector2() : x(static_cast<T>(0)), y(static_cast<T>(0)) {}
+struct Point2 {
+  Point2() : x(static_cast<T>(0)), y(static_cast<T>(0)) {}
 
   template <typename A, typename B>
-  Vector2(const A& a, const B& b) : x(static_cast<T>(a)), y(static_cast<T>(b)) {}
+  Point2(const A& a, const B& b) : x(static_cast<T>(a)), y(static_cast<T>(b)) {}
 
   template <typename U>
-  Vector2(const Vector2<U>& other) : x(static_cast<T>(other.x)), y(static_cast<T>(other.y)) {}
+  Point2(const Point2<U>& other) : x(static_cast<T>(other.x)), y(static_cast<T>(other.y)) {}
   // field
   T x;
   T y;
 
   // operators overload
-  Vector2& operator+=(const Vector2<T>& other) {
+  Point2& operator+=(const Point2<T>& other) {
     x += other.x;
     y += other.y;
     return *this;
   }
 
-  friend Vector2 operator+(Vector2<T> left, const Vector2<T>& right) {
+  friend Point2 operator+(Point2<T> left, const Point2<T>& right) {
     left += right;
     return left;
   }
 
-  Vector2& operator+=(const T& scalar) {
+  Point2& operator+=(const T& scalar) {
     x += scalar;
     y += scalar;
     return *this;
   }
 
-  friend Vector2 operator+(Vector2<T> left, const T& scalar) {
+  friend Point2 operator+(Point2<T> left, const T& scalar) {
     left += scalar;
     return left;
   }
 
-  friend Vector2 operator+(const T& scalar, Vector2<T> right) {
+  friend Point2 operator+(const T& scalar, Point2<T> right) {
     right.x = scalar + right.x;
     right.y = scalar + right.y;
     return right;
   }
 
-  Vector2& operator-=(const T& scalar) {
+  Point2& operator-=(const T& scalar) {
     x -= scalar;
     y -= scalar;
     return *this;
   }
 
-  friend Vector2 operator-(Vector2<T> left, const T& scalar) {
+  friend Point2 operator-(Point2<T> left, const T& scalar) {
     left -= scalar;
     return left;
   }
 
-  friend Vector2 operator-(const T& scalar, Vector2<T> right) {
+  friend Point2 operator-(const T& scalar, Point2<T> right) {
     right.x = scalar - right.x;
     right.y = scalar - right.y;
     return right;
   }
 
-  Vector2& operator*=(const T& scalar) {
+  Point2& operator*=(const T& scalar) {
     x *= scalar;
     y *= scalar;
     return *this;
   }
 
-  friend Vector2 operator*(Vector2<T> left, const T& scalar) {
+  friend Point2 operator*(Point2<T> left, const T& scalar) {
     left *= scalar;
     return left;
   }
 
-  friend Vector2 operator*(const T& scalar, Vector2<T> right) {
+  friend Point2 operator*(const T& scalar, Point2<T> right) {
     right *= scalar;
     return right;
   }
 };
 
-using Vector2i = Vector2<int>;
-using Vector2d = Vector2<double>;
+using Point2i = Point2<int>;
+using Point2d = Point2<double>;
 
 template <typename T>
 struct Rect {
-  Rect(Vector2<T> pos, Vector2<T> size) : left(pos.x), top(pos.y), width(size.x), height(size.y) {}
+  Rect(Point2<T> pos, Point2<T> size) : left(pos.x), top(pos.y), width(size.x), height(size.y) {}
   Rect(T x, T y, T w, T h) : left(x), top(y), width(w), height(h) {}
   T left;
   T top;
   T width;
   T height;
 
-  bool contains(const Vector2<T>& point) const {
+  bool contains(const Point2<T>& point) const {
     // Not using 'std::min' and 'std::max' to avoid depending on '<algorithm>'
     const auto min = [](T a, T b) { return (a < b) ? a : b; };
     const auto max = [](T a, T b) { return (a < b) ? b : a; };

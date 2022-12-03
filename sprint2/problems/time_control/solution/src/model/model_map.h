@@ -16,25 +16,19 @@ using namespace gm;
 using Dimension = int;
 using Coord = Dimension;
 
-// struct Point {
-//   Coord x, y;
-// };
-
-using Point = gm::Vector2i;
 
 struct Size {
   Dimension width, height;
 };
 
 struct Rectangle {
-  Point position;
+  Point2i position;
   Size size;
 };
 
 struct Offset {
   Dimension dx, dy;
 };
-
 
 class Road {
   struct HorizontalTag {
@@ -49,23 +43,23 @@ class Road {
   constexpr static HorizontalTag HORIZONTAL{};
   constexpr static VerticalTag VERTICAL{};
 
-  Road(HorizontalTag, Point start, Coord end_x) noexcept : start_{start}, end_{end_x, start.y} {}
+  Road(HorizontalTag, Point2i start, Coord end_x) noexcept : start_{start}, end_{end_x, start.y} {}
 
-  Road(VerticalTag, Point start, Coord end_y) noexcept : start_{start}, end_{start.x, end_y} {}
+  Road(VerticalTag, Point2i start, Coord end_y) noexcept : start_{start}, end_{start.x, end_y} {}
 
   bool IsHorizontal() const noexcept { return start_.y == end_.y; }
 
   bool IsVertical() const noexcept { return start_.x == end_.x; }
 
-  Point GetStart() const noexcept { return start_; }
+  Point2i GetStart() const noexcept { return start_; }
 
-  Point GetEnd() const noexcept { return end_; }
+  Point2i GetEnd() const noexcept { return end_; }
 
-  bool CheckInside(const double& x, const double &y, const double& wide = 0.4);
+  bool CheckInside(const Point2d& point, const double& wide = 0.4) const;
 
  private:
-  Point start_;
-  Point end_;
+  Point2i start_;
+  Point2i end_;
 };
 
 class Building {
@@ -82,17 +76,17 @@ class Office {
  public:
   using Id = util::Tagged<std::string, Office>;
 
-  Office(Id id, Point position, Offset offset) noexcept : id_{std::move(id)}, position_{position}, offset_{offset} {}
+  Office(Id id, Point2i position, Offset offset) noexcept : id_{std::move(id)}, position_{position}, offset_{offset} {}
 
   const Id& GetId() const noexcept { return id_; }
 
-  Point GetPosition() const noexcept { return position_; }
+  Point2i GetPosition() const noexcept { return position_; }
 
   Offset GetOffset() const noexcept { return offset_; }
 
  private:
   Id id_;
-  Point position_;
+  Point2i position_;
   Offset offset_;
 };
 
@@ -121,11 +115,11 @@ class Map {
 
   void AddOffice(Office office);
 
-  Vector2d GetRandPoint() const;
+  Point2d GetRandPoint() const;
 
   void SetDogSpeed(double speed);
 
-  double GetDogSpeed()const noexcept;
+  double GetDogSpeed() const noexcept;
 
  private:
   using OfficeIdToIndex = std::unordered_map<Office::Id, size_t, util::TaggedHasher<Office::Id>>;
