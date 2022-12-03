@@ -42,11 +42,20 @@ const std::string& Dog::GetDir() const {
 }
 
 void Dog::SetDir(const std::string& dir) {
-  if (dir == "U" || dir == "R" || dir == "D" || dir == "L") {
-    m_dir = dir;
-    return;
+  if (dir == "U") {
+    m_speed = {0.0, -m_default_speed};
+  } else if (dir == "R") {
+    m_speed = {m_default_speed, 0.0};
+  } else if (dir == "D") {
+    m_speed = {0.0, m_default_speed};
+  } else if (dir == "L") {
+    m_speed = {-m_default_speed, 0.0};
+  } else if (dir == "") {
+    m_speed = {0.0, 0.0};
+  } else {
+    throw std::invalid_argument("Argumen\'"s + dir +"\' must be 'U', 'R', 'D', 'L' or \"\"."s);
   }
-  throw std::invalid_argument("Argumen must one of a letters 'U', 'R', 'D', 'L'.");
+  m_dir = dir;
 }
 
 void Dog::Move(const Vector2d& offset) {
