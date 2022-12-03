@@ -6,6 +6,7 @@
 namespace model {
 
 using namespace std::literals;
+using namespace gm;
 
 void Map::AddOffice(Office office) {
   if (warehouse_id_to_index_.contains(office.GetId())) {
@@ -68,12 +69,22 @@ Vector2d Map::GetRandPoint() const {
   return ret;
 }
 
-  void Map::SetDogSpeed(double speed){
-    m_dog_speed = speed;
-  }
+void Map::SetDogSpeed(double speed) {
+  m_dog_speed = speed;
+}
 
-  double Map::GetDogSpeed()const noexcept{
-    return m_dog_speed;
-  }
+double Map::GetDogSpeed() const noexcept {
+  return m_dog_speed;
+}
+
+bool Road::CheckInside(const double& x, const double& y, const double& wide) {
+
+  Vector2d s(start_.x, start_.y);
+  Vector2d e(end_.x, end_.y);
+  s-=wide;
+  e+=wide;
+  Rect<double> rect(s, e);
+  return rect.contains({x, y});
+}
 
 }  // namespace model

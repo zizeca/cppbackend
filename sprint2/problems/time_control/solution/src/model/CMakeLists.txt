@@ -19,7 +19,7 @@ set(HEADER_MODEL
   game.h
   model_map.h
   token_generator.h
-  model_types.h
+  geometry.h
   player.h
   player_list.h
   tag_invokers.h

@@ -20,11 +20,13 @@ class GameSession {
 
   const Map& GetMap() const noexcept;
 
-  std::vector<std::shared_ptr<Dog>> GetDogs();
 
   std::shared_ptr<Dog> GetDog(const Token& token);
 
   void AddDog(std::shared_ptr<Dog> dog);
+
+
+  void Update(const double& delta);
 
  private:
   //const Map::Id m_mapId;

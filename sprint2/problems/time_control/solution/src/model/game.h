@@ -32,6 +32,8 @@ class Game {
   // get exist or create new & return pointer
   std::shared_ptr<GameSession> GetSession(const model::Map::Id& id);
 
+  void Update(const double& delta);
+
  private:
   using MapIdHasher = util::TaggedHasher<Map::Id>;
   using MapIdToIndex = std::unordered_map<Map::Id, size_t, MapIdHasher>;

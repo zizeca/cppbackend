@@ -1,19 +1,18 @@
 #ifndef __APPLICATION_H__
 #define __APPLICATION_H__
 
-#include <boost/asio/io_context.hpp>
 #include <boost/asio.hpp>
+#include <boost/asio/io_context.hpp>
 #include <filesystem>
+#include <optional>
 #include <string>
 #include <string_view>
-#include <optional>
 
 using namespace std::string_view_literals;
 using namespace std::string_literals;
 
 #include "json_loader.h"
 #include "model.h"
-
 
 class Application {
   Application() = delete;
@@ -26,27 +25,27 @@ class Application {
   Application(boost::asio::io_context& ioc, std::filesystem::path config, std::filesystem::path dir_to_content);
   ~Application();
 
-
   const std::filesystem::path& GetContentDir() const noexcept;
 
   const model::Map* FindMap(const model::Map::Id& id) const noexcept;
 
   const std::vector<model::Map>& GetMaps() const noexcept;
 
-  model::Player& JoinGame(model::Map::Id id, const std::string &user_name);
+  model::Player& JoinGame(model::Map::Id id, const std::string& user_name);
 
-  model::Player* FindPlayer(const model::Token &t);
+  model::Player* FindPlayer(const model::Token& t);
 
   const model::PlayerList::Container& GetPlayers() const noexcept;
 
+  void Update(const double& delta);
 
-  
+  boost::asio::strand<boost::asio::io_context::executor_type> strand;
+
  private:
   boost::asio::io_context& m_ioc;
   const std::filesystem::path dir_to_content_;
   model::Game m_game;
   model::PlayerList m_player_list;
-  
 };
 
 #endif  // __APPLICATION_H__

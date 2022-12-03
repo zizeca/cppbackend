@@ -7,9 +7,34 @@
 #include <vector>
 
 #include "../tagged.h"
-#include "model_types.h"
+#include "geometry.h"
 
 namespace model {
+
+using namespace gm;
+
+using Dimension = int;
+using Coord = Dimension;
+
+// struct Point {
+//   Coord x, y;
+// };
+
+using Point = gm::Vector2i;
+
+struct Size {
+  Dimension width, height;
+};
+
+struct Rectangle {
+  Point position;
+  Size size;
+};
+
+struct Offset {
+  Dimension dx, dy;
+};
+
 
 class Road {
   struct HorizontalTag {
@@ -35,6 +60,8 @@ class Road {
   Point GetStart() const noexcept { return start_; }
 
   Point GetEnd() const noexcept { return end_; }
+
+  bool CheckInside(const double& x, const double &y, const double& wide = 0.4);
 
  private:
   Point start_;

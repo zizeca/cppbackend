@@ -7,7 +7,7 @@ using namespace std::string_literals;
 
 void Game::AddMap(Map map) {
   // if dog speed is not set on the map
-  if(map.GetDogSpeed() == 0.0) {
+  if (map.GetDogSpeed() == 0.0) {
     map.SetDogSpeed(GetDefaultSpeed());
   }
 
@@ -39,7 +39,13 @@ std::shared_ptr<GameSession> Game::GetSession(const model::Map::Id& id) {
   auto sess = std::make_shared<GameSession>(*map);
   m_sess.push_back(sess);
 
-   return sess;
+  return sess;
+}
+
+void Game::Update(const double& delta) {
+  for(auto& i : m_sess) {
+    i->Update(delta);
   }
+}
 
 }  // namespace model

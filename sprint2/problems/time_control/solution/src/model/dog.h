@@ -1,13 +1,13 @@
 #ifndef __DOG_H__
 #define __DOG_H__
 
-#include "model_types.h"
+#include "geometry.h"
 #include "token_generator.h"
 
 namespace model {
 
 using namespace std::literals;
-
+using namespace gm;
 class Dog {
  public:
   explicit Dog(const Token& token = Token(""s));
