@@ -14,7 +14,8 @@ namespace model {
 
 class GameSession {
  public:
-  explicit GameSession(const Map::Id& id);
+  // explicit GameSession(const Map::Id& id);
+  explicit GameSession(const Map& map);
   ~GameSession();
 
   const Map::Id& GetMapId() const noexcept;
@@ -26,8 +27,9 @@ class GameSession {
   void AddDog(std::shared_ptr<Dog> dog);
 
  private:
-  const Map::Id m_mapId;
+  //const Map::Id m_mapId;
 
+  const Map& m_map;
   // owner is player
   std::vector<std::weak_ptr<Dog>> m_dogs;
 };
