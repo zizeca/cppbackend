@@ -12,8 +12,8 @@ using namespace std::string_view_literals;
 using namespace std::string_literals;
 
 #include "json_loader.h"
-#include "model/model.h"
-#include "model/player_list.h"
+#include "model.h"
+
 
 class Application {
   Application() = delete;
