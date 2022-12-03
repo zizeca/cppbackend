@@ -36,9 +36,8 @@ std::shared_ptr<Dog> GameSession::GetDog(const Token& token) {
 }
 
 void GameSession::AddDog(std::shared_ptr<Dog> dog) {
-
   dog->SetPosition(m_map.GetRandPoint());
-  dog->SetSpeed(m_map.GetDogSpeed());
+  dog->SetDefaultSpeed(m_map.GetDogSpeed());
 
   m_dogs.emplace_back(dog);
 }

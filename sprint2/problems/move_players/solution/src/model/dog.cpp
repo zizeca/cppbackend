@@ -33,9 +33,8 @@ void Dog::SetSpeed(const Vector2d& vspeed) {
   m_speed.y = vspeed.y;
 }
 
-void Dog::SetSpeed(const double& speed) {
-  m_speed.x = speed;
-  m_speed.y = speed;
+void Dog::SetDefaultSpeed(const double& speed) {
+  m_default_speed = speed;
 }
 
 const std::string& Dog::GetDir() const {

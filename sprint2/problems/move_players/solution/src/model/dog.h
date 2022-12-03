@@ -22,7 +22,7 @@ class Dog {
 
   const Vector2d& GetSpeed() const;
   void SetSpeed(const Vector2d& vspeed);
-  void SetSpeed(const double& speed);
+  void SetDefaultSpeed(const double& speed);
 
   const std::string& GetDir() const;
   void SetDir(const std::string& dir);
@@ -37,6 +37,7 @@ class Dog {
   Vector2d m_speed;
   std::string m_dir;
 
+  double m_default_speed;
   static int ID_COUNTER;
 };
 
