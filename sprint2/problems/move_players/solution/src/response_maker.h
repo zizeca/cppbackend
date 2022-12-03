@@ -16,7 +16,7 @@ using FileResponse = http::response<http::file_body>;
 StringResponse MakeResponse(http::status status, std::string_view text,
                             unsigned http_version,
                             bool keep_alive,
-                            std::string_view content_type = "text/html"sv, std::string_view cache_control = "",
+                            std::string_view content_type = "text/plain"sv, std::string_view cache_control = "",
                             std::string_view allow = "" );
 
 FileResponse MakeResponse(http::status status, http::file_body::value_type& file,
