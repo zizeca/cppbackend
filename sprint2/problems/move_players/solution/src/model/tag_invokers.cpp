@@ -153,6 +153,10 @@ Map tag_invoke(value_to_tag<Map>, value const& jv) {
       Map::Id(extruct<std::string>(jv, MapKey::id)),
       extruct<std::string>(jv, MapKey::name));
 
+  if (m.contains("dogSpeed")) {
+    map.SetDogSpeed(m.at("dogSpeed").as_double());
+  }
+
   for (auto i = m.cbegin(); i != m.cend(); ++i) {
     if (i->key() == MapKey::id || i->key() == MapKey::name) {
       // pass

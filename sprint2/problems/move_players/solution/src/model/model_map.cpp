@@ -68,4 +68,12 @@ Vector2d Map::GetRandPoint() const {
   return ret;
 }
 
+  void Map::SetDogSpeed(double speed){
+    m_dog_speed = speed;
+  }
+
+  double Map::GetDogSpeed()const noexcept{
+    return m_dog_speed;
+  }
+
 }  // namespace model

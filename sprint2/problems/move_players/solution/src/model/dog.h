@@ -21,7 +21,8 @@ class Dog {
   void SetPosition(const Vector2d& pos);
 
   const Vector2d& GetSpeed() const;
-  void SetSpeed(const Vector2d& pos);
+  void SetSpeed(const Vector2d& vspeed);
+  void SetSpeed(const double& speed);
 
   const std::string& GetDir() const;
   void SetDir(const std::string& dir);

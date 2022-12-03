@@ -37,6 +37,12 @@ model::Game LoadGame(const std::filesystem::path& json_path) {
   }
 
   model::Game game;
+  
+  if(doc.as_object().contains("defaultDogSpeed")) {
+    game.SetDefaultSpeed( doc.as_object().at("defaultDogSpeed").as_double());
+  } else {
+    game.SetDefaultSpeed(1.0);
+  }
 
   auto maps = doc.as_object().at("maps").as_array();
 

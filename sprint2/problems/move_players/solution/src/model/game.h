@@ -27,7 +27,7 @@ class Game {
   }
 
   void SetDefaultSpeed(double speed) { m_default_speed = speed; }
-  double GetDefaultSpeed() const { return m_default_speed; }
+  const double& GetDefaultSpeed() const { return m_default_speed; }
 
   // get exist or create new & return pointer
   std::shared_ptr<GameSession> GetSession(const model::Map::Id& id);
