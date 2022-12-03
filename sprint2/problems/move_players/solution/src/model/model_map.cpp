@@ -1,6 +1,8 @@
 #include "model_map.h"
 
 #include <random>
+
+#include "../logger.h"
 namespace model {
 
 using namespace std::literals;
@@ -21,17 +23,16 @@ void Map::AddOffice(Office office) {
   }
 }
 
-Vector2d Map::GetRandPoint() {
+Vector2d Map::GetRandPoint() const {
   if (roads_.size() == 0) {
     throw std::logic_error("Must be one or mode roads");
   }
 
   std::random_device rd;
-  std::mt19937 gen(rd());
-  Vector2d ret{0.f, 0.f};
+  std::mt19937 gen{rd()};
   int num_r = 0;
-  {
-    std::uniform_int_distribution<int> dist(0, roads_.size());
+  if (roads_.size() > 1) {
+    std::uniform_int_distribution<int> dist(0, roads_.size() - 1);
     num_r = dist(gen);
   }
 
@@ -40,10 +41,13 @@ Vector2d Map::GetRandPoint() {
   Point start = road.GetStart();
   Point end = road.GetEnd();
 
+  Vector2d ret{static_cast<double>(start.x), static_cast<double>(start.y)};
+
   double width;
   {
     std::uniform_real_distribution<> dist(-0.4, 0.4);
     width = dist(gen);
+    width = ((int)(width * 100 + .5) / 100.0);  // round two digit
   }
 
   if (road.IsHorizontal()) {
@@ -55,6 +59,12 @@ Vector2d Map::GetRandPoint() {
     ret.y = dist(gen);
     ret.x += width;
   }
+
+  ret.x = ((int)(ret.x * 100 + .5) / 100.0);  // round two digit
+  ret.y = ((int)(ret.y * 100 + .5) / 100.0);  // round two digit
+
+  // Logger::LogDebug("point ("s + std::to_string(ret.x) + ", "s + std::to_string(ret.y) + ")"s, "get random width"s);
+
   return ret;
 }
 

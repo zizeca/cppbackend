@@ -94,7 +94,7 @@ class Map {
 
   void AddOffice(Office office);
 
-  Vector2d GetRandPoint();
+  Vector2d GetRandPoint() const;
 
  private:
   using OfficeIdToIndex = std::unordered_map<Office::Id, size_t, util::TaggedHasher<Office::Id>>;

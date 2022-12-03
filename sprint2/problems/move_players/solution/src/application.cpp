@@ -38,7 +38,6 @@ model::Player& Application::JoinGame(model::Map::Id id, const std::string &user_
   sess->AddDog(player.GetDog());
   
   return player;
- 
 }
 
 
