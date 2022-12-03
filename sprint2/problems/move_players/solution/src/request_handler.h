@@ -56,7 +56,7 @@ class RequestHandler : public std::enable_shared_from_this<RequestHandler> {
   template <typename Body, typename Allocator, typename Send>
   void FileRequest(http::request<Body, http::basic_fields<Allocator>>& req, Send& send) {
     auto text_response = [&req, &send](http::status status, std::string_view text) {
-      send(MakeResponse(status, text, req.version(), req.keep_alive()));
+      send(MakeResponse(status, text, req.version(), req.keep_alive()), ContentType::TEXT_PLAIN);
     };
 
     auto file_response = [&req, &send](http::status status, http::file_body::value_type& file, std::string_view content_type) {
