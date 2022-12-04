@@ -33,7 +33,7 @@ class GameSession {
 
   const Map& m_map;
   // owner is player
-  std::vector<std::weak_ptr<Dog>> m_dogs;
+  std::vector<std::shared_ptr<Dog>> m_dogs;
 };
 
 }  // namespace model

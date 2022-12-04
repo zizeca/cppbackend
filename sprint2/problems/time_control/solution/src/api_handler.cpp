@@ -142,7 +142,7 @@ StringResponse ApiHandler::GetGameState() {
   //                           CacheControl::NO_CACHE);
   // }
 
-
+  // m_app.Update(m_app.tick);
   return ExecuteAuthorized([this](model::Player &p) {
     boost::json::object obj;
 
@@ -186,6 +186,7 @@ StringResponse ApiHandler::PostAction() {
       boost::json::value jv = boost::json::parse(m_req.body());
       
       p.GetDog()->SetDir( static_cast<std::string>(jv.as_object().at("move").as_string()));
+      std::cout << "dog dir " << p.GetDog()->GetDir() << " id" << p.GetDog()->GetId() << std::endl;
 
     } catch (...) {
       return MakeJsonResponse(http::status::bad_request, JsAnswer("invalidArgument","Failed to parse action"),CacheControl::NO_CACHE );
@@ -213,6 +214,8 @@ StringResponse ApiHandler::PostTick() {
     return MakeJsonResponse(http::status::bad_request, JsAnswer("invalidArgument","Failed to parse tick request JSON "s + e.what() ),CacheControl::NO_CACHE );
   }
 
+  m_app.tick = sec;
+  // std::abort();
   m_app.Update(sec);
 
   return MakeJsonResponse(http::status::ok,

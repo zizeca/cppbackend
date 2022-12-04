@@ -94,7 +94,7 @@ class LogRequestHandler {
   void operator()(http::request<Body, http::basic_fields<Allocator>>&& req, Send&& send) {
     std::chrono::high_resolution_clock timer;
     auto start = timer.now();
-    LogRequest(req);
+    //LogRequest(req);
     
     std::string content_type = "null";
     int code_result;
@@ -109,7 +109,7 @@ class LogRequestHandler {
     auto stop = timer.now();
     auto deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count();
 
-    LogResponse(deltaTime, code_result, content_type);
+    //LogResponse(deltaTime, code_result, content_type);
     return;
   }
 

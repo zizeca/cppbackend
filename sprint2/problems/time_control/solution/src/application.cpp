@@ -50,7 +50,8 @@ const model::PlayerList::Container &Application::GetPlayers() const noexcept {
 }
 
 void Application::Update(const double &delta) {
+  // std::abort();
   m_game.Update(delta);
 
-  Logger::LogDebug("update", "__App update__ "s + std::to_string(delta));
+  //Logger::LogDebug("update", "__App update__ "s + std::to_string(delta));
 }

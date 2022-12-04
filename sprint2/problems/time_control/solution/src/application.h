@@ -41,6 +41,8 @@ class Application {
 
   boost::asio::strand<boost::asio::io_context::executor_type> strand;
 
+  double tick = 0.1;
+
  private:
   boost::asio::io_context& m_ioc;
   const std::filesystem::path dir_to_content_;

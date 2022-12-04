@@ -23,12 +23,12 @@ class Dog {
   const Point2d& GetSpeed() const;
   void SetSpeed(const Point2d& vspeed);
   void SetDefaultSpeed(const double& speed);
-  double GetDefaultSpeed() const;
+  // double GetDefaultSpeed() const;
 
   const std::string& GetDir() const;
   void SetDir(const std::string& dir);
 
-  void Move(const Point2d& offset);
+  // void Move(const Point2d& offset);
 
  private:
   Token m_token;

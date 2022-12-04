@@ -58,10 +58,10 @@ void Dog::SetDir(const std::string& dir) {
   m_dir = dir;
 }
 
-void Dog::Move(const Point2d& offset) {
-  m_pos.x += offset.x;
-  m_pos.y += offset.y;
-}
+// void Dog::Move(const Point2d& offset) {
+//   m_pos.x += offset.x;
+//   m_pos.y += offset.y;
+// }
 
 Token Dog::GetToken() const {
   return m_token;
@@ -71,8 +71,8 @@ int Dog::GetId() const {
   return m_id;
 }
 
-double Dog::GetDefaultSpeed() const {
-  return m_default_speed;
-}
+// double Dog::GetDefaultSpeed() const {
+//   return m_default_speed;
+// }
 
 }  // namespace model
