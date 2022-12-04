@@ -1,6 +1,7 @@
 #ifndef __MODEL_MAP_H__
 #define __MODEL_MAP_H__
 
+#include <optional>
 #include <stdexcept>
 #include <string>
 #include <unordered_map>
@@ -15,7 +16,6 @@ using namespace gm;
 
 using Dimension = int;
 using Coord = Dimension;
-
 
 struct Size {
   Dimension width, height;
@@ -94,6 +94,8 @@ class Map {
  public:
   using Id = util::Tagged<std::string, Map>;
   using Roads = std::vector<Road>;
+  using RoadsV = std::vector<Road>;
+  using RoadsH = std::vector<Road>;
   using Buildings = std::vector<Building>;
   using Offices = std::vector<Office>;
 
@@ -109,7 +111,9 @@ class Map {
 
   const Offices& GetOffices() const noexcept { return offices_; }
 
-  void AddRoad(const Road& road) { roads_.emplace_back(road); }
+  void AddRoad(const Road& road) { 
+    roads_.emplace_back(road); 
+  }
 
   void AddBuilding(const Building& building) { buildings_.emplace_back(building); }
 
@@ -121,6 +125,10 @@ class Map {
 
   double GetDogSpeed() const noexcept;
 
+
+  std::optional<Road> GetRoadVerByPos(const Point2d& pos) const;
+  std::optional<Road> GetRoadHorByPos(const Point2d& pos) const;
+
  private:
   using OfficeIdToIndex = std::unordered_map<Office::Id, size_t, util::TaggedHasher<Office::Id>>;
 
@@ -128,6 +136,8 @@ class Map {
   std::string name_;
   Roads roads_;
   Buildings buildings_;
+  RoadsV m_vroads;
+  RoadsH m_hroads;
 
   OfficeIdToIndex warehouse_id_to_index_;
   Offices offices_;

@@ -23,6 +23,7 @@ class Dog {
   const Point2d& GetSpeed() const;
   void SetSpeed(const Point2d& vspeed);
   void SetDefaultSpeed(const double& speed);
+  double GetDefaultSpeed() const;
 
   const std::string& GetDir() const;
   void SetDir(const std::string& dir);

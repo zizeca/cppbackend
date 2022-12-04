@@ -71,4 +71,8 @@ int Dog::GetId() const {
   return m_id;
 }
 
+double Dog::GetDefaultSpeed() const {
+  return m_default_speed;
+}
+
 }  // namespace model

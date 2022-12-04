@@ -84,6 +84,7 @@ using Point2d = Point2<double>;
 
 template <typename T>
 struct Rect {
+  Rect() : left(static_cast<T>(0)), top(static_cast<T>(0)),  width(static_cast<T>(0)), height(static_cast<T>(0)) {} 
   Rect(Point2<T> pos, Point2<T> size) : left(pos.x), top(pos.y), width(size.x), height(size.y) {}
   Rect(T x, T y, T w, T h) : left(x), top(y), width(w), height(h) {}
   T left;

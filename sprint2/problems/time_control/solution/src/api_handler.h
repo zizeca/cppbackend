@@ -38,6 +38,7 @@ class ApiHandler {
   StringResponse GetGameState();
 
   StringResponse PostAction();
+  StringResponse PostTick();
 
   /**
    * @brief

@@ -89,4 +89,26 @@ bool Road::Contains(const Point2d& point) const {
     return p.x == start_.x && p.y >= start_.y && p.y <= end_.y;
   }
 }
+
+std::optional<Road> Map::GetRoadVerByPos(const Point2d& pos) const {
+  auto it = std::find_if(roads_.begin(),roads_.end(),[&pos](Road r) {
+    return r.IsVertical() && r.Contains(pos);
+  } );
+  if(it == roads_.end()){
+    return std::nullopt;
+  }
+  return *it;
+}
+
+std::optional<Road> Map::GetRoadHorByPos(const Point2d& pos) const {
+  auto it = std::find_if(roads_.begin(),roads_.end(),[&pos](Road r) {
+    return r.IsHorizontal() && r.Contains(pos);
+  });
+
+  if(it == roads_.end()){
+    return std::nullopt;
+  }
+  return *it;
+}
+
 }  // namespace model

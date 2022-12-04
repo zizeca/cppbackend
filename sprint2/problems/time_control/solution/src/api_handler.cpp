@@ -24,6 +24,8 @@ StringResponse ApiHandler::Response() {
       return GetGameState();
     } else if (m_target == "/api/v1/game/player/action") {
       return PostAction();
+    } else if (m_target == "/api/v1/game/tick") {
+      return PostTick();
     } else {
       return MakeJsonResponse(http::status::bad_request, {{"code", "badRequest"}, {"message", "Bad request"}});
     }
@@ -179,6 +181,30 @@ StringResponse ApiHandler::PostAction() {
                             CacheControl::NO_CACHE); });
 }
 
+StringResponse ApiHandler::PostTick() {
+  assert(m_target == "/api/v1/game/tick");
+  // check method
+  if (m_req.method() != http::verb::post) {
+    return MakeJsonResponse(http::status::method_not_allowed, {{"code", "invalidMethod"}, {"message", "Only POST method is expected"}}, CacheControl::NO_CACHE, "POST"sv);
+  }
+
+
+  boost::json::object obj;
+  double sec;
+  try{
+    boost::json::value jv = boost::json::parse(m_req.body());
+    sec = jv.as_object().at("timeDelta").as_int64() / 1000.0;
+  } catch (const std::exception &e) {
+    return MakeJsonResponse(http::status::bad_request, JsAnswer("invalidArgument","Failed to parse tick request JSON "s + e.what() ),CacheControl::NO_CACHE );
+  }
+
+  m_app.Update(sec);
+
+  return MakeJsonResponse(http::status::ok,
+                          json::object(),
+                          CacheControl::NO_CACHE);
+}
+
 std::optional<model::Token> ApiHandler::TryExtractToken() {
   std::string auth;  // for return value
 
@@ -239,7 +265,7 @@ StringResponse ApiHandler::ExecuteAuthorized(std::function<StringResponse(model:
                               CacheControl::NO_CACHE);
     }
 
-    if ( !m_req.count(http::field::content_type) || m_req.at(http::field::content_type) != "application/json"sv) {
+    if (!m_req.count(http::field::content_type) || m_req.at(http::field::content_type) != "application/json"sv) {
       return MakeJsonResponse(http::status::unauthorized,
                               JsAnswer("invalidArgument", "Invalid content type"),
                               CacheControl::NO_CACHE);
