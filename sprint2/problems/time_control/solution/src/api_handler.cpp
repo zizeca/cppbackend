@@ -135,6 +135,14 @@ StringResponse ApiHandler::GetGameState() {
                             "GET, HEAD"sv);
   }
 
+
+  // if (!m_req.count(http::field::content_type) || m_req.at(http::field::content_type) != "application/json"sv) {
+  //   return MakeJsonResponse(http::status::unauthorized,
+  //                           JsAnswer("invalidArgument", "Invalid content type"),
+  //                           CacheControl::NO_CACHE);
+  // }
+
+
   return ExecuteAuthorized([this](model::Player &p) {
     boost::json::object obj;
 
@@ -162,6 +170,13 @@ StringResponse ApiHandler::PostAction() {
                             CacheControl::NO_CACHE,
                             "POST"sv);
   }
+
+  if (!m_req.count(http::field::content_type) || m_req.at(http::field::content_type) != "application/json"sv) {
+    return MakeJsonResponse(http::status::unauthorized,
+                            JsAnswer("invalidArgument", "Invalid content type"),
+                            CacheControl::NO_CACHE);
+  }
+
 
   return ExecuteAuthorized([this](model::Player &p) {
     boost::json::object obj;
@@ -265,11 +280,7 @@ StringResponse ApiHandler::ExecuteAuthorized(std::function<StringResponse(model:
                               CacheControl::NO_CACHE);
     }
 
-    if (!m_req.count(http::field::content_type) || m_req.at(http::field::content_type) != "application/json"sv) {
-      return MakeJsonResponse(http::status::unauthorized,
-                              JsAnswer("invalidArgument", "Invalid content type"),
-                              CacheControl::NO_CACHE);
-    }
+
 
     return action(*p);
   } else {
