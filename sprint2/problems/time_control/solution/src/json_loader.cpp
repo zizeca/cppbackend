@@ -46,9 +46,9 @@ model::Game LoadGame(const std::filesystem::path& json_path) {
 
   for (auto m = maps.cbegin(); m != maps.end(); ++m) {
     model::Map ext_map = boost::json::value_to<model::Map>(*m);
-    if (ext_map.GetDogSpeed() == 0.0) {
-      ext_map.SetDogSpeed(game.GetDefaultSpeed());
-    }
+    // if (ext_map.GetDogSpeed() == 0.0) {
+    //   ext_map.SetDogSpeed(game.GetDefaultSpeed());
+    // }
     game.AddMap(ext_map);
   }
 

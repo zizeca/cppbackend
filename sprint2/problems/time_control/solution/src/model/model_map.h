@@ -99,7 +99,7 @@ class Map {
   using Buildings = std::vector<Building>;
   using Offices = std::vector<Office>;
 
-  Map(Id id, std::string name) noexcept : id_(std::move(id)), name_(std::move(name)), m_dog_speed(1.0) {}
+  Map(Id id, std::string name) noexcept : id_(std::move(id)), name_(std::move(name)), m_dog_speed(0.0) {}
 
   const Id& GetId() const noexcept { return id_; }
 
@@ -142,7 +142,7 @@ class Map {
   OfficeIdToIndex warehouse_id_to_index_;
   Offices offices_;
 
-  double m_dog_speed = 0.0;
+  double m_dog_speed;
 };
 
 }  // namespace model
