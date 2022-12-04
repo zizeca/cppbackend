@@ -1,6 +1,7 @@
 #include "api_handler.h"
 
 #include "content_type.h"
+#include "logger.h"
 
 namespace http_handler {
 
@@ -30,7 +31,9 @@ StringResponse ApiHandler::Response() {
       return MakeJsonResponse(http::status::bad_request, {{"code", "badRequest"}, {"message", "Bad request"}});
     }
   } catch (const std::exception &e) {
-    return MakeJsonResponse(http::status::internal_server_error, JsAnswer("exception", "Response except = \""s + e.what() + "\""));
+    // return MakeJsonResponse(http::status::internal_server_error, JsAnswer("exception", "Response except = \""s + e.what() + "\""));
+    Logger::LogExit(e);
+    throw;
   }
 
   return MakeJsonResponse(http::status::bad_request, {{"code", "badRequest"}, {"message", "Bad request"}});
@@ -135,7 +138,6 @@ StringResponse ApiHandler::GetGameState() {
                             "GET, HEAD"sv);
   }
 
-
   // if (!m_req.count(http::field::content_type) || m_req.at(http::field::content_type) != "application/json"sv) {
   //   return MakeJsonResponse(http::status::unauthorized,
   //                           JsAnswer("invalidArgument", "Invalid content type"),
@@ -177,7 +179,6 @@ StringResponse ApiHandler::PostAction() {
                             CacheControl::NO_CACHE);
   }
 
-
   return ExecuteAuthorized([this](model::Player &p) {
     boost::json::object obj;
     // todo
@@ -204,19 +205,23 @@ StringResponse ApiHandler::PostTick() {
     return MakeJsonResponse(http::status::method_not_allowed, {{"code", "invalidMethod"}, {"message", "Only POST method is expected"}}, CacheControl::NO_CACHE, "POST"sv);
   }
 
-
   boost::json::object obj;
   double sec;
-  try{
+  try {
     boost::json::value jv = boost::json::parse(m_req.body());
     sec = jv.as_object().at("timeDelta").as_int64() / 1000.0;
   } catch (const std::exception &e) {
-    return MakeJsonResponse(http::status::bad_request, JsAnswer("invalidArgument","Failed to parse tick request JSON "s + e.what() ),CacheControl::NO_CACHE );
+    return MakeJsonResponse(http::status::bad_request, JsAnswer("invalidArgument", "Failed to parse tick request JSON "s + e.what()), CacheControl::NO_CACHE);
   }
 
   m_app.tick = sec;
   // std::abort();
-  m_app.Update(sec);
+  try {
+    m_app.Update(sec);
+  } catch (const std::exception &e) {
+    Logger::LogExit(e);
+    throw;
+  }
 
   return MakeJsonResponse(http::status::ok,
                           json::object(),
@@ -282,8 +287,6 @@ StringResponse ApiHandler::ExecuteAuthorized(std::function<StringResponse(model:
                               JsAnswer("unknownToken", "Player token has not been found"),
                               CacheControl::NO_CACHE);
     }
-
-
 
     return action(*p);
   } else {
