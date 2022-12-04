@@ -5,11 +5,9 @@
 #include <fstream>
 #include <string>
 
-
 using namespace std::literals;
 
 namespace json_loader {
-
 
 model::Game LoadGame(const std::filesystem::path& json_path) {
   // Загрузить содержимое файла json_path, например, в виде строки
@@ -37,9 +35,9 @@ model::Game LoadGame(const std::filesystem::path& json_path) {
   }
 
   model::Game game;
-  
-  if(doc.as_object().contains("defaultDogSpeed")) {
-    game.SetDefaultSpeed( doc.as_object().at("defaultDogSpeed").as_double());
+
+  if (doc.as_object().contains("defaultDogSpeed")) {
+    game.SetDefaultSpeed(doc.as_object().at("defaultDogSpeed").as_double());
   } else {
     game.SetDefaultSpeed(1.0);
   }
@@ -47,8 +45,11 @@ model::Game LoadGame(const std::filesystem::path& json_path) {
   auto maps = doc.as_object().at("maps").as_array();
 
   for (auto m = maps.cbegin(); m != maps.end(); ++m) {
-    // boost::json::value_to depence of tag_invoke
-    game.AddMap(boost::json::value_to<model::Map>(*m));
+    model::Map ext_map = boost::json::value_to<model::Map>(*m);
+    if (ext_map.GetDogSpeed() == 0.0) {
+      ext_map.SetDogSpeed(game.GetDefaultSpeed());
+    }
+    game.AddMap(ext_map);
   }
 
   return game;
