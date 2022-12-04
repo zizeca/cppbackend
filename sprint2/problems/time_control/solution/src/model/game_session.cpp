@@ -68,18 +68,22 @@ void GameSession::Update(const double& delta) {
     auto dw = ver ? (static_cast<double>(ver->GetEnd().y) + 0.4) : (static_cast<double>(hor->GetEnd().y) + 0.4);
     auto rg = hor ? (static_cast<double>(hor->GetEnd().x) + 0.4) : (static_cast<double>(ver->GetEnd().x) + 0.4);
 
-    if (posNew.y <= up) {
+    if (posNew.y < up) {
       posNew.y = up;
-      dog->SetDir("");
-    } else if (posNew.y >= dw) {
+      
+      dog->SetSpeed({0.0,0.0});
+    } else if (posNew.y > dw) {
       posNew.y = dw;
-      dog->SetDir("");
-    } else if (posNew.x <= lf) {
+      //dog->SetDir("");
+      dog->SetSpeed({0.0,0.0});
+    } else if (posNew.x < lf) {
       posNew.x = lf;
-      dog->SetDir("");
-    } else if (posNew.x >= rg) {
+      //dog->SetDir("");
+      dog->SetSpeed({0.0,0.0});
+    } else if (posNew.x > rg) {
       posNew.x = rg;
-      dog->SetDir("");
+      //dog->SetDir("");
+      dog->SetSpeed({0.0,0.0});
     }
 
     // Logger::LogDebug("dog pos ("s + std::to_string(posNew.x) + ", "s + std::to_string(posNew.y) + ")"s, "game session");
