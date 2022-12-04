@@ -77,13 +77,16 @@ double Map::GetDogSpeed() const noexcept {
   return m_dog_speed;
 }
 
-bool Road::CheckInside(const Point2d& point, const double& wide) const {
-  Point2d s(start_);
-  Point2d e(end_);
-  s -= wide;
-  e += wide;
-  Rect<double> rect(s, e);
-  return rect.contains(point);
-}
+bool Road::Contains(const Point2d& point) const {
+  Point2i p;
 
+  p.x = (int)(point.x + 0.5);
+  p.y = (int)(point.y + 0.5);
+
+  if (IsHorizontal()) {
+    return p.y == start_.y && p.x >= start_.x && p.x <= end_.x;
+  } else {
+    return p.x == start_.x && p.y >= start_.y && p.y <= end_.y;
+  }
+}
 }  // namespace model

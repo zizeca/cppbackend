@@ -55,7 +55,7 @@ class Road {
 
   Point2i GetEnd() const noexcept { return end_; }
 
-  bool CheckInside(const Point2d& point, const double& wide = 0.4) const;
+  bool Contains(const Point2d& point) const;
 
  private:
   Point2i start_;
