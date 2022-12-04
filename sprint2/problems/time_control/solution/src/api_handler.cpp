@@ -186,7 +186,7 @@ StringResponse ApiHandler::PostAction() {
       boost::json::value jv = boost::json::parse(m_req.body());
       
       p.GetDog()->SetDir( static_cast<std::string>(jv.as_object().at("move").as_string()));
-      std::cout << "dog dir " << p.GetDog()->GetDir() << " id" << p.GetDog()->GetId() << std::endl;
+      // std::cout << "dog dir " << p.GetDog()->GetDir() << " id" << p.GetDog()->GetId() << std::endl;
 
     } catch (...) {
       return MakeJsonResponse(http::status::bad_request, JsAnswer("invalidArgument","Failed to parse action"),CacheControl::NO_CACHE );

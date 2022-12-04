@@ -83,8 +83,8 @@ void GameSession::Update(const double& delta) {
     }
 
     // Logger::LogDebug("dog pos ("s + std::to_string(posNew.x) + ", "s + std::to_string(posNew.y) + ")"s, "game session");
-    std::cout << "dog pos ("s << std::to_string(posNew.x) << ", " << std::to_string(posNew.y)
-              << ") speed ("s << dog->GetSpeed().x << ", " << dog->GetSpeed().y << ")" << std::endl;
+    // std::cout << "dog pos ("s << std::to_string(posNew.x) << ", " << std::to_string(posNew.y)
+    //           << ") speed ("s << dog->GetSpeed().x << ", " << dog->GetSpeed().y << ")" << std::endl;
     dog->SetPosition(posNew);
     // dog->SetDir(dir);
 
