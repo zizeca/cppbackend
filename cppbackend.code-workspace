@@ -1,9 +1,9 @@
 {
   "folders": [
-    {
-      "name": "root",
-      "path": "."
-    },
+    // {
+    //   "name": "root",
+    //   "path": "."
+    // },
     // {
     //   "name": "s2_join_game",
     //   "path": "sprint2/problems/join_game/solution"
@@ -16,10 +16,14 @@
     //   "name": "s3_move_players",
     //   "path": "sprint2/problems/move_players/solution"
     // },
+    // {
+    //   "name": "s2_time_control",
+    //   "path": "sprint2/problems/time_control/solution"
+    // },
     {
-      "name": "s2_time_control",
-      "path": "sprint2/problems/time_control/solution"
-    }
+      "name": "s2_command_line",
+      "path": "sprint2/problems/command_line/solution"
+    },
   ],
   "settings": {
     "C_Cpp.default.includePath": [
