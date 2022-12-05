@@ -15,6 +15,9 @@ Application::~Application() {
   // close resource
 }
 
+void Application::SetTickPeriod(int millisecond) {
+}
+
 const std::filesystem::path &Application::GetContentDir() const noexcept {
   return dir_to_content_;
 }
@@ -53,5 +56,5 @@ void Application::Update(const double &delta) {
   // std::abort();
   m_game.Update(delta);
 
-  //Logger::LogDebug("update", "__App update__ "s + std::to_string(delta));
+  // Logger::LogDebug("update", "__App update__ "s + std::to_string(delta));
 }

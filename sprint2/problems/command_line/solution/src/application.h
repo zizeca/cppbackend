@@ -13,6 +13,7 @@ using namespace std::string_literals;
 
 #include "json_loader.h"
 #include "model.h"
+#include "ticker.h"
 
 class Application {
   Application() = delete;
@@ -24,6 +25,8 @@ class Application {
  public:
   Application(boost::asio::io_context& ioc, std::filesystem::path config, std::filesystem::path dir_to_content);
   ~Application();
+
+  void SetTickPeriod(int millisecond);
 
   const std::filesystem::path& GetContentDir() const noexcept;
 
@@ -41,7 +44,6 @@ class Application {
 
   boost::asio::strand<boost::asio::io_context::executor_type> strand;
 
-  double tick = 0.1;
 
  private:
   boost::asio::io_context& m_ioc;
