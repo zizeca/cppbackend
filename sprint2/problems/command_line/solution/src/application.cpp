@@ -5,7 +5,10 @@
 #include "logger.h"
 
 Application::Application(boost::asio::io_context &ioc, std::filesystem::path config, std::filesystem::path dir_to_content)
-    : m_ioc(ioc), dir_to_content_(dir_to_content), strand(boost::asio::make_strand(ioc)) {
+    : m_ioc(ioc),
+      dir_to_content_(dir_to_content),
+      strand(boost::asio::make_strand(ioc)),
+      m_manual_ticker(true) {
   if (!(std::filesystem::exists(config) && std::filesystem::exists(dir_to_content_))) {
     throw std::logic_error("Wrong path");  //? maybe need more output information
   }
@@ -17,7 +20,12 @@ Application::~Application() {
   // close resource
 }
 
-void Application::SetTickPeriod(int millisecond) {
+void Application::SetManualTicker(bool enable) {
+  m_manual_ticker = enable;
+}
+
+bool Application::IsManualTicker() const {
+  return m_manual_ticker;
 }
 
 const std::filesystem::path &Application::GetContentDir() const noexcept {
@@ -55,8 +63,8 @@ const model::PlayerList::Container &Application::GetPlayers() const noexcept {
 }
 
 void Application::Update(std::chrono::milliseconds ms) {
-  assert(ms.count() < 30000ul); // fail if more than 30s
-  
+  assert(ms.count() < 30000ul);  // fail if more than 30s
+
   double delta = std::chrono::duration<double>(ms).count();
   // std::cout << "Call update with delta " << ms << "ms in " << delta << std::endl;
   m_game.Update(delta);

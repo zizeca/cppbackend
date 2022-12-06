@@ -27,7 +27,8 @@ class Application {
   Application(boost::asio::io_context& ioc, std::filesystem::path config, std::filesystem::path dir_to_content);
   ~Application();
 
-  void SetTickPeriod(int millisecond);
+  void SetManualTicker(bool enable = true);
+  bool IsManualTicker() const;
 
   const std::filesystem::path& GetContentDir() const noexcept;
 
@@ -51,6 +52,7 @@ class Application {
   const std::filesystem::path dir_to_content_;
   model::Game m_game;
   model::PlayerList m_player_list;
+  bool m_manual_ticker;
 };
 
 #endif  // __APPLICATION_H__
