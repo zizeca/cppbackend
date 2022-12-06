@@ -1,15 +1,18 @@
 #include "sdk.h"
 //
+#include <boost/asio.hpp>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/signal_set.hpp>
-#include <thread>
-#include <boost/asio.hpp>
+
 #include <memory>
-#include "json_loader.h"
-#include "request_handler.h"
-#include "logger.h"
+#include <thread>
+
 #include "application.h"
+#include "json_loader.h"
+#include "request_handler.h" // bad order  need upper then logger
+#include "logger.h" // bad order  need under request_handler
 #include "ticker.h"
+#include "command_parse.h"
 
 using namespace std::literals;
 namespace net = boost::asio;
@@ -29,7 +32,6 @@ void RunWorkers(unsigned n, const Fn& fn) {
   fn();
 }
 
-
 }  // namespace
 
 int main(int argc, const char* argv[]) {
@@ -40,16 +42,15 @@ int main(int argc, const char* argv[]) {
 
   // initial logger
   Logger::Init();
-  
+
   try {
-    
     // 2. Инициализируем io_context
     const unsigned num_threads = std::thread::hardware_concurrency();
     net::io_context ioc(num_threads);
 
     Application app(ioc, argv[1], argv[2]);
 
-    std::make_shared<util::Ticker>(app.strand,std::chrono::milliseconds(100), std::bind(&Application::Update,&app,std::placeholders::_1))->Start();
+    std::make_shared<util::Ticker>(app.strand, std::chrono::milliseconds(100), std::bind(&Application::Update, &app, std::placeholders::_1))->Start();
 
     // signal handler
     net::signal_set signals(ioc, SIGINT, SIGTERM);
@@ -64,7 +65,6 @@ int main(int argc, const char* argv[]) {
     // decorator pattern
     LogRequestHandler<http_handler::RequestHandler> loghandler{*handler};
 
-
     const auto address = net::ip::make_address("0.0.0.0");
     constexpr net::ip::port_type port = 8080;
 
@@ -72,10 +72,9 @@ int main(int argc, const char* argv[]) {
     http_server::ServeHttp(ioc, {address, port}, [&loghandler](auto&& req, auto&& send) {
       loghandler(std::forward<decltype(req)>(req), std::forward<decltype(send)>(send));
     });
-    
 
-    boost::json::value jv_port_address{{"port"s, 8080},{"address"s,"0.0.0.0"s}};
-    BOOST_LOG_TRIVIAL(info) <<  boost::log::add_value(additional_data, jv_port_address) << "Server has started..."sv;
+    boost::json::value jv_port_address{{"port"s, 8080}, {"address"s, "0.0.0.0"s}};
+    BOOST_LOG_TRIVIAL(info) << boost::log::add_value(additional_data, jv_port_address) << "Server has started..."sv;
 
     //  run async process
     RunWorkers(std::max(1u, num_threads), [&ioc] { ioc.run(); });
