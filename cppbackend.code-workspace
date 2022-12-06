@@ -16,10 +16,10 @@
     //   "name": "s3_move_players",
     //   "path": "sprint2/problems/move_players/solution"
     // },
-    // {
-    //   "name": "s2_time_control",
-    //   "path": "sprint2/problems/time_control/solution"
-    // },
+    {
+      "name": "s2_time_control",
+      "path": "sprint2/problems/time_control/solution"
+    },
     {
       "name": "s2_command_line",
       "path": "sprint2/problems/command_line/solution"
