@@ -34,13 +34,7 @@ struct Args {
     return std::nullopt;
   }
 
-  if (!vm.contains("src"s)) {
-    throw std::runtime_error("Source files have not been specified"s);
-  }
 
-  if (!vm.contains("dst"s)) {
-    throw std::runtime_error("Destination file path is not specified"s);
-  }
 
   return std::nullopt;
 }

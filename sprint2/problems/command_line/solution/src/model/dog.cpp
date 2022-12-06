@@ -52,6 +52,7 @@ void Dog::SetDir(const std::string& dir) {
     m_speed = {-m_default_speed, 0.0};
   } else if (dir == "") {
     m_speed = {0.0, 0.0};
+    return;
   } else {
     throw std::invalid_argument("Argumen\'"s + dir + "\' must be 'U', 'R', 'D', 'L' or \"\"."s);
   }

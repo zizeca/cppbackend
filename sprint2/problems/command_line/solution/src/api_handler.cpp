@@ -26,7 +26,7 @@ StringResponse ApiHandler::Response() {
     } else if (m_target == "/api/v1/game/player/action") {
       return PostAction();
     } else if (m_target == "/api/v1/game/tick") {
-      return PostTick();
+      // return PostTick();
     } else {
       return MakeJsonResponse(http::status::bad_request, {{"code", "badRequest"}, {"message", "Bad request"}});
     }
