@@ -5,7 +5,7 @@
 #include "logger.h"
 
 Application::Application(boost::asio::io_context &ioc, std::filesystem::path config, std::filesystem::path dir_to_content)
-    : m_ioc(ioc), dir_to_content_(dir_to_content), strand(boost::asio::make_strand(ioc)), m_is_manual_call_of_tick(true), m_is_random_dog_spawn(false) {
+    : m_ioc(ioc), dir_to_content_(dir_to_content), strand(boost::asio::make_strand(ioc)) {
   if (!(std::filesystem::exists(config) && std::filesystem::exists(dir_to_content_))) {
     throw std::logic_error("Wrong path");  //? maybe need more output information
   }
@@ -17,21 +17,8 @@ Application::~Application() {
   // close resource
 }
 
-void Application::SetManualCallOfTick(bool is_manual){
-  m_is_manual_call_of_tick = is_manual;
+void Application::SetTickPeriod(int millisecond) {
 }
-
-bool Application::IsManualCallOfTick() const {
-  return m_is_manual_call_of_tick;
-}
-
-void Application::SetRandomDogSpawn(bool is_random) {
-  m_is_random_dog_spawn = is_random;
-}
-bool Application::ISRandomDogSpawn() const {
-  return m_is_random_dog_spawn;
-}
-
 
 const std::filesystem::path &Application::GetContentDir() const noexcept {
   return dir_to_content_;
@@ -54,11 +41,6 @@ model::Player &Application::JoinGame(model::Map::Id id, const std::string &user_
 
   auto &player = m_player_list.CreatePlayer(user_name);
   player.SetSession(sess);
-  
-  if(m_is_random_dog_spawn){
-    player.GetDog()->SetPosition(sess->GetMap().GetRandPoint());
-  }
-
   sess->AddDog(player.GetDog());
 
   return player;

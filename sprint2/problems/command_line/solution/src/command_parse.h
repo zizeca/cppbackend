@@ -1,16 +1,18 @@
 #ifndef __COMMAND_PARSE_H__
 #define __COMMAND_PARSE_H__
 
+
 #include <boost/program_options.hpp>
+#include <fstream>
+#include <iostream>
 #include <optional>
+#include <vector>
 
 using namespace std::literals;
 
 struct Args {
-  unsigned int period = 0;
-  std::string config_file;
-  std::string www_root;
-  bool random = false;
+  std::vector<std::string> source;
+  std::string destination;
 };
 
 [[nodiscard]] std::optional<Args> ParseCommandLine(int argc, const char* const argv[]) {
@@ -18,12 +20,10 @@ struct Args {
 
   po::options_description desc{"All options"s};
   Args args;
-  desc.add_options()                                                                                            //
-      ("help,h", "produce help message")                                                                        //
-      ("tick-period,t", po::value<unsigned int>(&args.period)->value_name("milliseconds"), "set tick period")            //
-      ("config-file,c", po::value<std::string>(&args.config_file)->value_name("file"), "set config file path")  //
-      ("www-root,w", po::value<std::string>(&args.www_root)->value_name("dir"), "set static files root")        //
-      ("randomize-spawn-points", po::value<bool>(&args.random), "spawn dogs at random positions");
+  desc.add_options()           //
+      ("help,h", "Show help")  //
+      ("tick-period,t", "Tick time for update state")  //
+      ("config-file", "Path to configuration file");
 
   po::variables_map vm;
   po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -34,15 +34,17 @@ struct Args {
     return std::nullopt;
   }
 
-  if (!vm.contains("config-file"s)) {
-    throw std::runtime_error("Config file is not specified"s);
+  if (!vm.contains("src"s)) {
+    throw std::runtime_error("Source files have not been specified"s);
   }
 
-  if (!vm.contains("www-root"s)) {
-    throw std::runtime_error("WWW Root directory is not specified"s);
+  if (!vm.contains("dst"s)) {
+    throw std::runtime_error("Destination file path is not specified"s);
   }
 
-  return args;
+  return std::nullopt;
 }
 
-#endif  // __COMMAND_PARSE_H__
+
+
+#endif // __COMMAND_PARSE_H__
