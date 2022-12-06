@@ -9,8 +9,8 @@
 
 #include "application.h"
 #include "json_loader.h"
-#include "request_handler.h" // bad order  need upper then logger
-#include "logger.h" // bad order  need under request_handler
+#include "request_handler.h"  // bad order  need upper then logger
+#include "logger.h"           // bad order  need under request_handler
 #include "ticker.h"
 #include "command_parse.h"
 
@@ -35,22 +35,40 @@ void RunWorkers(unsigned n, const Fn& fn) {
 }  // namespace
 
 int main(int argc, const char* argv[]) {
-  if (argc != 3) {
-    std::cerr << "Usage: game_server <game-config-json> <dir-to-content>"sv << std::endl;
+  if (argc < 3) {
+    std::cerr << "write --help for more info"sv << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  Args arg;
+
+  try {
+    if (auto args = ParseCommandLine(argc, argv)) {
+      arg = *args;
+    } else {
+      return EXIT_FAILURE;
+    }
+  } catch (const std::exception& e) {
+    std::cout << e.what() << std::endl;
     return EXIT_FAILURE;
   }
 
   // initial logger
   Logger::Init();
-
   try {
     // 2. Инициализируем io_context
     const unsigned num_threads = std::thread::hardware_concurrency();
     net::io_context ioc(num_threads);
 
-    Application app(ioc, argv[1], argv[2]);
+    // Application app(ioc, argv[1], argv[2]);
+    Application app(ioc, arg.config, arg.www_root);
 
-    std::make_shared<util::Ticker>(app.strand, std::chrono::milliseconds(100), std::bind(&Application::Update, &app, std::placeholders::_1))->Start();
+    if (arg.period) {
+      std::make_shared<util::Ticker>(app.strand, std::chrono::milliseconds(100), std::bind(&Application::Update, &app, std::placeholders::_1))->Start();
+      app.SetManualTicker(false);
+    }
+
+    app.SetRandomSpawn(arg.random);
 
     // signal handler
     net::signal_set signals(ioc, SIGINT, SIGTERM);

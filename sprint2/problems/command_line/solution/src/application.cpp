@@ -10,7 +10,7 @@ Application::Application(boost::asio::io_context &ioc, std::filesystem::path con
       strand(boost::asio::make_strand(ioc)),
       m_manual_ticker(true) {
   if (!(std::filesystem::exists(config) && std::filesystem::exists(dir_to_content_))) {
-    throw std::logic_error("Wrong path");  //? maybe need more output information
+    throw std::logic_error("Wrong path config="s + config.string() + " content="s + dir_to_content.string());  //? maybe need more output information
   }
   m_game = json_loader::LoadGame(config);
 }
@@ -27,6 +27,11 @@ void Application::SetManualTicker(bool enable) {
 bool Application::IsManualTicker() const {
   return m_manual_ticker;
 }
+
+void Application::SetRandomSpawn(bool enable){
+  // todo
+}
+
 
 const std::filesystem::path &Application::GetContentDir() const noexcept {
   return dir_to_content_;

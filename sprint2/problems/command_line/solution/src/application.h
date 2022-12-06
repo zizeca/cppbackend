@@ -30,6 +30,8 @@ class Application {
   void SetManualTicker(bool enable = true);
   bool IsManualTicker() const;
 
+  void SetRandomSpawn(bool enable = true);
+
   const std::filesystem::path& GetContentDir() const noexcept;
 
   const model::Map* FindMap(const model::Map::Id& id) const noexcept;
