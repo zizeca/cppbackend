@@ -3,11 +3,11 @@
 
 #include <boost/asio.hpp>
 #include <boost/asio/io_context.hpp>
+#include <chrono>
 #include <filesystem>
 #include <optional>
 #include <string>
 #include <string_view>
-#include <chrono>
 
 using namespace std::string_view_literals;
 using namespace std::string_literals;
@@ -27,7 +27,11 @@ class Application {
   Application(boost::asio::io_context& ioc, std::filesystem::path config, std::filesystem::path dir_to_content);
   ~Application();
 
-  void SetTickPeriod(int millisecond);
+  void SetManualCallOfTick(bool is_manual = true);
+  bool IsManualCallOfTick() const;
+
+  void SetRandomDogSpawn(bool is_random = true);
+  bool ISRandomDogSpawn() const;
 
   const std::filesystem::path& GetContentDir() const noexcept;
 
@@ -45,12 +49,13 @@ class Application {
 
   boost::asio::strand<boost::asio::io_context::executor_type> strand;
 
-
  private:
   boost::asio::io_context& m_ioc;
   const std::filesystem::path dir_to_content_;
   model::Game m_game;
   model::PlayerList m_player_list;
+  bool m_is_manual_call_of_tick;
+  bool m_is_random_dog_spawn;
 };
 
 #endif  // __APPLICATION_H__
