@@ -63,10 +63,10 @@ void GameSession::Update(const double& delta) {
     // std::abort();
     assert(ver != std::nullopt || hor != std::nullopt);
 
-    auto up = ver ? (static_cast<double>(std::min(ver->GetStart().y, ver->GetEnd().y)) - 0.4) : (static_cast<double>(hor->GetStart().y) - 0.4);
-    auto lf = hor ? (static_cast<double>(std::min(hor->GetStart().x, hor->GetEnd().x)) - 0.4) : (static_cast<double>(ver->GetStart().x) - 0.4);
-    auto dw = ver ? (static_cast<double>(std::max(ver->GetStart().y, ver->GetEnd().y)) + 0.4) : (static_cast<double>(hor->GetEnd().y) + 0.4);
-    auto rg = hor ? (static_cast<double>(std::max(hor->GetStart().x, hor->GetEnd().x)) + 0.4) : (static_cast<double>(ver->GetEnd().x) + 0.4);
+    auto up = ver ? (static_cast<double>(ver->GetStart().y) - 0.4) : (static_cast<double>(hor->GetStart().y) - 0.4);
+    auto lf = hor ? (static_cast<double>(hor->GetStart().x) - 0.4) : (static_cast<double>(ver->GetStart().x) - 0.4);
+    auto dw = ver ? (static_cast<double>(ver->GetEnd().y) + 0.4) : (static_cast<double>(hor->GetEnd().y) + 0.4);
+    auto rg = hor ? (static_cast<double>(hor->GetEnd().x) + 0.4) : (static_cast<double>(ver->GetEnd().x) + 0.4);
 
     if (posNew.y < up) {
       posNew.y = up;
