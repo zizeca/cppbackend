@@ -206,16 +206,16 @@ StringResponse ApiHandler::PostTick() {
   }
 
   boost::json::object obj;
-  double sec;
+  int64_t ms;
   try {
     boost::json::value jv = boost::json::parse(m_req.body());
-    sec = jv.as_object().at("timeDelta").as_int64() / 1000.0;
+    ms = jv.as_object().at("timeDelta").as_int64();
   } catch (const std::exception &e) {
     return MakeJsonResponse(http::status::bad_request, JsAnswer("invalidArgument", "Failed to parse tick request JSON "s + e.what()), CacheControl::NO_CACHE);
   }
 
   try {
-    m_app.Update(sec);
+    m_app.Update(std::chrono::milliseconds(ms));
   } catch (const std::exception &e) {
     Logger::LogExit(e);
     throw;

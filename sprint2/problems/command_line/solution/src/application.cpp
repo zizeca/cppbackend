@@ -1,5 +1,7 @@
 #include "application.h"
 
+#include <cassert>
+#include <chrono>
 #include "logger.h"
 
 Application::Application(boost::asio::io_context &ioc, std::filesystem::path config, std::filesystem::path dir_to_content)
@@ -52,9 +54,11 @@ const model::PlayerList::Container &Application::GetPlayers() const noexcept {
   return m_player_list.GetContainer();
 }
 
-void Application::Update(const double &delta) {
-  // std::abort();
+void Application::Update(std::chrono::milliseconds ms) {
+  assert(ms.count() < 30000ul); // fail if more than 30s
+  
+  double delta = std::chrono::duration<double>(ms).count();
+  // std::cout << "Call update with delta " << ms << "ms in " << delta << std::endl;
   m_game.Update(delta);
-
   // Logger::LogDebug("update", "__App update__ "s + std::to_string(delta));
 }

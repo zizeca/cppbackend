@@ -7,6 +7,7 @@
 #include <optional>
 #include <string>
 #include <string_view>
+#include <chrono>
 
 using namespace std::string_view_literals;
 using namespace std::string_literals;
@@ -40,7 +41,7 @@ class Application {
 
   const model::PlayerList::Container& GetPlayers() const noexcept;
 
-  void Update(const double& delta);
+  void Update(std::chrono::milliseconds ms);
 
   boost::asio::strand<boost::asio::io_context::executor_type> strand;
 

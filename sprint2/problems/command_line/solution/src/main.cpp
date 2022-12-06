@@ -29,9 +29,6 @@ void RunWorkers(unsigned n, const Fn& fn) {
   fn();
 }
 
-void TestTick(std::chrono::milliseconds ms) {
-  std::cout << "tick " << ms.count() << std::endl;
-}
 
 }  // namespace
 
@@ -52,8 +49,7 @@ int main(int argc, const char* argv[]) {
 
     Application app(ioc, argv[1], argv[2]);
 
-    std::shared_ptr<util::Ticker> ticker = std::make_shared<util::Ticker>(app.strand,std::chrono::milliseconds(2000), ::TestTick );
-    ticker->Start();
+    std::make_shared<util::Ticker>(app.strand,std::chrono::milliseconds(100), std::bind(&Application::Update,&app,std::placeholders::_1))->Start();
 
     // signal handler
     net::signal_set signals(ioc, SIGINT, SIGTERM);
