@@ -15,8 +15,6 @@ class Game {
 
   void AddMap(Map map);
 
-  // void AddGameSession(GameSession session);
-
   const Maps& GetMaps() const noexcept { return maps_; }
 
   const Map* FindMap(const Map::Id& id) const noexcept {
