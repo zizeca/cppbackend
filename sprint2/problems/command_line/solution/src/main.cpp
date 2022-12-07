@@ -35,10 +35,10 @@ void RunWorkers(unsigned n, const Fn& fn) {
 }  // namespace
 
 int main(int argc, const char* argv[]) {
-  if (argc < 3) {
-    std::cerr << "write --help for more info"sv << std::endl;
-    return EXIT_FAILURE;
-  }
+  // if (argc < 3) {
+  //   std::cerr << "write --help for more info"sv << std::endl;
+  //   return EXIT_FAILURE;
+  // }
 
   Args arg;
 
