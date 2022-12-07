@@ -63,26 +63,22 @@ void GameSession::Update(const double& delta) {
     // std::abort();
     assert(ver != std::nullopt || hor != std::nullopt);
 
-    auto up = ver ? (static_cast<double>(ver->GetStart().y) - 0.4) : (static_cast<double>(hor->GetStart().y) - 0.4);
-    auto lf = hor ? (static_cast<double>(hor->GetStart().x) - 0.4) : (static_cast<double>(ver->GetStart().x) - 0.4);
-    auto dw = ver ? (static_cast<double>(ver->GetEnd().y) + 0.4) : (static_cast<double>(hor->GetEnd().y) + 0.4);
-    auto rg = hor ? (static_cast<double>(hor->GetEnd().x) + 0.4) : (static_cast<double>(ver->GetEnd().x) + 0.4);
+    auto up = [&ver, &hor](){ return ver ? (static_cast<double>(std::min(ver->GetStart().y, ver->GetEnd().y)) - 0.4) : (static_cast<double>(hor->GetStart().y) - 0.4);};
+    auto lf = [&ver, &hor](){ return hor ? (static_cast<double>(std::min(hor->GetStart().x, hor->GetEnd().x)) - 0.4) : (static_cast<double>(ver->GetStart().x) - 0.4);};
+    auto dw = [&ver, &hor](){ return ver ? (static_cast<double>(std::max(ver->GetEnd().y, ver->GetStart().y)) + 0.4) : (static_cast<double>(hor->GetEnd().y) + 0.4);};
+    auto rg = [&ver, &hor](){ return hor ? (static_cast<double>(std::max(hor->GetEnd().x, hor->GetStart().x)) + 0.4) : (static_cast<double>(ver->GetEnd().x) + 0.4);};
 
-    if (posNew.y < up) {
-      posNew.y = up;
-      
+    if (posNew.y < up()) {
+      posNew.y = up();
       dog->SetSpeed({0.0,0.0});
-    } else if (posNew.y > dw) {
-      posNew.y = dw;
-      //dog->SetDir("");
+    } else if (posNew.y > dw()) {
+      posNew.y = dw();
       dog->SetSpeed({0.0,0.0});
-    } else if (posNew.x < lf) {
-      posNew.x = lf;
-      //dog->SetDir("");
+    } else if (posNew.x < lf()) {
+      posNew.x = lf();
       dog->SetSpeed({0.0,0.0});
-    } else if (posNew.x > rg) {
-      posNew.x = rg;
-      //dog->SetDir("");
+    } else if (posNew.x > rg()) {
+      posNew.x = rg();
       dog->SetSpeed({0.0,0.0});
     }
 

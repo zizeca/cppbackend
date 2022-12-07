@@ -84,9 +84,9 @@ bool Road::Contains(const Point2d& point) const {
   p.y = (int)(point.y + 0.5);
 
   if (IsHorizontal()) {
-    return p.y == start_.y && p.x >= start_.x && p.x <= end_.x;
+    return p.y == start_.y && p.x >= std::min(start_.x, end_.x) && p.x <= std::max(start_.x, end_.x);
   } else {
-    return p.x == start_.x && p.y >= start_.y && p.y <= end_.y;
+    return p.x == start_.x && p.y >= std::min(start_.y, end_.y) && p.y <= std::max(start_.y, end_.y);
   }
 }
 
