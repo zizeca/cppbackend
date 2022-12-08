@@ -55,7 +55,6 @@ find_package(Threads REQUIRED)
 
 add_executable(${EXECUTE} ${SRC} ${HEADER})
 target_include_directories(${EXECUTE} PRIVATE CONAN_PKG::boost)
-#target_compile_options(${EXECUTE} PRIVATE -fsanitize=address)
 target_link_libraries(${EXECUTE} PRIVATE Threads::Threads CONAN_PKG::boost)
 add_subdirectory(${SRCDIR}/http_server)
 add_subdirectory(${SRCDIR}/model)

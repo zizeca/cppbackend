@@ -30,15 +30,32 @@ void GameSession::AddDog(std::shared_ptr<Dog> dog) {
 }
 
 void GameSession::Update(const double& delta) {
+  // std::cout << "Update " << delta << std::endl;
   assert(m_dogs.size() != 0);
-  for (auto it = m_dogs.begin(); it != m_dogs.end(); ++it) {
+  for (auto it = m_dogs.begin(); it != m_dogs.end(); /* iteration below */) {
+    // if dog not more active, or owner not active any more
 
+    // if (it->expired()) {
+    //   it = m_dogs.erase(it);
+    //   continue;
+    // }
+
+    // auto dog = it->lock();
     auto dog = *it;
     assert(dog != nullptr);
     auto dir = dog->GetDir();
 
+//    std::cout << "dog dir " << dog->GetDir() << " id" << dog->GetId() << " dir" << dir << std::endl;
+
+    // if (dir == "") {
+    //   dog->SetSpeed({0.0, 0.0});
+    //   return;
+    // }
+    // // std::abort();
     auto pos = dog->GetPosition();
+    //std::cout << "get pos " << pos.x << " " << pos.y << std::endl;
     auto speed = dog->GetSpeed();
+    //std::cout << "speed " << speed.x << " " << speed.y << std::endl;
     auto posNew = pos + (speed * delta);
 
     auto ver = m_map.GetRoadVerByPos(pos);
@@ -65,7 +82,11 @@ void GameSession::Update(const double& delta) {
       dog->SetSpeed({0.0,0.0});
     }
 
+    // Logger::LogDebug("dog pos ("s + std::to_string(posNew.x) + ", "s + std::to_string(posNew.y) + ")"s, "game session");
+    // std::cout << "dog pos ("s << std::to_string(posNew.x) << ", " << std::to_string(posNew.y)
+    //           << ") speed ("s << dog->GetSpeed().x << ", " << dog->GetSpeed().y << ")" << std::endl;
     dog->SetPosition(posNew);
+    // dog->SetDir(dir);
 
     ++it;
   }
