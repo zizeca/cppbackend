@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <optional>
 
 #include "game_session.h"
 
@@ -19,11 +20,11 @@ class Game {
 
   const Maps& GetMaps() const noexcept { return maps_; }
 
-  const Map* FindMap(const Map::Id& id) const noexcept {
+  std::optional<std::reference_wrapper<const Map>> FindMap(const Map::Id& id) const noexcept {
     if (auto it = map_id_to_index_.find(id); it != map_id_to_index_.end()) {
-      return &maps_.at(it->second);
+      return maps_.at(it->second);
     }
-    return nullptr;
+    return std::nullopt;
   }
 
   void SetDefaultSpeed(double speed) { m_default_speed = speed; }

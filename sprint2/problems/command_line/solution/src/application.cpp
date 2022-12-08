@@ -37,7 +37,7 @@ const std::filesystem::path &Application::GetContentDir() const noexcept {
   return dir_to_content_;
 }
 
-const model::Map *Application::FindMap(const model::Map::Id &id) const noexcept {
+std::optional<std::reference_wrapper<const model::Map>> Application::FindMap(const model::Map::Id &id) const noexcept {
   return m_game.FindMap(id);
 }
 
@@ -68,7 +68,7 @@ const model::PlayerList::Container &Application::GetPlayers() const noexcept {
 }
 
 void Application::Update(std::chrono::milliseconds ms) {
-  if(ms.count() < 30000ul){   // fail if more than 30s
+  if(ms.count() > 30000ul){   // fail if more than 30s
     throw std::runtime_error("Time for aplication update state is very long");
   }
 

@@ -34,7 +34,7 @@ class Application {
 
   const std::filesystem::path& GetContentDir() const noexcept;
 
-  const model::Map* FindMap(const model::Map::Id& id) const noexcept;
+std::optional<std::reference_wrapper<const model::Map>>  FindMap(const model::Map::Id& id) const noexcept;
 
   const std::vector<model::Map>& GetMaps() const noexcept;
 

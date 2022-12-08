@@ -92,7 +92,7 @@ StringResponse ApiHandler::PlayerJoinRequest() {
   }
 
   // check map id exist
-  if (auto map = m_app.FindMap(model::Map::Id(map_id)); map == nullptr) {
+  if (auto map = m_app.FindMap(model::Map::Id(map_id)); map == std::nullopt) {
     return MakeJsonResponse(http::status::not_found, JsAnswer("mapNotFound", "Map not found"), CacheControl::NO_CACHE);
   }
 

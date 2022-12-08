@@ -25,7 +25,7 @@ void Game::AddMap(Map map) {
 }
 
 std::shared_ptr<GameSession> Game::GetSession(const model::Map::Id& id) {
-  const Map* map = FindMap(id);
+  auto map = FindMap(id);
   if (!map) {
     throw std::invalid_argument("Map"s + *id + "id not exist"s);
   }
