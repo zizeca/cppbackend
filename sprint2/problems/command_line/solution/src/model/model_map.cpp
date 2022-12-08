@@ -17,7 +17,7 @@ void Map::AddOffice(Office office) {
   Office& o = offices_.emplace_back(std::move(office));
   try {
     warehouse_id_to_index_.emplace(o.GetId(), index);
-  } catch (...) {
+  } catch (const std::exception&) {
     // Удаляем офис из вектора, если не удалось вставить в unordered_map
     offices_.pop_back();
     throw;
@@ -63,8 +63,6 @@ Point2d Map::GetRandPoint() const {
 
   ret.x = ((int)(ret.x * 100 + .5) / 100.0);  // round two digit
   ret.y = ((int)(ret.y * 100 + .5) / 100.0);  // round two digit
-
-  // Logger::LogDebug("point ("s + std::to_string(ret.x) + ", "s + std::to_string(ret.y) + ")"s, "get random width"s);
 
   return ret;
 }

@@ -16,8 +16,6 @@ class Game {
 
   void AddMap(Map map);
 
-  // void AddGameSession(GameSession session);
-
   const Maps& GetMaps() const noexcept { return maps_; }
 
   std::optional<std::reference_wrapper<const Map>> FindMap(const Map::Id& id) const noexcept {

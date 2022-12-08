@@ -14,7 +14,6 @@ const Map& GameSession::GetMap() const noexcept {
 
 std::shared_ptr<Dog> GameSession::GetDog(const Token& token) {
   for (auto& i : m_dogs) {
-    // auto ptr = i.lock();
     auto ptr = i;
     if (ptr->GetToken() == token) {
       return ptr;
@@ -30,65 +29,41 @@ void GameSession::AddDog(std::shared_ptr<Dog> dog) {
 }
 
 void GameSession::Update(const double& delta) {
-  // std::cout << "Update " << delta << std::endl;
-  assert(m_dogs.size() != 0);
-  for (auto it = m_dogs.begin(); it != m_dogs.end(); /* iteration below */) {
-    // if dog not more active, or owner not active any more
-
-    // if (it->expired()) {
-    //   it = m_dogs.erase(it);
-    //   continue;
-    // }
-
-    // auto dog = it->lock();
+  for (auto it = m_dogs.begin(); it != m_dogs.end(); ++it) {
     auto dog = *it;
     assert(dog != nullptr);
     auto dir = dog->GetDir();
 
-//    std::cout << "dog dir " << dog->GetDir() << " id" << dog->GetId() << " dir" << dir << std::endl;
-
-    // if (dir == "") {
-    //   dog->SetSpeed({0.0, 0.0});
-    //   return;
-    // }
-    // // std::abort();
     auto pos = dog->GetPosition();
-    //std::cout << "get pos " << pos.x << " " << pos.y << std::endl;
     auto speed = dog->GetSpeed();
-    //std::cout << "speed " << speed.x << " " << speed.y << std::endl;
+
     auto posNew = pos + (speed * delta);
 
     auto ver = m_map.GetRoadVerByPos(pos);
     auto hor = m_map.GetRoadHorByPos(pos);
-    // std::abort();
+
     assert(ver != std::nullopt || hor != std::nullopt);
 
-    auto up = [&ver, &hor](){ return ver ? (static_cast<double>(std::min(ver->GetStart().y, ver->GetEnd().y)) - 0.4) : (static_cast<double>(hor->GetStart().y) - 0.4);};
-    auto lf = [&ver, &hor](){ return hor ? (static_cast<double>(std::min(hor->GetStart().x, hor->GetEnd().x)) - 0.4) : (static_cast<double>(ver->GetStart().x) - 0.4);};
-    auto dw = [&ver, &hor](){ return ver ? (static_cast<double>(std::max(ver->GetEnd().y, ver->GetStart().y)) + 0.4) : (static_cast<double>(hor->GetEnd().y) + 0.4);};
-    auto rg = [&ver, &hor](){ return hor ? (static_cast<double>(std::max(hor->GetEnd().x, hor->GetStart().x)) + 0.4) : (static_cast<double>(ver->GetEnd().x) + 0.4);};
+    auto up = [&ver, &hor]() { return ver ? (static_cast<double>(std::min(ver->GetStart().y, ver->GetEnd().y)) - 0.4) : (static_cast<double>(hor->GetStart().y) - 0.4); };
+    auto lf = [&ver, &hor]() { return hor ? (static_cast<double>(std::min(hor->GetStart().x, hor->GetEnd().x)) - 0.4) : (static_cast<double>(ver->GetStart().x) - 0.4); };
+    auto dw = [&ver, &hor]() { return ver ? (static_cast<double>(std::max(ver->GetEnd().y, ver->GetStart().y)) + 0.4) : (static_cast<double>(hor->GetEnd().y) + 0.4); };
+    auto rg = [&ver, &hor]() { return hor ? (static_cast<double>(std::max(hor->GetEnd().x, hor->GetStart().x)) + 0.4) : (static_cast<double>(ver->GetEnd().x) + 0.4); };
 
     if (posNew.y < up()) {
       posNew.y = up();
-      dog->SetSpeed({0.0,0.0});
+      dog->SetSpeed({0.0, 0.0});
     } else if (posNew.y > dw()) {
       posNew.y = dw();
-      dog->SetSpeed({0.0,0.0});
+      dog->SetSpeed({0.0, 0.0});
     } else if (posNew.x < lf()) {
       posNew.x = lf();
-      dog->SetSpeed({0.0,0.0});
+      dog->SetSpeed({0.0, 0.0});
     } else if (posNew.x > rg()) {
       posNew.x = rg();
-      dog->SetSpeed({0.0,0.0});
+      dog->SetSpeed({0.0, 0.0});
     }
 
-    // Logger::LogDebug("dog pos ("s + std::to_string(posNew.x) + ", "s + std::to_string(posNew.y) + ")"s, "game session");
-    // std::cout << "dog pos ("s << std::to_string(posNew.x) << ", " << std::to_string(posNew.y)
-    //           << ") speed ("s << dog->GetSpeed().x << ", " << dog->GetSpeed().y << ")" << std::endl;
     dog->SetPosition(posNew);
-    // dog->SetDir(dir);
-
-    ++it;
   }
 }
 
