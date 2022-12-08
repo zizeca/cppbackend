@@ -15,31 +15,12 @@ const std::string& Player::GetName() const noexcept {
   return m_name;
 }
 
-void Player::SetName(const std::string& name) {
-  if (name.empty())
-    throw std::invalid_argument("name is empty");
-
-  if (!m_name.empty())
-    throw std::logic_error("Name already preset");
-
-  m_name = name;
-}
-
 std::shared_ptr<Dog> Player::GetDog() {
   return m_dog;
 }
 
 const std::shared_ptr<Dog> Player::GetDog() const {
   return m_dog;
-}
-
-void Player::SetDog(std::shared_ptr<Dog> dog) {
-  if (!dog)
-    throw std::invalid_argument("don is null");
-
-  if (m_dog)
-    throw std::logic_error("player already has dog");
-  m_dog = dog;
 }
 
 const Token& Player::GetToken() const {

@@ -17,11 +17,10 @@ class Player {
   int GetId() const noexcept;
 
   const std::string& GetName() const noexcept;
-  void SetName(const std::string& name);
 
   std::shared_ptr<Dog> GetDog();
   const std::shared_ptr<Dog> GetDog() const ;
-  void SetDog(std::shared_ptr<Dog> dog);
+
 
   const Token& GetToken() const;
 
