@@ -1,5 +1,7 @@
 #include "api_handler.h"
 
+#include <cassert>
+
 #include "content_type.h"
 #include "logger.h"
 
@@ -113,11 +115,13 @@ StringResponse ApiHandler::PlayerListRequest() {
 
   return ExecuteAuthorized([this](model::Player &p) {
     boost::json::object obj;
-
+    assert(p.GetSession());
     for (auto it = m_app.GetPlayers().cbegin(); it != m_app.GetPlayers().cend(); ++it) {
       if (it->second.GetSession() == p.GetSession())
         obj[std::to_string(it->second.GetId())] = {{"name", it->second.GetName()}};
     }
+
+    assert(!obj.empty());
 
     return MakeJsonResponse(http::status::ok,
                             obj,
@@ -135,8 +139,11 @@ StringResponse ApiHandler::GetGameState() {
   return ExecuteAuthorized([this](model::Player &p) {
     boost::json::object obj;
 
+    assert(m_app.GetPlayers().size() != 0);
+
     for (auto it = m_app.GetPlayers().cbegin(); it != m_app.GetPlayers().cend(); ++it) {
       if (it->second.GetSession() == p.GetSession()) {
+        assert(it->second.GetDog() != nullptr);
         obj[std::to_string(it->second.GetId())] = {
             {"pos", {it->second.GetDog()->GetPosition().x, it->second.GetDog()->GetPosition().y}},
             {"speed", {it->second.GetDog()->GetSpeed().x, it->second.GetDog()->GetSpeed().y}},
@@ -144,6 +151,9 @@ StringResponse ApiHandler::GetGameState() {
       }
     }
 
+    /// std::cout << json::serialize(obj) << std::endl;
+
+    assert(!obj.empty());
     return MakeJsonResponse(http::status::ok,
                             {{"players", obj}},
                             CacheControl::NO_CACHE); });
