@@ -92,24 +92,22 @@ class LogRequestHandler {
 
   template <typename Body, typename Allocator, typename Send>
   void operator()(http::request<Body, http::basic_fields<Allocator>>&& req, Send&& send) {
-    std::chrono::high_resolution_clock timer;
-    auto start = timer.now();
+
     LogRequest(req);
-    
-    std::string content_type = "null";
-    int code_result;
+    decorated_(std::move(req), [s = std::move(send)](auto&& response) {
+      std::chrono::high_resolution_clock timer;
+      auto start = timer.now();
 
-    decorated_(std::move(req), [s = std::move(send), &content_type, &code_result](auto&& response) {
-      
-      code_result = response.result_int();
-      content_type = static_cast<std::string>(response.at(http::field::content_type));
+      const int code_result = response.result_int();
+      const std::string content_type = static_cast<std::string>(response.at(http::field::content_type));
       s(response);
-    });
-    
-    auto stop = timer.now();
-    auto deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count();
 
-    LogResponse(deltaTime, code_result, content_type);
+      auto stop = timer.now();
+      auto deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count();
+
+      LogRequestHandler::LogResponse(deltaTime, code_result, content_type);
+    });
+   
     return;
   }
 
