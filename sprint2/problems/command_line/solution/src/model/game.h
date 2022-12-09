@@ -33,6 +33,9 @@ class Game {
 
   void Update(const double& delta);
 
+  void SetRandomSpawn(const bool &enable = true);
+  const bool IsRandomSpawn() const;
+
  private:
   using MapIdHasher = util::TaggedHasher<Map::Id>;
   using MapIdToIndex = std::unordered_map<Map::Id, size_t, MapIdHasher>;
@@ -43,6 +46,8 @@ class Game {
   std::vector<std::shared_ptr<GameSession>> m_sess;
 
   double m_default_speed = 1.0;
+
+  bool m_random_dog_spawn;
 };
 
 }  // namespace model

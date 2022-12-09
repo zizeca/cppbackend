@@ -11,6 +11,8 @@ void Game::AddMap(Map map) {
     map.SetDogSpeed(GetDefaultSpeed());
   }
 
+  map.EnableRandomStartPoint(m_random_dog_spawn);
+
   const size_t index = maps_.size();
   if (auto [it, inserted] = map_id_to_index_.emplace(map.GetId(), index); !inserted) {
     throw std::invalid_argument("Map with id "s + *map.GetId() + " already exists"s);
@@ -47,5 +49,14 @@ void Game::Update(const double& delta) {
     i->Update(delta);
   }
 }
+
+void Game::SetRandomSpawn(const bool &enable){
+  m_random_dog_spawn = enable;
+}
+
+const bool Game::IsRandomSpawn() const{
+  return m_random_dog_spawn;
+}
+
 
 }  // namespace model

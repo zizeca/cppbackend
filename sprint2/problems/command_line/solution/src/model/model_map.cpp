@@ -109,4 +109,15 @@ std::optional<Road> Map::GetRoadHorByPos(const Point2d& pos) const {
   return *it;
 }
 
+Point2d Map::GetStartDogPoint() const {
+  if(m_random_spawn) {
+    return GetRandPoint();
+  }
+  return {0.0, 0.0};
+}
+
+void Map::EnableRandomStartPoint(const bool& enable) {
+  m_random_spawn = enable;
+}
+
 }  // namespace model

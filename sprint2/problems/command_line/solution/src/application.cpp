@@ -29,7 +29,7 @@ bool Application::IsManualTicker() const {
 }
 
 void Application::SetRandomSpawn(bool enable){
-  // todo
+  m_game.SetRandomSpawn(enable);
 }
 
 
