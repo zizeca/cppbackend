@@ -31,7 +31,7 @@ class RequestHandler : public std::enable_shared_from_this<RequestHandler> {
   RequestHandler& operator=(const RequestHandler&) = delete;
 
   template <typename Body, typename Allocator, typename Send>
-  void operator()(http::request<Body, http::basic_fields<Allocator>>&& req, Send&& send) {
+  void operator()(const boost::asio::ip::tcp::endpoint &endp, http::request<Body, http::basic_fields<Allocator>>&& req, Send&& send) {
     std::string target(req.target());
     if (target.starts_with("/api/")) {
 

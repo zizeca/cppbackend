@@ -1,6 +1,7 @@
 #ifndef __LOGGER_H__
 #define __LOGGER_H__
 
+#include <boost/asio/ip/tcp.hpp>
 #include <boost/beast/http.hpp>
 #include <boost/date_time.hpp>
 #include <boost/json.hpp>
@@ -50,7 +51,7 @@ class Logger final {
 template <class RequestHandler>
 class LogRequestHandler {
   template <typename Body, typename Allocator>
-  static void LogRequest(http::request<Body, http::basic_fields<Allocator>>& req) {
+  static void LogRequest(const boost::asio::ip::tcp::endpoint &endp ,http::request<Body, http::basic_fields<Allocator>>& req) {
     // message — строка request received
     // data — объект с полями:
     // ip — IP-адрес клиента (полученный через endpoint.address().to_string()),
@@ -60,7 +61,7 @@ class LogRequestHandler {
     host = host.substr(0, host.rfind(':'));
 
     boost::json::object obj{
-        {"ip", host},
+        {"ip", endp.address().to_string()},
         {"URI", req.target()},
         {"method", req.method_string()}};
     BOOST_LOG_TRIVIAL(info) << boost::log::add_value(additional_data, obj) << "request received"sv;
@@ -91,10 +92,10 @@ class LogRequestHandler {
   LogRequestHandler(RequestHandler& h) : decorated_(h) {}
 
   template <typename Body, typename Allocator, typename Send>
-  void operator()(http::request<Body, http::basic_fields<Allocator>>&& req, Send&& send) {
+  void operator()(const boost::asio::ip::tcp::endpoint &endp, http::request<Body, http::basic_fields<Allocator>>&& req, Send&& send) {
 
-    LogRequest(req);
-    decorated_(std::move(req), [s = std::move(send)](auto&& response) {
+    LogRequest( endp, req);
+    decorated_(endp, std::move(req), [s = std::move(send)](auto&& response) {
       std::chrono::high_resolution_clock timer;
       auto start = timer.now();
 

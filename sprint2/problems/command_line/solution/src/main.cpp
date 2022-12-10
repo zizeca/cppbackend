@@ -84,8 +84,8 @@ int main(int argc, const char* argv[]) {
     constexpr net::ip::port_type port = 8080;
 
     // run server listener
-    http_server::ServeHttp(ioc, {address, port}, [&loghandler](auto&& req, auto&& send) {
-      loghandler(std::forward<decltype(req)>(req), std::forward<decltype(send)>(send));
+    http_server::ServeHttp(ioc, {address, port}, [&loghandler](auto&& endp, auto&& req, auto&& send) {
+      loghandler(std::forward<decltype(endp)>(endp), std::forward<decltype(req)>(req), std::forward<decltype(send)>(send));
     });
 
     boost::json::value jv_port_address{{"port"s, 8080}, {"address"s, "0.0.0.0"s}};

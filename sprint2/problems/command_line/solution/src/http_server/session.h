@@ -46,6 +46,8 @@ class SessionBase {
   template <typename Body, typename Fields>
   void Write(http::response<Body, Fields>&& response);
 
+  tcp::endpoint GetEndpoint() const;
+
  protected:
   explicit SessionBase(tcp::socket&& socket);
   ~SessionBase() = default;
@@ -106,7 +108,7 @@ void Session<RequestHandler>::HandleRequest(HttpRequest&& request) {
   // Захватываем умный указатель на текущий объект Session в лямбде,
   // чтобы продлить время жизни сессии до вызова лямбды.
   // Используется generic-лямбда функция, способная принять response произвольного типа
-  request_handler_(std::move(request), [self = this->shared_from_this()](auto&& response) {
+  request_handler_(GetEndpoint(),  std::move(request), [self = this->shared_from_this()](auto&& response) {
       self->Write(std::move(response));
   });
 }
