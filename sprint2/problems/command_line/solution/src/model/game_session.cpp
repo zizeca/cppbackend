@@ -39,27 +39,46 @@ void GameSession::Update(const double& delta) {
 
     auto posNew = pos + (speed * delta);
 
-    auto ver = m_map.GetRoadVerByPos(pos);
-    auto hor = m_map.GetRoadHorByPos(pos);
+    double border_up = pos.y;
+    double border_down = pos.y;
+    double border_left = pos.x;
+    double border_right = pos.x;
 
-    assert(ver != std::nullopt || hor != std::nullopt);
+    bool check_if_contain = false;
+    for( auto road = m_map.GetRoads().cbegin(); road != m_map.GetRoads().cend(); ++road) {
+      if(road->Contains(pos)) {
+        check_if_contain = true; 
+        if(border_up > road->GetMinY()) {
+          border_up = road->GetMinY();
+        }
 
-    auto up = [&ver, &hor]() { return ver ? (static_cast<double>(std::min(ver->GetStart().y, ver->GetEnd().y)) - 0.4) : (static_cast<double>(hor->GetStart().y) - 0.4); };
-    auto lf = [&ver, &hor]() { return hor ? (static_cast<double>(std::min(hor->GetStart().x, hor->GetEnd().x)) - 0.4) : (static_cast<double>(ver->GetStart().x) - 0.4); };
-    auto dw = [&ver, &hor]() { return ver ? (static_cast<double>(std::max(ver->GetEnd().y, ver->GetStart().y)) + 0.4) : (static_cast<double>(hor->GetEnd().y) + 0.4); };
-    auto rg = [&ver, &hor]() { return hor ? (static_cast<double>(std::max(hor->GetEnd().x, hor->GetStart().x)) + 0.4) : (static_cast<double>(ver->GetEnd().x) + 0.4); };
+        if(border_down < road->GetMaxY()) {
+          border_down = road->GetMaxY();
+        }
 
-    if (posNew.y < up()) {
-      posNew.y = up();
+        if(border_left > road->GetMinX()) {
+          border_left = road->GetMinX();
+        }
+
+        if(border_right < road->GetMaxX()) {
+          border_right = road->GetMaxX();
+        }
+      }
+    }
+
+    assert(check_if_contain);
+
+    if (posNew.y < border_up) {
+      posNew.y = border_up;
       dog->SetSpeed({0.0, 0.0});
-    } else if (posNew.y > dw()) {
-      posNew.y = dw();
+    } else if (posNew.y > border_down) {
+      posNew.y = border_down;
       dog->SetSpeed({0.0, 0.0});
-    } else if (posNew.x < lf()) {
-      posNew.x = lf();
+    } else if (posNew.x < border_left) {
+      posNew.x = border_left;
       dog->SetSpeed({0.0, 0.0});
-    } else if (posNew.x > rg()) {
-      posNew.x = rg();
+    } else if (posNew.x > border_right) {
+      posNew.x = border_right;
       dog->SetSpeed({0.0, 0.0});
     }
 
