@@ -54,6 +54,6 @@ void Logger::Init() {
   boost::log::add_console_log(
       // std::cout,
       // boost::log::keywords::auto_flush = true,
-      std::cerr,
+      std::clog,
       boost::log::keywords::format = &LogFormatter);
 }
