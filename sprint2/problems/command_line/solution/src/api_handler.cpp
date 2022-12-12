@@ -47,7 +47,7 @@ StringResponse ApiHandler::MapRequest() {
       json::value v = {{"id", *i.GetId()}, {"name", i.GetName()}};
       arr.push_back(v);
     }
-    return MakeJsonResponse(http::status::ok, arr);
+    return MakeJsonResponse(http::status::ok, arr, CacheControl::NO_CACHE);
   }
 
   if (m_target.starts_with("/api/v1/maps/")) {
