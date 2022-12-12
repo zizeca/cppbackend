@@ -58,7 +58,7 @@ StringResponse ApiHandler::MapRequest() {
     std::string s = m_target.substr(("/api/v1/maps/"s).size());
     auto m = m_app.FindMap(model::Map::Id(s));
     if (m) {
-      return MakeJsonResponse(http::status::ok, json::value_from(*m));
+      return MakeJsonResponse(http::status::ok, json::value_from(*m), CacheControl::NO_CACHE);
     } else {
       return MakeJsonResponse(http::status::not_found, JsAnswer("mapNotFound", "Map not found"));
     }
