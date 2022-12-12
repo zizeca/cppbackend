@@ -67,8 +67,8 @@ int main(int argc, const char* argv[]) {
     const auto address = net::ip::make_address("0.0.0.0");
     constexpr net::ip::port_type port = 8080;
 
-    http_server::ServeHttp(ioc, {address, port}, [&loghandler](auto&& req, auto&& send) {
-      loghandler(std::forward<decltype(req)>(req), std::forward<decltype(send)>(send));
+    http_server::ServeHttp(ioc, {address, port}, [&loghandler](auto&& endp, auto&& req, auto&& send) {
+      loghandler(std::forward<decltype(endp)>(endp), std::forward<decltype(req)>(req), std::forward<decltype(send)>(send));
     });
     /**/
 
