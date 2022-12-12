@@ -52,7 +52,8 @@ void Logger::LogFormatter(boost::log::record_view const& rec, boost::log::format
 void Logger::Init() {
   boost::log::add_common_attributes();
   boost::log::add_console_log(
-      std::cout,
-      boost::log::keywords::auto_flush = true,
+      // std::cout,
+      // boost::log::keywords::auto_flush = true,
+      std::cerr,
       boost::log::keywords::format = &LogFormatter);
 }
