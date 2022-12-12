@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <optional>
 
 #include "game_session.h"
 
@@ -15,15 +16,13 @@ class Game {
 
   void AddMap(Map map);
 
-  // void AddGameSession(GameSession session);
-
   const Maps& GetMaps() const noexcept { return maps_; }
 
-  const Map* FindMap(const Map::Id& id) const noexcept {
+  std::optional<std::reference_wrapper<const Map>> FindMap(const Map::Id& id) const noexcept {
     if (auto it = map_id_to_index_.find(id); it != map_id_to_index_.end()) {
-      return &maps_.at(it->second);
+      return maps_.at(it->second);
     }
-    return nullptr;
+    return std::nullopt;
   }
 
   void SetDefaultSpeed(double speed) { m_default_speed = speed; }
@@ -33,6 +32,9 @@ class Game {
   std::shared_ptr<GameSession> GetSession(const model::Map::Id& id);
 
   void Update(const double& delta);
+
+  void SetRandomSpawn(const bool &enable = true);
+  const bool IsRandomSpawn() const;
 
  private:
   using MapIdHasher = util::TaggedHasher<Map::Id>;
@@ -44,6 +46,8 @@ class Game {
   std::vector<std::shared_ptr<GameSession>> m_sess;
 
   double m_default_speed = 1.0;
+
+  bool m_random_dog_spawn;
 };
 
 }  // namespace model

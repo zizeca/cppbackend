@@ -1,5 +1,7 @@
 #include "api_handler.h"
 
+#include <cassert>
+
 #include "content_type.h"
 #include "logger.h"
 
@@ -10,33 +12,27 @@ json::value JsAnswer(std::string code, std::string message) {
 }
 
 ApiHandler::ApiHandler(Application &app, const StringRequest &req) : m_app(app), m_req(req), m_target(req.target()) {
-  assert(m_target.starts_with("/api/"));
+  if (!m_target.starts_with("/api/")) {
+    throw std::invalid_argument("Request target for ApiHandler should starts with \"api\" but target =="s + m_target);
+  }
 }
 
 StringResponse ApiHandler::Response() {
-  try {
-    if (m_target.starts_with("/api/v1/maps")) {
-      return MapRequest();
-    } else if (m_target == "/api/v1/game/join") {
-      return PlayerJoinRequest();
-    } else if (m_target == "/api/v1/game/players") {
-      return PlayerListRequest();
-    } else if (m_target == "/api/v1/game/state") {
-      return GetGameState();
-    } else if (m_target == "/api/v1/game/player/action") {
-      return PostAction();
-    } else if (m_target == "/api/v1/game/tick" && m_app.IsManualTicker()) {
-      return PostTick();
-    } else {
-      return MakeJsonResponse(http::status::bad_request, {{"code", "badRequest"}, {"message", "Bad request"}});
-    }
-  } catch (const std::exception &e) {
-    // return MakeJsonResponse(http::status::internal_server_error, JsAnswer("exception", "Response except = \""s + e.what() + "\""));
-    Logger::LogExit(e);
-    throw;
+  if (m_target.starts_with("/api/v1/maps")) {
+    return MapRequest();
+  } else if (m_target == "/api/v1/game/join") {
+    return PlayerJoinRequest();
+  } else if (m_target == "/api/v1/game/players") {
+    return PlayerListRequest();
+  } else if (m_target == "/api/v1/game/state") {
+    return GetGameState();
+  } else if (m_target == "/api/v1/game/player/action") {
+    return PostAction();
+  } else if (m_target == "/api/v1/game/tick" && m_app.IsManualTicker()) {
+    return PostTick();
+  } else {
+    return MakeJsonResponse(http::status::bad_request, {{"code", "badRequest"}, {"message", "Bad request"}});
   }
-
-  return MakeJsonResponse(http::status::bad_request, {{"code", "badRequest"}, {"message", "Bad request"}});
 }
 
 StringResponse ApiHandler::MapRequest() {
@@ -92,7 +88,7 @@ StringResponse ApiHandler::PlayerJoinRequest() {
   }
 
   // check map id exist
-  if (auto map = m_app.FindMap(model::Map::Id(map_id)); map == nullptr) {
+  if (auto map = m_app.FindMap(model::Map::Id(map_id)); map == std::nullopt) {
     return MakeJsonResponse(http::status::not_found, JsAnswer("mapNotFound", "Map not found"), CacheControl::NO_CACHE);
   }
 
@@ -119,11 +115,13 @@ StringResponse ApiHandler::PlayerListRequest() {
 
   return ExecuteAuthorized([this](model::Player &p) {
     boost::json::object obj;
-
+    assert(p.GetSession());
     for (auto it = m_app.GetPlayers().cbegin(); it != m_app.GetPlayers().cend(); ++it) {
       if (it->second.GetSession() == p.GetSession())
         obj[std::to_string(it->second.GetId())] = {{"name", it->second.GetName()}};
     }
+
+    assert(!obj.empty());
 
     return MakeJsonResponse(http::status::ok,
                             obj,
@@ -138,18 +136,14 @@ StringResponse ApiHandler::GetGameState() {
                             "GET, HEAD"sv);
   }
 
-  // if (!m_req.count(http::field::content_type) || m_req.at(http::field::content_type) != "application/json"sv) {
-  //   return MakeJsonResponse(http::status::unauthorized,
-  //                           JsAnswer("invalidArgument", "Invalid content type"),
-  //                           CacheControl::NO_CACHE);
-  // }
-
-  // m_app.Update(m_app.tick);
   return ExecuteAuthorized([this](model::Player &p) {
     boost::json::object obj;
 
+    assert(m_app.GetPlayers().size() != 0);
+
     for (auto it = m_app.GetPlayers().cbegin(); it != m_app.GetPlayers().cend(); ++it) {
       if (it->second.GetSession() == p.GetSession()) {
+        assert(it->second.GetDog() != nullptr);
         obj[std::to_string(it->second.GetId())] = {
             {"pos", {it->second.GetDog()->GetPosition().x, it->second.GetDog()->GetPosition().y}},
             {"speed", {it->second.GetDog()->GetSpeed().x, it->second.GetDog()->GetSpeed().y}},
@@ -157,6 +151,9 @@ StringResponse ApiHandler::GetGameState() {
       }
     }
 
+    /// std::cout << json::serialize(obj) << std::endl;
+
+    assert(!obj.empty());
     return MakeJsonResponse(http::status::ok,
                             {{"players", obj}},
                             CacheControl::NO_CACHE); });
@@ -189,7 +186,7 @@ StringResponse ApiHandler::PostAction() {
       p.GetDog()->SetDir( static_cast<std::string>(jv.as_object().at("move").as_string()));
       // std::cout << "dog dir " << p.GetDog()->GetDir() << " id" << p.GetDog()->GetId() << std::endl;
 
-    } catch (...) {
+    } catch (const std::exception&) {
       return MakeJsonResponse(http::status::bad_request, JsAnswer("invalidArgument","Failed to parse action"),CacheControl::NO_CACHE );
     }
 
@@ -244,18 +241,18 @@ std::optional<model::Token> ApiHandler::TryExtractToken() {
     return std::nullopt;
   }
 
-  // to lower
-  std::transform(auth.begin(), auth.end(), auth.begin(), [](unsigned char c) { return std::tolower(c); });
-
   // check is hex simbols
-  if (auth.find_first_not_of("0123456789abcdef") != std::string::npos) {
+  if (!std::all_of(auth.begin(), auth.end(), ::isxdigit)) {
     return std::nullopt;
   }
 
   // check length token
-  if (auth.size() != 32) {
+  if (auth.size() != model::TOKEN_LENGHT) {
     return std::nullopt;
   }
+
+  // to lower
+  std::transform(auth.begin(), auth.end(), auth.begin(), [](unsigned char c) { return std::tolower(c); });
   return model::Token(auth);
 }
 

@@ -35,10 +35,6 @@ void RunWorkers(unsigned n, const Fn& fn) {
 }  // namespace
 
 int main(int argc, const char* argv[]) {
-  // if (argc < 3) {
-  //   std::cerr << "write --help for more info"sv << std::endl;
-  //   return EXIT_FAILURE;
-  // }
 
   Args arg;
 
@@ -49,7 +45,7 @@ int main(int argc, const char* argv[]) {
       return EXIT_FAILURE;
     }
   } catch (const std::exception& e) {
-    std::cout << e.what() << std::endl;
+    std::cout << "Parse arguments failure. " << e.what() << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -63,6 +59,7 @@ int main(int argc, const char* argv[]) {
     // Application app(ioc, argv[1], argv[2]);
     Application app(ioc, arg.config, arg.www_root);
 
+    // auto update
     if (arg.period) {
       std::make_shared<util::Ticker>(app.strand, std::chrono::milliseconds(100), std::bind(&Application::Update, &app, std::placeholders::_1))->Start();
       app.SetManualTicker(false);
@@ -87,8 +84,8 @@ int main(int argc, const char* argv[]) {
     constexpr net::ip::port_type port = 8080;
 
     // run server listener
-    http_server::ServeHttp(ioc, {address, port}, [&loghandler](auto&& req, auto&& send) {
-      loghandler(std::forward<decltype(req)>(req), std::forward<decltype(send)>(send));
+    http_server::ServeHttp(ioc, {address, port}, [&loghandler](auto&& endp, auto&& req, auto&& send) {
+      loghandler(std::forward<decltype(endp)>(endp), std::forward<decltype(req)>(req), std::forward<decltype(send)>(send));
     });
 
     boost::json::value jv_port_address{{"port"s, 8080}, {"address"s, "0.0.0.0"s}};

@@ -1,6 +1,7 @@
 #ifndef __LOGGER_H__
 #define __LOGGER_H__
 
+#include <boost/asio/ip/tcp.hpp>
 #include <boost/beast/http.hpp>
 #include <boost/date_time.hpp>
 #include <boost/json.hpp>
@@ -50,7 +51,7 @@ class Logger final {
 template <class RequestHandler>
 class LogRequestHandler {
   template <typename Body, typename Allocator>
-  static void LogRequest(http::request<Body, http::basic_fields<Allocator>>& req) {
+  static void LogRequest(const boost::asio::ip::tcp::endpoint &endp ,http::request<Body, http::basic_fields<Allocator>>& req) {
     // message — строка request received
     // data — объект с полями:
     // ip — IP-адрес клиента (полученный через endpoint.address().to_string()),
@@ -60,7 +61,7 @@ class LogRequestHandler {
     host = host.substr(0, host.rfind(':'));
 
     boost::json::object obj{
-        {"ip", host},
+        {"ip", endp.address().to_string()},
         {"URI", req.target()},
         {"method", req.method_string()}};
     BOOST_LOG_TRIVIAL(info) << boost::log::add_value(additional_data, obj) << "request received"sv;
@@ -91,25 +92,23 @@ class LogRequestHandler {
   LogRequestHandler(RequestHandler& h) : decorated_(h) {}
 
   template <typename Body, typename Allocator, typename Send>
-  void operator()(http::request<Body, http::basic_fields<Allocator>>&& req, Send&& send) {
-    std::chrono::high_resolution_clock timer;
-    auto start = timer.now();
-    LogRequest(req);
-    
-    std::string content_type = "null";
-    int code_result;
+  void operator()(const boost::asio::ip::tcp::endpoint &endp, http::request<Body, http::basic_fields<Allocator>>&& req, Send&& send) {
 
-    decorated_(std::move(req), [s = std::move(send), &content_type, &code_result](auto&& response) {
-      
-      code_result = response.result_int();
-      content_type = static_cast<std::string>(response.at(http::field::content_type));
+    LogRequest( endp, req);
+    decorated_(endp, std::move(req), [s = std::move(send)](auto&& response) {
+      std::chrono::high_resolution_clock timer;
+      auto start = timer.now();
+
+      const int code_result = response.result_int();
+      const std::string content_type = static_cast<std::string>(response.at(http::field::content_type));
       s(response);
-    });
-    
-    auto stop = timer.now();
-    auto deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count();
 
-    LogResponse(deltaTime, code_result, content_type);
+      auto stop = timer.now();
+      auto deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count();
+
+      LogRequestHandler::LogResponse(deltaTime, code_result, content_type);
+    });
+   
     return;
   }
 

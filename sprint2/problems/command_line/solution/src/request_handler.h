@@ -25,14 +25,13 @@ using namespace std::literals;
 
 class RequestHandler : public std::enable_shared_from_this<RequestHandler> {
  public:
-  //  explicit RequestHandler(model::Game& game, std::filesystem::path path) : game_{game}, content_path_( std::filesystem::absolute(path)) {
   explicit RequestHandler(boost::asio::io_context& ioc, Application& app) : m_ioc(ioc), m_app(app), m_strand(boost::asio::make_strand(ioc)) {}
 
   RequestHandler(const RequestHandler&) = delete;
   RequestHandler& operator=(const RequestHandler&) = delete;
 
   template <typename Body, typename Allocator, typename Send>
-  void operator()(http::request<Body, http::basic_fields<Allocator>>&& req, Send&& send) {
+  void operator()(const boost::asio::ip::tcp::endpoint &endp, http::request<Body, http::basic_fields<Allocator>>&& req, Send&& send) {
     std::string target(req.target());
     if (target.starts_with("/api/")) {
 

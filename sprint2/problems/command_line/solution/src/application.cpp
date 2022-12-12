@@ -10,7 +10,7 @@ Application::Application(boost::asio::io_context &ioc, std::filesystem::path con
       strand(boost::asio::make_strand(ioc)),
       m_manual_ticker(true) {
   if (!(std::filesystem::exists(config) && std::filesystem::exists(dir_to_content_))) {
-    throw std::logic_error("Wrong path config="s + config.string() + " content="s + dir_to_content.string());  //? maybe need more output information
+    throw std::logic_error("Wrong path, config="s + config.string() + ", content="s + dir_to_content.string());  //? maybe need more output information
   }
   m_game = json_loader::LoadGame(config);
 }
@@ -29,7 +29,7 @@ bool Application::IsManualTicker() const {
 }
 
 void Application::SetRandomSpawn(bool enable){
-  // todo
+  m_game.SetRandomSpawn(enable);
 }
 
 
@@ -37,7 +37,7 @@ const std::filesystem::path &Application::GetContentDir() const noexcept {
   return dir_to_content_;
 }
 
-const model::Map *Application::FindMap(const model::Map::Id &id) const noexcept {
+std::optional<std::reference_wrapper<const model::Map>> Application::FindMap(const model::Map::Id &id) const noexcept {
   return m_game.FindMap(id);
 }
 
@@ -68,10 +68,10 @@ const model::PlayerList::Container &Application::GetPlayers() const noexcept {
 }
 
 void Application::Update(std::chrono::milliseconds ms) {
-  assert(ms.count() < 30000ul);  // fail if more than 30s
+  if(ms.count() > 30000ul){   // fail if more than 30s
+    throw std::runtime_error("Time for aplication update state is very long");
+  }
 
   double delta = std::chrono::duration<double>(ms).count();
-  // std::cout << "Call update with delta " << ms << "ms in " << delta << std::endl;
   m_game.Update(delta);
-  // Logger::LogDebug("update", "__App update__ "s + std::to_string(delta));
 }
