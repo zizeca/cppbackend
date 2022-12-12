@@ -20,10 +20,14 @@
     //   "name": "s2_time_control",
     //   "path": "sprint2/problems/time_control/solution"
     // },
+    // {
+    //   "name": "s2_command_line",
+    //   "path": "sprint2/problems/command_line/solution"
+    // },
     {
-      "name": "s2_command_line",
-      "path": "sprint2/problems/command_line/solution"
-    },
+      "name": "s3_instrumentation",
+      "path": "sprint3/problems/instrumentation"
+    }
   ],
   "settings": {
     "C_Cpp.default.includePath": [
