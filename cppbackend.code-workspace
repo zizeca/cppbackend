@@ -24,9 +24,13 @@
     //   "name": "s2_command_line",
     //   "path": "sprint2/problems/command_line/solution"
     // },
+    // {
+    //   "name": "s3_instrumentation",
+    //   "path": "sprint3/problems/instrumentation"
+    // },
     {
-      "name": "s3_instrumentation",
-      "path": "sprint3/problems/instrumentation"
+      "name": "s3_falmegraf",
+      "path": "sprint3/problems/flamegraph/solution"
     }
   ],
   "settings": {
