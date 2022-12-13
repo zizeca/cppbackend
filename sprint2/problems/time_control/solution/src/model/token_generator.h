@@ -18,6 +18,7 @@ struct TokenTag {};
 
 using Token = util::Tagged<std::string, detail::TokenTag>;
 using TokenHasher = util::TaggedHasher<Token>;
+constexpr int TOKEN_LENGHT = 32;
 
 Token GenerateToken();
 

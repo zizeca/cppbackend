@@ -17,7 +17,7 @@ void Map::AddOffice(Office office) {
   Office& o = offices_.emplace_back(std::move(office));
   try {
     warehouse_id_to_index_.emplace(o.GetId(), index);
-  } catch (...) {
+  } catch (const std::exception&) {
     // Удаляем офис из вектора, если не удалось вставить в unordered_map
     offices_.pop_back();
     throw;
@@ -46,7 +46,7 @@ Point2d Map::GetRandPoint() const {
 
   double width;
   {
-    std::uniform_real_distribution<> dist(-0.4, 0.4);
+    std::uniform_real_distribution<> dist(-Road::HALF_WIDTH, Road::HALF_WIDTH);
     width = dist(gen);
     width = ((int)(width * 100 + .5) / 100.0);  // round two digit
   }
@@ -64,8 +64,6 @@ Point2d Map::GetRandPoint() const {
   ret.x = ((int)(ret.x * 100 + .5) / 100.0);  // round two digit
   ret.y = ((int)(ret.y * 100 + .5) / 100.0);  // round two digit
 
-  // Logger::LogDebug("point ("s + std::to_string(ret.x) + ", "s + std::to_string(ret.y) + ")"s, "get random width"s);
-
   return ret;
 }
 
@@ -78,37 +76,19 @@ double Map::GetDogSpeed() const noexcept {
 }
 
 bool Road::Contains(const Point2d& point) const {
-  Point2i p;
-
-  p.x = (int)(point.x + 0.5);
-  p.y = (int)(point.y + 0.5);
-
-  if (IsHorizontal()) {
-    return p.y == start_.y && p.x >= std::min(start_.x, end_.x) && p.x <= std::max(start_.x, end_.x);
-  } else {
-    return p.x == start_.x && p.y >= std::min(start_.y, end_.y) && p.y <= std::max(start_.y, end_.y);
-  }
+  return point.x >= m_min_X && point.x <= m_max_X && point.y >= m_min_Y && point.y <= m_max_Y;
 }
 
-std::optional<Road> Map::GetRoadVerByPos(const Point2d& pos) const {
-  auto it = std::find_if(roads_.begin(),roads_.end(),[&pos](Road r) {
-    return r.IsVertical() && r.Contains(pos);
-  } );
-  if(it == roads_.end()){
-    return std::nullopt;
+
+Point2d Map::GetStartDogPoint() const {
+  if(m_random_spawn) {
+    return GetRandPoint();
   }
-  return *it;
+  return {0.0, 0.0};
 }
 
-std::optional<Road> Map::GetRoadHorByPos(const Point2d& pos) const {
-  auto it = std::find_if(roads_.begin(),roads_.end(),[&pos](Road r) {
-    return r.IsHorizontal() && r.Contains(pos);
-  });
-
-  if(it == roads_.end()){
-    return std::nullopt;
-  }
-  return *it;
+void Map::EnableRandomStartPoint(const bool& enable) {
+  m_random_spawn = enable;
 }
 
 }  // namespace model
