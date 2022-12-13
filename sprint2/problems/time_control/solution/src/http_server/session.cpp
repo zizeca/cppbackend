@@ -61,4 +61,9 @@ void SessionBase::OnWrite(bool close, beast::error_code ec, [[maybe_unused]] std
   Read();
 }
 
+tcp::endpoint SessionBase::GetEndpoint() const {
+  return stream_.socket().remote_endpoint();
+}
+
+
 } // namespace http_server

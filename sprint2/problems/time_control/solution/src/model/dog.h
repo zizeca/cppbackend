@@ -13,22 +13,24 @@ class Dog {
   explicit Dog(const Token& token = Token(""s));
 
   int GetId() const;
+
   Token GetToken() const;
 
   bool SetToken(const Token& token);
 
   const Point2d& GetPosition() const;
+
   void SetPosition(const Point2d& pos);
 
   const Point2d& GetSpeed() const;
+
   void SetSpeed(const Point2d& vspeed);
+
   void SetDefaultSpeed(const double& speed);
-  // double GetDefaultSpeed() const;
 
   const std::string& GetDir() const;
-  void SetDir(const std::string& dir);
 
-  // void Move(const Point2d& offset);
+  void SetDir(const std::string& dir);
 
  private:
   Token m_token;
