@@ -48,21 +48,20 @@ def make_shots():
 
 
 server = run(start_server())
-pf = run("sudo perf record -o perf.data -p " + str(server.pid))
+pf = run("perf record -g -o perf.data -p " + str(server.pid) + " -o perf.data")
 make_shots()
 time.sleep(1)
 stop(pf)
 time.sleep(1)
 stop(server)
-p1 = run("sudo perf script", output=subprocess.PIPE)
+p1 = run("perf script", output=subprocess.PIPE)
 p2 = run("./FlameGraph/stackcollapse-perf.pl", output=subprocess.PIPE, inp=p1.stdout)
-p1.wait()
 fout = open('graph.svg', 'wt')
 p3 = run("./FlameGraph/flamegraph.pl", output=fout, inp=p2.stdout)
 
-#stop(p1, wait=True)
-#stop(p2, wait=True)
-#stop(p3, wait=True)
+stop(p1, wait=True)
+stop(p2, wait=True)
+stop(p3, wait=True)
 time.sleep(1)
 print('Job done')
 # python3 shoot.py "/test_cpp_backend/sprint1/problems/map_json/solution/build/bin/game_server /test_cpp_backend/sprint1/problems/map_json/solution/data/config.json" || true
