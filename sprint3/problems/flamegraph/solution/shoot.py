@@ -25,7 +25,7 @@ def start_server():
 
 
 def run(command, output=None, inp=None):
-    process = subprocess.Popen(shlex.split(command), stdin=inp, stdout=output) #, stderr=subprocess.DEVNULL)
+    process = subprocess.Popen(shlex.split(command), stdin=inp, stdout=output, stderr=subprocess.DEVNULL)
     return process
 
 
