@@ -3,6 +3,7 @@ import subprocess
 import time
 import random
 import shlex
+import signal
 
 RANDOM_LIMIT = 1000
 SEED = 123456789
@@ -24,7 +25,7 @@ def start_server():
 
 
 def run(command, output=None, inp=None):
-    process = subprocess.Popen(shlex.split(command), stdin=inp, stdout=output, stderr=subprocess.DEVNULL)
+    process = subprocess.Popen(shlex.split(command), stdin=inp, stdout=output) #, stderr=subprocess.DEVNULL)
     return process
 
 
@@ -48,13 +49,16 @@ def make_shots():
 
 
 server = run(start_server())
-pf = run("perf record -g -o perf.data -p " + str(server.pid) + " -o perf.data")
+pf = run("perf record -g -o perf.data -p " + str(server.pid))
+time.sleep(1)
 make_shots()
 time.sleep(1)
-stop(pf)
+pf.send_signal(signal.SIGINT)
+time.sleep(1)
+stop(pf, wait=True)
 time.sleep(1)
 stop(server)
-p1 = run("perf script", output=subprocess.PIPE)
+p1 = run("perf script -i perf.data", output=subprocess.PIPE)
 p2 = run("./FlameGraph/stackcollapse-perf.pl", output=subprocess.PIPE, inp=p1.stdout)
 fout = open('graph.svg', 'wt')
 p3 = run("./FlameGraph/flamegraph.pl", output=fout, inp=p2.stdout)
