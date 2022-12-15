@@ -3,6 +3,7 @@ overload:
                                             # https://overload.yandex.net
 phantom:
   address: cppserver:8080                   # адрес тестируемого приложения
+  #address: 127.0.0.1:8080                   # адрес тестируемого приложения
   ammofile: /var/loadtest/ammo.txt          # путь к файлу с патронами
   ammo_type: uri                            # тип запросов POST (или uri для GET)
   load_profile:
@@ -10,7 +11,7 @@ phantom:
                                             # указать кол-во потоков для обстрела 
                                             # максимальном возможным rps, генерируемым 
                                             # каждым потоком)
-    schedule: const(100000, 1m)               # линейный профиль от 5 до 30 rps в течение 
+    schedule: const(200, 30s) # линейный профиль от 5 до 30 rps в течение 
                                             # минуты
   ssl: false                                # если нужна поддержка https, то true
 autostop:
