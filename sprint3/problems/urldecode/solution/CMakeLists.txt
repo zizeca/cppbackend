@@ -1,29 +1,30 @@
 cmake_minimum_required(VERSION 3.13)
 
-project(game_server CXX)
+project(tests CXX)
 set(CMAKE_CXX_STANDARD 20)
 
-# обратите внимание на аргумент TARGETS у команды conan_basic_setup
+
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup(TARGETS)
 
 set(SRCDIR src)
 set(TESTDIR tests)
 
-set(EXECUTE boost_tests)
+set(BOOST_EXEC boost_tests)
+set(GOOGLE_EXEC google_tests)
 
 set(SRC 
 	${SRCDIR}/url_decode.cpp
   ${SRCDIR}/url_decode.h
 )
 
-set(TEST 
+set(BOOST_TEST_SRC 
 	${TESTDIR}/boost_test_main.cpp
 )
 
-
-
-
+set(GOOGLE_TEST_SRC 
+	${TESTDIR}/google_test_main.cpp
+)
 
 
 find_package(Boost 1.78.0 REQUIRED)
@@ -31,12 +32,13 @@ if(Boost_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})
 endif()
 
-# set(THREADS_PREFER_PTHREAD_FLAG ON)
-# find_package(Threads REQUIRED)
 
 
+add_executable(${BOOST_EXEC} ${SRC} ${BOOST_TEST_SRC})
+target_include_directories(${BOOST_EXEC} PRIVATE CONAN_PKG::boost)
+target_link_libraries(${BOOST_EXEC} PRIVATE CONAN_PKG::boost)
 
-add_executable(${EXECUTE} ${SRC} ${TEST})
-target_include_directories(${EXECUTE} PRIVATE CONAN_PKG::boost)
-# target_link_libraries(${EXECUTE} PRIVATE Threads::Threads CONAN_PKG::boost)
-target_link_libraries(${EXECUTE} PRIVATE CONAN_PKG::boost)
+
+add_executable(${GOOGLE_EXEC} ${SRC} ${GOOGLE_TEST_SRC})
+target_include_directories(${GOOGLE_EXEC} PRIVATE CONAN_PKG::gtest)
+target_link_libraries(${GOOGLE_EXEC} PRIVATE CONAN_PKG::gtest)
