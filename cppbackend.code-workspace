@@ -1,9 +1,9 @@
 {
   "folders": [
-    {
-      "name": "root",
-      "path": "."
-    },
+    // {
+    //   "name": "root",
+    //   "path": "."
+    // },
     // {
     //   "name": "s2_join_game",
     //   "path": "sprint2/problems/join_game/solution"
@@ -28,9 +28,13 @@
     //   "name": "s3_instrumentation",
     //   "path": "sprint3/problems/instrumentation"
     // },
+    // {
+    //   "name": "s3_falmegraf",
+    //   "path": "sprint3/problems/flamegraph/solution"
+    // }
     {
-      "name": "s3_falmegraf",
-      "path": "sprint3/problems/flamegraph/solution"
+      "name": "s3_",
+      "path": "sprint3"
     }
   ],
   "settings": {
