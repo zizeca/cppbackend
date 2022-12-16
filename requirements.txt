@@ -15,10 +15,12 @@ psutil==5.9.1
 py==1.11.0
 pyparsing==3.0.9
 pytest==7.1.2
-pytest-xprocess==0.19.0
+pytest-xprocess==0.20.0
+pytest-quickcheck==0.9.0
 requests==2.27.1
 tomli==2.0.1
 urllib3==1.26.9
 Werkzeug==2.1.2
 zipp==3.8.0
-conan>=1.51.3
+conan
+gprof2dot==2022.7.29
