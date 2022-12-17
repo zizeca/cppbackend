@@ -1,30 +1,36 @@
+#pragma once
 #ifndef __MENU_H__
 #define __MENU_H__
 
-#include <iostream>
-#include <string>
-#include <vector>
+#include <functional>
+#include <iomanip>
+#include <map>
+#include <sstream>
 
 class Menu {
  public:
-  Menu(std::istream& is, std::ostream& os);
+  using Handler = std::function<bool(std::istream&, std::ostream&)>;
 
-  ~Menu();
-
-  template <typename Handler, typename... Args>
-  void AddAction(const std::string& name, const std::string& description, Handler&& handler, Args&&... args);
+  Menu(std::istream& input, std::ostream& output);
+  
+  void AddAction(std::string action_name, std::string args, std::string description, Handler handler);
 
   void Run();
 
-  void ShowInstructions();
+  void ShowInstructions() const;
 
  private:
-  std::istream& m_is;
-  std::ostream& m_os;
-};
+  struct ActionInfo {
+    Handler handler;
+    std::string args;
+    std::string description;
+  };
 
-template <typename Handler, typename... Args>
-void Menu::AddAction(const std::string& name, const std::string& description, Handler&& handler, Args&&... args) {
-}
+  [[nodiscard]] bool ParseCommand(std::istream& input);
+
+  std::istream& input_;
+  std::ostream& output_;
+  std::map<std::string, ActionInfo> actions_;
+};
 
 #endif  // __MENU_H__

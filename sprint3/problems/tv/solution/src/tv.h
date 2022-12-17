@@ -1,29 +1,54 @@
+#pragma once
 #ifndef __TV_H__
 #define __TV_H__
 
+#include <cassert>
 #include <optional>
 
-class Tv
-{
-public:
-  Tv();
+class TV {
+ public:
+  constexpr static int MIN_CHANNEL = 1;
+  constexpr static int MAX_CHANNEL = 99;
 
-  ~Tv();
+  /*
+   * Возвращает информацию о том, включен телевизор или нет.
+   */
+  [[nodiscard]] bool IsTurnedOn() const noexcept;
 
-  bool IsTurnedOn() const;
+  /*
+   * Возвращает номер выбранного канала или std::nullopt, если телевизор выключен.
+   */
+  [[nodiscard]] std::optional<int> GetChannel() const noexcept;
+  /*
+   * Включает телевизор, если он был выключен. Если телевизор уже включен, ничего не делает.
+   * При включении выбирается тот номер канала, который был выбран перед последним выключением.
+   * При самом первом включении выбирает канал #1.
+   */
+  void TurnOn() noexcept;
 
-  std::optional<int> GetChannel() const;
+  /*
+   * Выключает телевизор, если он был включен. Если телевизор уже выключен, ничего не делает.
+   */
+  void TurnOff() noexcept;
 
-  void TurnOn();
+  /*
+   * Выбирает канал channel.
+   * Ранее выбранный канал запоминается и может быть восстановлен методом SelectLastViewedChannel.
+   * Если номер канала совпадает с ранее выбранным каналом, метод ничего не делает.
+   * Если телевизор выключен, выбрасывает исключение std::logic_error.
+   * Если номер канала за пределами диапазона MIN_CHANNEL, MAX_CHANNEL, выбрасывает out_of_range.
+   */
+  void SelectChannel(int channel);
+  /*
+   * Выбирает номер канала, который был выбран перед последним вызовом SelectChannel.
+   * Многократный последовательный вызов SelectChannel переключает два последних выбранных канала.
+   * Если телевизор выключен, выбрасывает исключение std::logic_error.
+   */
+  void SelectLastViewedChannel();
 
-  void TurnOff();
-
-private:
-  bool m_turn_on;
-  int m_channel;
+ private:
+  bool is_turned_on_ = false;
+  int channel_ = 1;
 };
 
-
-
-
-#endif // __TV_H__
+#endif  // __TV_H__
