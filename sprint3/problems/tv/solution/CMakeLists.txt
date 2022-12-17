@@ -7,34 +7,45 @@ set(CMAKE_CXX_STANDARD 20)
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup(TARGETS)
 
-set(SRCDIR src)
-set(TESTDIR tests)
-
-set(CATCH2_EXEC catch2_tests)
-
-
-set(SRC 
-	${SRCDIR}/tv.cpp 
-  ${SRCDIR}/tv.h 
-  ${SRCDIR}/menu.cpp 
-  ${SRCDIR}/menu.h 
-  ${SRCDIR}/controller.cpp 
-  ${SRCDIR}/controller.h 
+add_executable(app
+	src/main.cpp
+  src/tv.cpp
+	src/menu.cpp
+	src/controller.cpp
+	src/tv.h
+	src/menu.h
+	src/controller.h
 )
 
-set(CATCH2_TEST_SRC 
-	${TESTDIR}/catch_test_main.cpp
+add_executable(catch_tv_tests
+	tests/catch_tv_tests.cpp
+  src/tv.cpp
+	src/menu.cpp
+	src/controller.cpp
+	src/tv.h
+	src/menu.h
+	src/controller.h
 )
+target_link_libraries(catch_tv_tests PRIVATE CONAN_PKG::catch2)
 
+add_executable(google_tv_tests
+	tests/google_tv_tests.cpp
+  src/tv.cpp
+	src/menu.cpp
+	src/controller.cpp
+	src/tv.h
+	src/menu.h
+	src/controller.h
+)
+target_link_libraries(google_tv_tests PRIVATE CONAN_PKG::gtest)
 
-
-# find_package(Boost 1.78.0 REQUIRED)
-# if(Boost_FOUND)
-#   include_directories(${Boost_INCLUDE_DIRS})
-# endif()
-
-
-
-add_executable(${CATCH2_EXEC} ${SRC} ${CATCH2_TEST_SRC})
-target_include_directories(${CATCH2_EXEC} PRIVATE CONAN_PKG::catch2)
-target_link_libraries(${CATCH2_EXEC} PRIVATE  CONAN_PKG::catch2)
+add_executable(boost_tv_tests
+	tests/boost_tv_tests.cpp
+  src/tv.cpp
+	src/menu.cpp
+	src/controller.cpp
+	src/tv.h
+	src/menu.h
+	src/controller.h
+)
+target_link_libraries(boost_tv_tests PRIVATE CONAN_PKG::boost)

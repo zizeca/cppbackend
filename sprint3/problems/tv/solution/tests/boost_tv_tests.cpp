@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE(doesnt_show_any_channel_by_default) {
     BOOST_TEST(!tv.GetChannel().has_value());
 }
 // Включите этот тест и доработайте класс TV, чтобы тест выполнился успешно
-#if 0
+#if 1
 BOOST_AUTO_TEST_CASE(cant_select_any_channel_when_it_is_off) {
     BOOST_CHECK_THROW(tv.SelectChannel(10), std::logic_error);
     BOOST_TEST(tv.GetChannel() == std::nullopt);
@@ -180,7 +180,7 @@ BOOST_AUTO_TEST_CASE(on_TurnOff_command_with_some_arguments_prints_error_message
     ExpectExtraArgumentsErrorInOutput("TurnOff"sv);
 }
 // Включите этот тест, после того, как реализуете метод TV::SelectChannel
-#if 0
+#if 1
 BOOST_AUTO_TEST_CASE(on_Info_prints_current_channel) {
     tv.SelectChannel(42);
     RunMenuCommand("Info"s);
