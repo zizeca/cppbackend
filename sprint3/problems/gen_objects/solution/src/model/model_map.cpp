@@ -7,7 +7,6 @@ namespace model {
 
 using namespace std::literals;
 
-
 void Map::AddOffice(Office office) {
   if (warehouse_id_to_index_.contains(office.GetId())) {
     throw std::invalid_argument("Duplicate warehouse");
@@ -29,7 +28,7 @@ Point2d Map::GetRandPoint(bool enable) const {
     throw std::logic_error("Must be one or mode roads");
   }
 
-  if(!enable) {
+  if (!enable) {
     return roads_.at(0).GetStart();
   }
 
@@ -78,13 +77,5 @@ void Map::SetDogSpeed(double speed) {
 double Map::GetDogSpeed() const noexcept {
   return m_dog_speed;
 }
-
-bool Road::Contains(const Point2d& point) const {
-  return point.x >= m_min_X && point.x <= m_max_X && point.y >= m_min_Y && point.y <= m_max_Y;
-}
-
-
-
-
 
 }  // namespace model
