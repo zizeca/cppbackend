@@ -49,7 +49,7 @@ class Game {
 
   double m_default_speed = 1.0;
 
-  bool m_random_dog_spawn;
+  bool m_random_dog_spawn = false;
 };
 
 }  // namespace model
