@@ -3,4 +3,3 @@ build/
 bin/
 old/
 cppbackend.code-workspace
-run.sh
