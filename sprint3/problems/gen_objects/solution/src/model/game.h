@@ -1,5 +1,7 @@
 #pragma once
-#include <boost/json.hpp>
+#ifndef __GAME_H__
+#define __GAME_H__
+
 #include <random>
 #include <string>
 #include <unordered_map>
@@ -51,3 +53,5 @@ class Game {
 };
 
 }  // namespace model
+
+#endif // __GAME_H__
