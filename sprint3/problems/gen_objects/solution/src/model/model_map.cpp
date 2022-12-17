@@ -6,7 +6,7 @@
 namespace model {
 
 using namespace std::literals;
-using namespace gm;
+
 
 void Map::AddOffice(Office office) {
   if (warehouse_id_to_index_.contains(office.GetId())) {

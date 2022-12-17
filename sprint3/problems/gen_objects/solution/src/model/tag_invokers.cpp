@@ -1,28 +1,33 @@
 #include "tag_invokers.h"
 
 namespace model {
-using namespace gm;
 namespace {
 
 template <typename T>
-std::enable_if_t<std::is_integral_v<T>, T>
-extruct(const value& jv, const string_view& key) {
-  return static_cast<T>(jv.as_object().at(key).as_int64());
+T extruct(const value& jv, const string_view& key);
+
+template <>
+int extruct<int>(const value& jv, const string_view& key) {
+  return static_cast<int>(jv.as_object().at(key).as_int64());
 }
 
-template <typename T>
-std::enable_if_t<std::is_same_v<T, std::string>, std::string>
-extruct(const value& jv, const string_view& key) {
+template <>
+double extruct<double>(const value& jv, const string_view& key) {
+  return jv.as_object().at(key).as_double();
+}
+
+template <>
+std::string extruct<std::string>(const value& jv, const string_view& key) {
   return static_cast<std::string>(jv.as_object().at(key).as_string());
 }
 
 }  // namespace
 
 void tag_invoke(value_from_tag, value& jv, Building const& building) {
-  jv = {{MapKey::pos_X, building.GetBounds().position.x},
-        {MapKey::pos_Y, building.GetBounds().position.y},
-        {MapKey::width, building.GetBounds().size.width},
-        {MapKey::height, building.GetBounds().size.height}};
+  jv = {{MapKey::pos_X, building.GetBounds().left},
+        {MapKey::pos_Y, building.GetBounds().top},
+        {MapKey::width, building.GetBounds().width},
+        {MapKey::height, building.GetBounds().height}};
 }
 
 void tag_invoke(value_from_tag, value& jv, Office const& office) {
@@ -30,8 +35,8 @@ void tag_invoke(value_from_tag, value& jv, Office const& office) {
       {MapKey::id, *office.GetId()},
       {MapKey::pos_X, office.GetPosition().x},
       {MapKey::pos_Y, office.GetPosition().y},
-      {MapKey::offset_X, office.GetOffset().dx},
-      {MapKey::offset_Y, office.GetOffset().dy}};
+      {MapKey::offset_X, office.GetOffset().x},
+      {MapKey::offset_Y, office.GetOffset().y}};
 }
 
 void tag_invoke(value_from_tag, value& jv, Road const& road) {
@@ -96,16 +101,18 @@ Building tag_invoke(value_to_tag<Building>, value const& jv) {
     throw std::logic_error("wrong building val");
   }
 
-  const Coord& x = extruct<Coord>(jv, MapKey::pos_X);
-  const Coord& y = extruct<Coord>(jv, MapKey::pos_Y);
-  const Dimension& w = extruct<Dimension>(jv, MapKey::width);
-  const Dimension& h = extruct<Dimension>(jv, MapKey::height);
+  RectInt rect;
 
-  if (w == 0 || h == 0) {
+  rect.left = extruct<int>(jv, MapKey::pos_X);
+  rect.top = extruct<int>(jv, MapKey::pos_Y);
+  rect.width = extruct<int>(jv, MapKey::width);
+  rect.height = extruct<int>(jv, MapKey::height);
+
+  if (rect.width == 0 || rect.height == 0) {
     throw std::logic_error("Wrong building size");
   }
 
-  return Building({{x, y}, {w, h}});
+  return Building(rect);
 }
 
 Office tag_invoke(value_to_tag<Office>, value const& jv) {
@@ -113,20 +120,20 @@ Office tag_invoke(value_to_tag<Office>, value const& jv) {
 
   Office::Id id(extruct<std::string>(jv, MapKey::id));
 
-  const Coord& x = extruct<Coord>(jv, MapKey::pos_X);
-  const Coord& y = extruct<Coord>(jv, MapKey::pos_Y);
-  const Dimension& ofX = extruct<Dimension>(jv, MapKey::offset_X);
-  const Dimension& ofY = extruct<Dimension>(jv, MapKey::offset_Y);
+  Point2i position;
+  Point2i offset;
 
-  Point2i position{x, y};
-  Offset offset{ofX, ofY};
+  position.x = extruct<int>(jv, MapKey::pos_X);
+  position.y = extruct<int>(jv, MapKey::pos_Y);
+  offset.x = extruct<int>(jv, MapKey::offset_X);
+  offset.y = extruct<int>(jv, MapKey::offset_Y);
 
   return {id, position, offset};
 }
 
 Road tag_invoke(value_to_tag<Road>, value const& jv) {
-  Point2i start{};
-  Coord finish{};
+  Point2i start;
+  int finish;
 
   auto& road = jv.as_object();
   if (road.size() != 3) {
@@ -136,15 +143,15 @@ Road tag_invoke(value_to_tag<Road>, value const& jv) {
   bool vertical = true;
   for (auto i = road.cbegin(); i != road.cend(); ++i) {
     if (i->key() == MapKey::start_X) {
-      start.x = static_cast<Coord>(i->value().as_int64());
+      start.x = static_cast<int>(i->value().as_int64());
     } else if (i->key() == MapKey::start_Y) {
-      start.y = static_cast<Coord>(i->value().as_int64());
+      start.y = static_cast<int>(i->value().as_int64());
     } else if (i->key() == MapKey::end_X) {
       vertical = false;
-      finish = static_cast<Coord>(i->value().as_int64());
+      finish = static_cast<int>(i->value().as_int64());
     } else if (i->key() == MapKey::end_Y) {
       vertical = true;
-      finish = static_cast<Coord>(i->value().as_int64());
+      finish = static_cast<int>(i->value().as_int64());
     } else {
       throw std::logic_error("Unknon key in road json");
     }

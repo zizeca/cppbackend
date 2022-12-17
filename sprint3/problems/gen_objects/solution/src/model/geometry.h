@@ -1,10 +1,13 @@
 #ifndef __GEOMETRY_H__
 #define __GEOMETRY_H__
 
-namespace gm {
+namespace model {
 
 template <typename T>
 struct Point2 {
+
+  using value_type = T;
+
   Point2() : x(static_cast<T>(0)), y(static_cast<T>(0)) {}
 
   template <typename A, typename B>
@@ -15,6 +18,7 @@ struct Point2 {
   // field
   T x;
   T y;
+
 
   // operators overload
   Point2& operator+=(const Point2<T>& other) {
@@ -84,6 +88,8 @@ using Point2d = Point2<double>;
 
 template <typename T>
 struct Rect {
+  using value_type = T;
+
   Rect() : left(static_cast<T>(0)), top(static_cast<T>(0)),  width(static_cast<T>(0)), height(static_cast<T>(0)) {} 
   Rect(Point2<T> pos, Point2<T> size) : left(pos.x), top(pos.y), width(size.x), height(size.y) {}
   Rect(T x, T y, T w, T h) : left(x), top(y), width(w), height(h) {}
@@ -108,6 +114,8 @@ struct Rect {
     return (point.x >= minX) && (point.x < maxX) && (point.y >= minY) && (point.y < maxY);
   }
 };
+
+  using RectInt = Rect<int>;
 
 }  // namespace gm
 

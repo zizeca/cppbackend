@@ -7,7 +7,7 @@
 namespace model {
 
 using namespace std::literals;
-using namespace gm;
+
 class Dog {
  public:
   explicit Dog(const Token& token = Token(""s));
