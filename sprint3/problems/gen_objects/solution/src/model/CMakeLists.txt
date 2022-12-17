@@ -10,6 +10,7 @@ set(SRC_MODEL
   game.cpp
   model_map.cpp
   token_generator.cpp
+  loot_type.cpp
 )
 message(${SRCDIR})
 
@@ -24,6 +25,7 @@ set(HEADER_MODEL
   player_list.h
   tag_invokers.h
   token_generator.h
+  loot_type.h
 )
 
 message(${SRC})

@@ -42,6 +42,13 @@ model::Game LoadGame(const std::filesystem::path& json_path) {
     game.SetDefaultSpeed(1.0);
   }
 
+  if (doc.as_object().contains("lootGeneratorConfig")) {
+    auto& loot = doc.as_object().at("lootGeneratorConfig");
+    game.LootGeneratorConfig( loot.at("period").as_double(), loot.at("probability").as_double());
+  } else {
+    assert(!"no loot config");
+  }
+
   auto maps = doc.as_object().at("maps").as_array();
 
   for (auto m = maps.cbegin(); m != maps.end(); ++m) {
