@@ -2,7 +2,7 @@
 
 namespace model {
 
-Loot::Loot(const std::string& name,
+LootType::LootType(const std::string& name,
                    const std::string& file,
                    const std::string& type,
                    const int& rotation,
@@ -15,28 +15,43 @@ Loot::Loot(const std::string& name,
                                           m_scale(scale) {
 }
 
-const std::string& Loot::GetName() const noexcept {
+const std::string& LootType::GetName() const noexcept {
   return m_name;
 }
 
-const std::string& Loot::GetFile() const noexcept {
+const std::string& LootType::GetFile() const noexcept {
   return m_file;
 }
 
-const std::string& Loot::GetType() const noexcept {
+const std::string& LootType::GetType() const noexcept {
   return m_type;
 }
 
-const int& Loot::GetRotation() const noexcept {
+const int& LootType::GetRotation() const noexcept {
   return m_rotation;
 }
 
-const std::string& Loot::GetColor() const noexcept {
+const std::string& LootType::GetColor() const noexcept {
   return m_color;
 }
 
-const double& Loot::GetScale() const noexcept {
+const double& LootType::GetScale() const noexcept {
   return m_scale;
+}
+
+Loot::Loot(const LootType& type) : m_loot_type(type), m_position(0.0, 0.0) {
+}
+
+void Loot::SetPosition(const Point2d& pos) {
+  m_position = pos;
+}
+
+const Point2d& Loot::GetPosition() const noexcept {
+  return m_position;
+}
+
+const LootType& Loot::GetLootType() const noexcept {
+  return m_loot_type;
 }
 
 }  // namespace model

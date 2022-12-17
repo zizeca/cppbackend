@@ -13,6 +13,7 @@
 #include "office.h"
 #include "road.h"
 #include "building.h"
+#include "loot.h"
 
 namespace model {
 
@@ -22,10 +23,9 @@ class Map {
  public:
   using Id = util::Tagged<std::string, Map>;
   using Roads = std::vector<Road>;
-  using RoadsV = std::vector<Road>;
-  using RoadsH = std::vector<Road>;
   using Buildings = std::vector<Building>;
   using Offices = std::vector<Office>;
+  using LootTypes = std::vector<LootType>;
 
   Map(Id id, std::string name) noexcept : id_(std::move(id)), name_(std::move(name)), m_dog_speed(0.0) {}
 
@@ -47,6 +47,8 @@ class Map {
 
   void AddOffice(Office office);
 
+  void AddLootType(LootType loot);
+
   void SetDogSpeed(double speed);
 
   double GetDogSpeed() const noexcept;
@@ -59,13 +61,13 @@ class Map {
   std::string name_;
   Roads roads_;
   Buildings buildings_;
-  RoadsV m_vroads;
-  RoadsH m_hroads;
 
   OfficeIdToIndex warehouse_id_to_index_;
   Offices offices_;
 
   double m_dog_speed;
+
+  LootTypes m_loot_types;
 };
 
 }  // namespace model

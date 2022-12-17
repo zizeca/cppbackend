@@ -23,6 +23,11 @@ void Map::AddOffice(Office office) {
   }
 }
 
+void Map::AddLootType(LootType loot) {
+  m_loot_types.push_back(loot);
+}
+
+
 Point2d Map::GetRandPoint(bool enable) const {
   if (roads_.size() == 0) {
     throw std::logic_error("Must be one or mode roads");
