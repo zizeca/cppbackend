@@ -87,7 +87,12 @@ BOOST_AUTO_TEST_CASE(can_be_turned_off) {
 }
 // Может выбирать каналы с 1 по 99
 BOOST_AUTO_TEST_CASE(can_select_channel_from_1_to_99) {
-    /* Реализуйте самостоятельно этот тест */
+    tv.TurnOn();
+    BOOST_TEST(tv.IsTurnedOn());    
+    for(int i = 1 ; i <= 99; i++) {
+      BOOST_CHECK_NO_THROW(tv.SelectChannel(i));
+      BOOST_TEST(tv.GetChannel() == i);
+    }
 }
 /* Реализуйте остальные тесты класса TV */
 BOOST_AUTO_TEST_SUITE_END()
@@ -160,6 +165,7 @@ BOOST_AUTO_TEST_CASE(on_TurnOn_command_with_some_arguments_prints_error_message)
 /*
  * Протестируйте остальные аспекты поведения класса Controller, когда TV выключен
  */
+
 BOOST_AUTO_TEST_SUITE_END()
 
 struct WhenTVIsOnFixture : ControllerFixture {

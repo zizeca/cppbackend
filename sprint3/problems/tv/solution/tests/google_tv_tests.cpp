@@ -15,7 +15,7 @@ TEST_F(TVByDefault, DoesntShowAChannelWhenItIsOff) {
     EXPECT_FALSE(tv_.GetChannel().has_value());
 }
 // Включите этот тест и доработайте класс TV, чтобы тест выполнился успешно
-#if 0
+#if 1
 TEST_F(TVByDefault, CantSelectAnyChannel) {
     EXPECT_THROW(tv_.SelectChannel(10), std::logic_error);
     EXPECT_EQ(tv_.GetChannel(), std::nullopt);
@@ -134,7 +134,7 @@ TEST_F(ControllerWithTurnedOnTV, OnTurnOffCommandPrintsErrorMessageIfCommandHasA
     ExpectExtraArgumentsErrorInOutput("TurnOff"sv);
 }
 // Включите этот тест, после того, как реализуете метод TV::SelectChannel
-#if 0
+#if 1
 TEST_F(ControllerWithTurnedOnTV, OnInfoPrintsCurrentChannel) {
     tv_.SelectChannel(42);
     RunMenuCommand("Info"s);
