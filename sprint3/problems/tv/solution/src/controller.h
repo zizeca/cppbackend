@@ -65,8 +65,8 @@ class Controller {
   constexpr static std::string_view SELECT_CHANNEL_COMMAND = "SelectChannel";
   constexpr static std::string_view SELECT_PREVIOUS_CHANNEL_COMMAND = "SelectPreviousChannel";
 
-  TV& tv_;
-  Menu& menu_;
+  TV& m_tv;
+  Menu& m_menu;
 };
 
 #endif  // __CONTROLLER_H__

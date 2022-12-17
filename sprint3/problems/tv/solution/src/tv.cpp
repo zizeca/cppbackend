@@ -43,7 +43,7 @@ void TV::SelectChannel(int channel) {
   }
 
   if (channel > MAX_CHANNEL || channel < MIN_CHANNEL) {
-    throw std::out_of_range("Wrong channel selected");
+    throw std::out_of_range("Channel is out of range");
   }
 
   if (m_channel == channel) {
