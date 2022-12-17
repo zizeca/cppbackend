@@ -144,10 +144,7 @@ StringResponse ApiHandler::GetGameState() {
     for (auto it = m_app.GetPlayers().cbegin(); it != m_app.GetPlayers().cend(); ++it) {
       if (it->second.GetSession() == p.GetSession()) {
         assert(it->second.GetDog() != nullptr);
-        obj[std::to_string(it->second.GetId())] = {
-            {"pos", {it->second.GetDog()->GetPosition().x, it->second.GetDog()->GetPosition().y}},
-            {"speed", {it->second.GetDog()->GetSpeed().x, it->second.GetDog()->GetSpeed().y}},
-            {"dir", it->second.GetDog()->GetDir()}};
+        obj[std::to_string(it->second.GetId())] = boost::json::value_from(*it->second.GetDog());
       }
     }
 

@@ -82,6 +82,15 @@ void tag_invoke(value_from_tag, value& jv, Map const& map) {
   jv = obj;
 }
 
+void tag_invoke(value_from_tag, value& jv, Dog const& dog) {
+  jv = {
+      {"pos", {dog.GetPosition().x, dog.GetPosition().y}},
+      {"speed", {dog.GetSpeed().x, dog.GetSpeed().y}},
+      {"dir", dog.GetDir()}};
+}
+
+// ------------------------------------
+
 Building tag_invoke(value_to_tag<Building>, value const& jv) {
   if (jv.as_object().size() != 4) {
     throw std::logic_error("wrong building val");
