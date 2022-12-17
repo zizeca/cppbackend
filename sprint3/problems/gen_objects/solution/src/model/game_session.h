@@ -25,9 +25,12 @@ class GameSession {
 
   void Update(const double& delta);
 
+  void SetDogRandomSpawn(bool enable = true);
+
  private:
   const Map& m_map;
   std::vector<std::shared_ptr<Dog>> m_dogs;
+  bool m_random_spawn;
 };
 
 }  // namespace model

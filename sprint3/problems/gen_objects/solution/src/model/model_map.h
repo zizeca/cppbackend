@@ -125,7 +125,7 @@ class Map {
   using Buildings = std::vector<Building>;
   using Offices = std::vector<Office>;
 
-  Map(Id id, std::string name) noexcept : id_(std::move(id)), name_(std::move(name)), m_dog_speed(0.0), m_random_spawn(false) {}
+  Map(Id id, std::string name) noexcept : id_(std::move(id)), name_(std::move(name)), m_dog_speed(0.0) {}
 
   const Id& GetId() const noexcept { return id_; }
 
@@ -145,16 +145,12 @@ class Map {
 
   void AddOffice(Office office);
 
-  Point2d GetStartDogPoint() const;
-
   void SetDogSpeed(double speed);
 
   double GetDogSpeed() const noexcept;
 
-  void EnableRandomStartPoint(const bool& enable = true);
-
+  Point2d GetRandPoint(bool enable = true) const;
  private:
-  Point2d GetRandPoint() const;
   using OfficeIdToIndex = std::unordered_map<Office::Id, size_t, util::TaggedHasher<Office::Id>>;
 
   Id id_;
@@ -168,7 +164,6 @@ class Map {
   Offices offices_;
 
   double m_dog_speed;
-  bool m_random_spawn;
 };
 
 }  // namespace model

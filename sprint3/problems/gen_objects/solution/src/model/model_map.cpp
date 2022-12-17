@@ -24,9 +24,13 @@ void Map::AddOffice(Office office) {
   }
 }
 
-Point2d Map::GetRandPoint() const {
+Point2d Map::GetRandPoint(bool enable) const {
   if (roads_.size() == 0) {
     throw std::logic_error("Must be one or mode roads");
+  }
+
+  if(!enable) {
+    return roads_.at(0).GetStart();
   }
 
   std::random_device rd;
@@ -80,15 +84,7 @@ bool Road::Contains(const Point2d& point) const {
 }
 
 
-Point2d Map::GetStartDogPoint() const {
-  if(m_random_spawn) {
-    return GetRandPoint();
-  }
-  return {0.0, 0.0};
-}
 
-void Map::EnableRandomStartPoint(const bool& enable) {
-  m_random_spawn = enable;
-}
+
 
 }  // namespace model

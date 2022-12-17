@@ -38,6 +38,8 @@ class Game {
   void SetRandomSpawn(const bool &enable = true);
   const bool IsRandomSpawn() const;
 
+  void LootGeneratorConfig(const double &period, const double &probability);
+
  private:
   using MapIdHasher = util::TaggedHasher<Map::Id>;
   using MapIdToIndex = std::unordered_map<Map::Id, size_t, MapIdHasher>;
@@ -50,6 +52,9 @@ class Game {
   double m_default_speed = 1.0;
 
   bool m_random_dog_spawn = false;
+
+  double m_period_loot_gen = 0.0;
+  double m_probability_loot_gen = 0.0;
 };
 
 }  // namespace model
