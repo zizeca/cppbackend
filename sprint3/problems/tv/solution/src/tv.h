@@ -4,7 +4,7 @@
 
 #include <cassert>
 #include <optional>
-
+#include <stdexcept>
 class TV {
  public:
   constexpr static int MIN_CHANNEL = 1;
@@ -47,8 +47,9 @@ class TV {
   void SelectLastViewedChannel();
 
  private:
-  bool is_turned_on_ = false;
-  int channel_ = 1;
+  bool m_is_turned_on = false;
+  int m_channel = 1;
+  int m_prev_channel = 1;
 };
 
 #endif  // __TV_H__
