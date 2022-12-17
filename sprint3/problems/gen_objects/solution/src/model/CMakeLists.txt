@@ -5,7 +5,7 @@ set(SRC_MODEL
   dog.cpp
   game.cpp
   game_session.cpp
-  loot_type.cpp
+  loot.cpp
   model_map.cpp
   player.cpp
   player_list.cpp
@@ -20,7 +20,7 @@ set(HEADER_MODEL
   game.h
   game_session.h
   geometry.h
-  loot_type.h
+  loot.h
   model_map.h
   office.h
   player.h

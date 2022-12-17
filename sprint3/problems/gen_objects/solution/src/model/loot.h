@@ -1,14 +1,14 @@
 #pragma once
-#ifndef __MODEL__LOOT_TYPE_H__
-#define __MODEL__LOOT_TYPE_H__
+#ifndef __MODEL__LOOT_H__
+#define __MODEL__LOOT_H__
 
 #include <string>
 
 namespace model {
 
-class LootType {
+class Loot {
  public:
-  LootType(const std::string& name, const std::string& file, const std::string& type, const int& rotation, const std::string& color, const double& scale);
+  Loot(const std::string& name, const std::string& file, const std::string& type, const int& rotation, const std::string& color, const double& scale);
 
   const std::string& GetName() const noexcept;
 
@@ -33,4 +33,4 @@ class LootType {
 
 }  // namespace model
 
-#endif  // __MODEL__LOOT_TYPE_H__
+#endif  // __MODEL__LOOT_H__
