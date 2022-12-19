@@ -1,18 +1,20 @@
 
 #set(SRCDIR ${CMAKE_CURRENT_SOURCE_DIR})
 
+message("Model source")
+
 set(SRC_MODEL 
   dog.cpp
   game.cpp
   game_session.cpp
-  loot.cpp
+  #loot.cpp
+  loot_generator.cpp
   model_map.cpp
   player.cpp
   player_list.cpp
   tag_invokers.cpp
   token_generator.cpp
 )
-message(${SRCDIR})
 
 set(HEADER_MODEL 
   building.h
@@ -21,6 +23,7 @@ set(HEADER_MODEL
   game_session.h
   geometry.h
   loot.h
+  loot_generator.h
   model_map.h
   office.h
   player.h
@@ -29,7 +32,5 @@ set(HEADER_MODEL
   tag_invokers.h
   token_generator.h
 )
-
-message(${SRC})
 
 target_sources(${EXECUTE} PUBLIC ${SRC_MODEL} ${HEADER_MODEL})

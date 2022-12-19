@@ -8,29 +8,13 @@
 
 namespace model {
 
-class LootType {
- public:
-  LootType(const std::string& name, const std::string& file, const std::string& type, const int& rotation, const std::string& color, const double& scale);
-
-  const std::string& GetName() const noexcept;
-
-  const std::string& GetFile() const noexcept;
-
-  const std::string& GetType() const noexcept;
-
-  const int& GetRotation() const noexcept;
-
-  const std::string& GetColor() const noexcept;
-
-  const double& GetScale() const noexcept;
-
- private:
-  std::string m_name;   // example -> = "key";
-  std::string m_file;   // example -> = "assets/key.obj";
-  std::string m_type;   // example -> = "obj";
-  int m_rotation;       // example -> = 90;
-  std::string m_color;  // example -> = "#338844";
-  double m_scale;       // example -> = 0.03;
+struct LootType {
+  std::optional<std::string> name;   // example -> = "key";
+  std::optional<std::string> file;   // example -> = "assets/key.obj";
+  std::optional<std::string> type;   // example -> = "obj";
+  std::optional<int> rotation;       // example -> = 90;
+  std::optional<std::string> color;  // example -> = "#338844";
+  std::optional<double> scale;       // example -> = 0.03;
 };
 
 class Loot {
@@ -38,9 +22,9 @@ class Loot {
   Loot(const LootType& type);
 
   void SetPosition(const Point2d& pos);
-  const Point2d& GetPosition() const noexcept;
+  const Point2d& GetPosition() const noexcept {return m_position;}
 
-  const LootType& GetLootType() const noexcept;
+  const LootType& GetLootType() const noexcept { return m_loot_type;}
 
  private:
   LootType m_loot_type;

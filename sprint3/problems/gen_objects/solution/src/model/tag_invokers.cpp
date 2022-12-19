@@ -57,6 +57,15 @@ void tag_invoke(value_from_tag, value& jv, Map const& map) {
   obj[MapKey::id] = *map.GetId();
   obj[MapKey::name] = map.GetName();
 
+  // loot types parse
+  if (!map.GetLootTypes().empty()) {
+    array arr;
+    for (auto& i : map.GetLootTypes()) {
+      arr.push_back(value_from(i));
+    }
+    obj[MapKey::lootTypes] = value_from(arr);
+  }
+
   // road parse
   if (!map.GetRoads().empty()) {
     array arr;
@@ -85,6 +94,36 @@ void tag_invoke(value_from_tag, value& jv, Map const& map) {
     obj[MapKey::offices] = value_from(arr);
   }
   jv = obj;
+}
+
+void tag_invoke(value_from_tag, value& jv, LootType const& lootType) {
+  
+  object obj;
+  if(lootType.name){
+      obj["name"] = *lootType.name;
+  }
+  
+  if (lootType.file) {
+      obj["file"] = *lootType.file;
+  }
+
+  if (lootType.type){
+      obj["type"] = *lootType.type;
+  }
+
+  if (lootType.type) {
+      obj["rotation"] = *lootType.rotation;
+  }
+
+  if (lootType.color){
+      obj["color"] = *lootType.color;
+  }
+
+  if (lootType.scale) {
+      obj["scale"] = *lootType.scale;
+  }
+  
+  jv = std::move(obj);
 }
 
 void tag_invoke(value_from_tag, value& jv, Dog const& dog) {
@@ -188,6 +227,10 @@ Map tag_invoke(value_to_tag<Map>, value const& jv) {
       for (auto office : i->value().as_array()) {
         map.AddOffice(value_to<Office>(office));
       }
+    } else if (i->key() == MapKey::lootTypes) {
+      for (auto lootType : i->value().as_array()) {
+        map.AddLootType(value_to<LootType>(lootType));
+      }
     } else {
       // throw std::logic_error(
       //     std::string("Found unknon key").append(i->key_c_str()));
@@ -196,4 +239,30 @@ Map tag_invoke(value_to_tag<Map>, value const& jv) {
   return map;
 }
 
+LootType tag_invoke(value_to_tag<LootType>, value const& jv) {
+  LootType ret;
+  const object& obj = jv.as_object();
+
+  if (obj.contains("name")) {
+    ret.name = obj.at("name").as_string();
+  }
+
+  if (obj.contains("file")) {
+    ret.file = obj.at("file").as_string();
+  }
+  if (obj.contains("type")) {
+    ret.type = obj.at("type").as_string();
+  }
+  if (obj.contains("rotation")) {
+    ret.rotation = obj.at("rotation").as_int64();
+  }
+  if (obj.contains("color")) {
+    ret.color = obj.at("color").as_string();
+  }
+  if (obj.contains("scale")) {
+    ret.scale = obj.at("scale").as_double();
+  }
+
+  return ret;
+}
 }  // namespace model

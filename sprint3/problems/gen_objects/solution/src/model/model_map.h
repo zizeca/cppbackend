@@ -49,6 +49,8 @@ class Map {
 
   void AddLootType(LootType loot);
 
+  const LootTypes& GetLootTypes() const { return m_loot_types; }
+
   void SetDogSpeed(double speed);
 
   double GetDogSpeed() const noexcept;
