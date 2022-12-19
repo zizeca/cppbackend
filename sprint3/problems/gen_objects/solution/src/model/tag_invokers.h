@@ -27,6 +27,7 @@ void tag_invoke(value_from_tag, value& jv, Road const& road);
 void tag_invoke(value_from_tag, value& jv, Map const& map);
 void tag_invoke(value_from_tag, value& jv, LootType const& lootType);
 
+
 void tag_invoke(value_from_tag, value& jv, Dog const& dog);
 
 
@@ -35,6 +36,7 @@ Office tag_invoke(value_to_tag<Office>, value const& jv);
 Road tag_invoke(value_to_tag<Road>, value const& jv);
 Map tag_invoke(value_to_tag<Map>, value const& jv);
 LootType tag_invoke(value_to_tag<LootType>, value const& jv);
+Game tag_invoke(value_to_tag<Game>, value const& jv);
 
   /// @brief json object key constant
 struct MapKey {

@@ -34,32 +34,7 @@ model::Game LoadGame(const std::filesystem::path& json_path) {
     throw std::runtime_error(("Fail to json parse "s).append(ec.message()));
   }
 
-  model::Game game;
-
-  if (doc.as_object().contains("defaultDogSpeed")) {
-    game.SetDefaultSpeed(doc.as_object().at("defaultDogSpeed").as_double());
-  } else {
-    game.SetDefaultSpeed(1.0);
-  }
-
-  if (doc.as_object().contains("lootGeneratorConfig")) {
-    auto& loot = doc.as_object().at("lootGeneratorConfig");
-    game.LootGeneratorConfig( loot.at("period").as_double(), loot.at("probability").as_double());
-  } else {
-    assert(!"no loot config");
-  }
-
-  auto maps = doc.as_object().at("maps").as_array();
-
-  for (auto m = maps.cbegin(); m != maps.end(); ++m) {
-    model::Map ext_map = boost::json::value_to<model::Map>(*m);
-    // if (ext_map.GetDogSpeed() == 0.0) {
-    //   ext_map.SetDogSpeed(game.GetDefaultSpeed());
-    // }
-    game.AddMap(ext_map);
-  }
-
-  return game;
+  return boost::json::value_to<model::Game>(doc);
 }
 
 }  // namespace json_loader

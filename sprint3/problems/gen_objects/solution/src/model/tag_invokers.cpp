@@ -265,4 +265,38 @@ LootType tag_invoke(value_to_tag<LootType>, value const& jv) {
 
   return ret;
 }
+
+Game tag_invoke(value_to_tag<Game>, value const& jv) {
+  model::Game game;
+
+  if (jv.as_object().contains("defaultDogSpeed")) {
+    game.SetDefaultSpeed(jv.as_object().at("defaultDogSpeed").as_double());
+  } else {
+    game.SetDefaultSpeed(1.0);
+  }
+
+
+
+  if (jv.as_object().contains("lootGeneratorConfig")) {
+    auto& loot = jv.as_object().at("lootGeneratorConfig");
+    game.LootGeneratorConfig( loot.at("period").as_double(), loot.at("probability").as_double());
+  } else {
+    assert(!"no loot config");
+  }
+
+  auto maps = jv.as_object().at("maps").as_array();
+
+  for (auto m = maps.cbegin(); m != maps.end(); ++m) {
+    model::Map ext_map = boost::json::value_to<model::Map>(*m);
+    // if (ext_map.GetDogSpeed() == 0.0) {
+    //   ext_map.SetDogSpeed(game.GetDefaultSpeed());
+    // }
+    game.AddMap(ext_map);
+  }
+
+  return game;
+}
+
+
+
 }  // namespace model
