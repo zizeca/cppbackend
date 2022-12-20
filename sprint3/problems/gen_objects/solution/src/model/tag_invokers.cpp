@@ -97,32 +97,31 @@ void tag_invoke(value_from_tag, value& jv, Map const& map) {
 }
 
 void tag_invoke(value_from_tag, value& jv, LootType const& lootType) {
-  
   object obj;
-  if(lootType.name){
-      obj["name"] = *lootType.name;
-  }
-  
-  if (lootType.file) {
-      obj["file"] = *lootType.file;
+  if (lootType.name) {
+    obj["name"] = *lootType.name;
   }
 
-  if (lootType.type){
-      obj["type"] = *lootType.type;
+  if (lootType.file) {
+    obj["file"] = *lootType.file;
   }
 
   if (lootType.type) {
-      obj["rotation"] = *lootType.rotation;
+    obj["type"] = *lootType.type;
   }
 
-  if (lootType.color){
-      obj["color"] = *lootType.color;
+  if (lootType.type) {
+    obj["rotation"] = *lootType.rotation;
+  }
+
+  if (lootType.color) {
+    obj["color"] = *lootType.color;
   }
 
   if (lootType.scale) {
-      obj["scale"] = *lootType.scale;
+    obj["scale"] = *lootType.scale;
   }
-  
+
   jv = std::move(obj);
 }
 
@@ -275,28 +274,21 @@ Game tag_invoke(value_to_tag<Game>, value const& jv) {
     game.SetDefaultSpeed(1.0);
   }
 
-
-
   if (jv.as_object().contains("lootGeneratorConfig")) {
     auto& loot = jv.as_object().at("lootGeneratorConfig");
-    game.LootGeneratorConfig( loot.at("period").as_double(), loot.at("probability").as_double());
+    game.LootGeneratorConfig(loot.at("period").as_double(), loot.at("probability").as_double());
   } else {
     assert(!"no loot config");
   }
 
   auto maps = jv.as_object().at("maps").as_array();
 
-  for (auto m = maps.cbegin(); m != maps.end(); ++m) {
+  for (auto m = maps.cbegin(); m != maps.cend(); ++m) {
     model::Map ext_map = boost::json::value_to<model::Map>(*m);
-    // if (ext_map.GetDogSpeed() == 0.0) {
-    //   ext_map.SetDogSpeed(game.GetDefaultSpeed());
-    // }
     game.AddMap(ext_map);
   }
 
   return game;
 }
-
-
 
 }  // namespace model
