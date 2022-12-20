@@ -36,7 +36,9 @@ std::shared_ptr<GameSession> Game::GetSession(const model::Map::Id& id) {
     }
   }
 
-  auto sess = std::make_shared<GameSession>(*map);
+  std::chrono::milliseconds ms(static_cast<int>(m_period_loot_gen * 1000));
+
+  auto sess = std::make_shared<GameSession>(*map, loot_gen::LootGenerator( ms , m_probability_loot_gen));
   sess->SetDogRandomSpawn(m_random_dog_spawn);
   m_sess.push_back(sess);
 

@@ -2,7 +2,7 @@
 
 #include "../logger.h"
 namespace model {
-GameSession::GameSession(const Map& map) : m_map(map), m_random_spawn(false) {
+GameSession::GameSession(const Map& map, loot_gen::LootGenerator gen) : m_map(map), m_random_spawn(false), m_loot_gen(std::move(gen)) {
 }
 
 GameSession::~GameSession() {
