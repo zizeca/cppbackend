@@ -19,16 +19,19 @@ struct LootType {
 
 class Loot {
  public:
-  Loot(const LootType& type);
+  Loot(const LootType& type,const Point2d& pos, const unsigned& loot_index) : m_loot_type(type), m_position(pos), m_loot_index(loot_index) {}
 
-  void SetPosition(const Point2d& pos);
-  const Point2d& GetPosition() const noexcept {return m_position;}
+  // void SetPosition(const Point2d& pos);
 
   const LootType& GetLootType() const noexcept { return m_loot_type;}
+  const Point2d& GetPosition() const noexcept {return m_position;}
+  const unsigned& GetLootIndex() const noexcept {return m_loot_index;}
+
 
  private:
-  LootType m_loot_type;
+  const LootType& m_loot_type;
   Point2d m_position;
+  const unsigned& m_loot_index;
 };
 
 }  // namespace model

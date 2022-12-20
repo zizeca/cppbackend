@@ -1,7 +1,22 @@
 #include "game_session.h"
 
+#include <random>
+
 #include "../logger.h"
+
 namespace model {
+
+namespace {
+
+  unsigned int Rand( unsigned max) {
+    if (max <= 1) return max;
+    std::default_random_engine generator;
+    std::uniform_int_distribution<int> distribution(0,max);
+    return distribution(generator);
+  }
+
+}
+
 GameSession::GameSession(const Map& map, loot_gen::LootGenerator gen) : m_map(map), m_random_spawn(false), m_loot_gen(std::move(gen)) {
 }
 
@@ -29,6 +44,33 @@ void GameSession::AddDog(std::shared_ptr<Dog> dog) {
 }
 
 void GameSession::Update(const double& delta) {
+  GenerateLoot(delta);
+
+  DogsUpdate(delta);
+}
+
+void GameSession::SetDogRandomSpawn(bool enable){
+  m_random_spawn = enable;
+}
+
+void GameSession::GenerateLoot(const double& delta)
+{
+  const size_t max_loots = m_map.GetLootTypes().size(); 
+  if(max_loots == 0) return;
+
+  const std::chrono::milliseconds ms (static_cast<int64_t>(delta*1000));
+
+  const unsigned count = m_loot_gen.Generate(ms, m_loots.size(), m_dogs.size());
+
+  for(size_t i = 0; i < count; ++i) {
+    const unsigned loot_index = Rand(max_loots-1);
+    m_loots.emplace_back(m_map.GetLootTypes().at(loot_index),m_map.GetRandPoint(), loot_index);
+  }
+}
+
+void GameSession::DogsUpdate(const double& delta)
+{
+    // dog udate
   for (auto it = m_dogs.begin(); it != m_dogs.end(); ++it) {
     auto dog = *it;
     assert(dog != nullptr);
@@ -80,10 +122,6 @@ void GameSession::Update(const double& delta) {
 
     dog->SetPosition(posNew);
   }
-}
-
-void GameSession::SetDogRandomSpawn(bool enable){
-  m_random_spawn = enable;
 }
 
 
