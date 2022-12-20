@@ -28,9 +28,9 @@ const Point2d& Dog::GetSpeed() const {
   return m_speed;
 }
 
-void Dog::SetSpeed(const Point2d& vspeed) {
-  m_speed.x = vspeed.x;
-  m_speed.y = vspeed.y;
+void Dog::Stop() {
+  m_speed.x = 0.0;
+  m_speed.y = 0.0;
 }
 
 void Dog::SetDefaultSpeed(const double& speed) {

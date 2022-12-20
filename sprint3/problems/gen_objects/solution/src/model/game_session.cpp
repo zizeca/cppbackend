@@ -44,10 +44,8 @@ void GameSession::Update(const double& delta) {
     double border_left = pos.x;
     double border_right = pos.x;
 
-    bool check_if_contain = false;
-    for( auto road = m_map.GetRoads().cbegin(); road != m_map.GetRoads().cend(); ++road) {
+     for( auto road = m_map.GetRoads().cbegin(); road != m_map.GetRoads().cend(); ++road) {
       if(road->Contains(pos)) {
-        check_if_contain = true; 
         if(border_up > road->GetMinY()) {
           border_up = road->GetMinY();
         }
@@ -66,20 +64,18 @@ void GameSession::Update(const double& delta) {
       }
     }
 
-    assert(check_if_contain);
-
     if (posNew.y < border_up) {
       posNew.y = border_up;
-      dog->SetSpeed({0.0, 0.0});
+      dog->Stop();
     } else if (posNew.y > border_down) {
       posNew.y = border_down;
-      dog->SetSpeed({0.0, 0.0});
+      dog->Stop();
     } else if (posNew.x < border_left) {
       posNew.x = border_left;
-      dog->SetSpeed({0.0, 0.0});
+      dog->Stop();
     } else if (posNew.x > border_right) {
       posNew.x = border_right;
-      dog->SetSpeed({0.0, 0.0});
+      dog->Stop();
     }
 
     dog->SetPosition(posNew);

@@ -24,7 +24,7 @@ class Dog {
 
   const Point2d& GetSpeed() const;
 
-  void SetSpeed(const Point2d& vspeed);
+  void Stop();
 
   void SetDefaultSpeed(const double& speed);
 
