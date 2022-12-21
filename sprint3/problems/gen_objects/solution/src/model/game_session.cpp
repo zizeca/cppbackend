@@ -56,7 +56,7 @@ void GameSession::SetDogRandomSpawn(bool enable){
 void GameSession::GenerateLoot(const double& delta)
 {
   const size_t max_loots = m_map.GetLootTypes().size(); 
-  if(max_loots == 0) return;
+  if(max_loots == 0 || m_loots.size() >= m_dogs.size()) return;
 
   const std::chrono::milliseconds ms (static_cast<int64_t>(delta*1000));
 
@@ -64,6 +64,7 @@ void GameSession::GenerateLoot(const double& delta)
 
   for(size_t i = 0; i < count; ++i) {
     const unsigned loot_index = Rand(max_loots-1);
+    assert(loot_index <= m_map.GetLootTypes().size());
     m_loots.emplace_back(m_map.GetLootTypes().at(loot_index),m_map.GetRandPoint(), loot_index);
   }
 }

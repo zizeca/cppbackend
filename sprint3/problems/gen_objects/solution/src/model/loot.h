@@ -29,9 +29,9 @@ class Loot {
 
 
  private:
-  const LootType& m_loot_type;
-  Point2d m_position;
-  const unsigned& m_loot_index;
+  const LootType m_loot_type;
+  const Point2d m_position;
+  const unsigned m_loot_index;
 };
 
 }  // namespace model

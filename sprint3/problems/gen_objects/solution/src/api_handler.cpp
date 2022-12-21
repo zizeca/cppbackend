@@ -31,13 +31,13 @@ StringResponse ApiHandler::Response() {
   } else if (m_target == "/api/v1/game/tick" && m_app.IsManualTicker()) {
     return PostTick();
   } else {
-    return MakeJsonResponse(http::status::bad_request, {{"code", "badRequest"}, {"message", "Bad request"}});
+    return MakeJsonResponse(http::status::bad_request, JsAnswer("badRequest", "Bad request"));
   }
 }
 
 StringResponse ApiHandler::MapRequest() {
   assert(m_target.starts_with("/api/v1/maps"));
-  if (m_req.method() != http::verb::get) {
+  if (m_req.method() != http::verb::get && m_req.method() != http::verb::head) {
     return MakeJsonResponse(http::status::method_not_allowed, JsAnswer("invalidMethod", "Only GET method is expected"), ""sv, "GET"sv);
   }
 
@@ -67,7 +67,7 @@ StringResponse ApiHandler::PlayerJoinRequest() {
 
   // check method
   if (m_req.method() != http::verb::post) {
-    return MakeJsonResponse(http::status::method_not_allowed, {{"code", "invalidMethod"}, {"message", "Only POST method is expected"}}, CacheControl::NO_CACHE, "POST"sv);
+    return MakeJsonResponse(http::status::method_not_allowed, JsAnswer("invalidMethod", "Only POST method is expected"), CacheControl::NO_CACHE, "POST"sv);
   }
 
   std::string user_name;
@@ -137,6 +137,8 @@ StringResponse ApiHandler::GetGameState() {
   }
 
   return ExecuteAuthorized([this](model::Player &p) {
+    boost::json::object resp{};
+    
     boost::json::object obj;
 
     assert(m_app.GetPlayers().size() != 0);
@@ -148,11 +150,28 @@ StringResponse ApiHandler::GetGameState() {
       }
     }
 
-    /// std::cout << json::serialize(obj) << std::endl;
+    if (!obj.empty()) {
+      resp["players"] = obj;
+    }
+
+    boost::json::object lostLoots;
+
+    auto sess = p.GetSession();
+    int count = 0;
+    for(auto& i : sess->GetLoots()) {
+      lostLoots[std::to_string(count++)] = {{"type", i.GetLootIndex()}, {
+        "pos", {i.GetPosition().x, i.GetPosition().y}
+      }};
+    }
+
+
+    if(!lostLoots.empty()) {
+      resp["lostObjects"] = lostLoots;
+    }
 
     assert(!obj.empty());
     return MakeJsonResponse(http::status::ok,
-                            {{"players", obj}},
+                            resp,
                             CacheControl::NO_CACHE); });
 }
 

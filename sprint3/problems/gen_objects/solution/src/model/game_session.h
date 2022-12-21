@@ -17,6 +17,8 @@ namespace model {
 
 class GameSession {
  public:
+  using LootContainer = std::list<Loot>;
+
   explicit GameSession(const Map& map, loot_gen::LootGenerator gen);
   ~GameSession();
 
@@ -30,6 +32,8 @@ class GameSession {
 
   void SetDogRandomSpawn(bool enable = true);
 
+  const LootContainer GetLoots() const noexcept { return m_loots;}
+
  private:
 
   void GenerateLoot(const double& delta);
@@ -42,7 +46,7 @@ class GameSession {
 
   loot_gen::LootGenerator m_loot_gen;
 
-  std::list<Loot> m_loots;
+  LootContainer m_loots;
 };
 
 }  // namespace model

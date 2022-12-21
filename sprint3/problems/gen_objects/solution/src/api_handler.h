@@ -61,6 +61,8 @@ class ApiHandler {
                                   const json::value& val,
                                   std::string_view cache_control = std::string_view(),
                                   std::string_view allow = std::string_view());
+
+  
 };
 
 }  // namespace http_handler
