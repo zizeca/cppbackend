@@ -59,7 +59,7 @@ class ApiHandler {
    */
   StringResponse MakeJsonResponse(const http::status& status,
                                   const json::value& val,
-                                  std::string_view cache_control = std::string_view(),
+                                  std::string_view cache_control = "no-cache"sv,
                                   std::string_view allow = std::string_view());
 
   
