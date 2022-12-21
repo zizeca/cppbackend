@@ -38,7 +38,7 @@ StringResponse ApiHandler::Response() {
 StringResponse ApiHandler::MapRequest() {
   assert(m_target.starts_with("/api/v1/maps"));
   if (m_req.method() != http::verb::get && m_req.method() != http::verb::head) {
-    return MakeJsonResponse(http::status::method_not_allowed, JsAnswer("invalidMethod", "Only GET method is expected"), ""sv, "GET"sv);
+    return MakeJsonResponse(http::status::method_not_allowed, JsAnswer("invalidMethod", "Only GET method is expected"), CacheControl::NO_CACHE, "GET"sv);
   }
 
   if (m_target == "/api/v1/maps"s) {
@@ -115,7 +115,6 @@ StringResponse ApiHandler::PlayerListRequest() {
 
   return ExecuteAuthorized([this](model::Player &p) {
     boost::json::object obj;
-    assert(p.GetSession());
     for (auto it = m_app.GetPlayers().cbegin(); it != m_app.GetPlayers().cend(); ++it) {
       if (it->second.GetSession() == p.GetSession())
         obj[std::to_string(it->second.GetId())] = {{"name", it->second.GetName()}};
