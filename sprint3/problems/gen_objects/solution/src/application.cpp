@@ -68,7 +68,7 @@ const model::PlayerList::Container &Application::GetPlayers() const noexcept {
 }
 
 void Application::Update(std::chrono::milliseconds ms) {
-  if(ms.count() > 30000ul){   // fail if more than 30s
+  if(!m_manual_ticker && ms.count() > 30000ul){   // fail if more than 30s
     throw std::runtime_error("Time for aplication update state is very long");
   }
 
