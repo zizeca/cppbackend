@@ -28,7 +28,7 @@ StringResponse ApiHandler::Response() {
     return GetGameState();
   } else if (m_target == "/api/v1/game/player/action") {
     return PostAction();
-  } else if (m_target == "/api/v1/game/tick" && m_app.IsManualTicker()) {
+  } else if (m_target == "/api/v1/game/tick") {
     return PostTick();
   } else {
     return MakeJsonResponse(http::status::bad_request, JsAnswer("badRequest", "Bad request"));
@@ -226,11 +226,13 @@ StringResponse ApiHandler::PostTick() {
     return MakeJsonResponse(http::status::bad_request, JsAnswer("invalidArgument", "Failed to parse tick request JSON "s + e.what()), CacheControl::NO_CACHE);
   }
 
-  try {
-    m_app.Update(std::chrono::milliseconds(ms));
-  } catch (const std::exception &e) {
-    Logger::LogExit(e);
-    throw;
+  if(m_app.IsManualTicker()) {
+    try {
+      m_app.Update(std::chrono::milliseconds(ms));
+    } catch (const std::exception &e) {
+      Logger::LogExit(e);
+      throw;
+    }
   }
 
   return MakeJsonResponse(http::status::ok,
