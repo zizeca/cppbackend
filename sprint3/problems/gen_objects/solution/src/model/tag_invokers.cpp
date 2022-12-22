@@ -110,7 +110,7 @@ void tag_invoke(value_from_tag, value& jv, LootType const& lootType) {
     obj["type"] = *lootType.type;
   }
 
-  if (lootType.type && *lootType.rotation != 0) {
+  if (lootType.type) {
     obj["rotation"] = *lootType.rotation;
   }
 
@@ -252,7 +252,7 @@ LootType tag_invoke(value_to_tag<LootType>, value const& jv) {
   if (obj.contains("type")) {
     ret.type = obj.at("type").as_string();
   }
-  if (obj.contains("rotation") && obj.at("rotation").as_int64() != 0) {
+  if (obj.contains("rotation")) {
     ret.rotation = obj.at("rotation").as_int64();
   }
   if (obj.contains("color")) {
