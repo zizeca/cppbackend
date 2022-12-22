@@ -226,14 +226,14 @@ StringResponse ApiHandler::PostTick() {
     return MakeJsonResponse(http::status::bad_request, JsAnswer("invalidArgument", "Failed to parse tick request JSON "s + e.what()), CacheControl::NO_CACHE);
   }
 
-  if(m_app.IsManualTicker()) {
+  //if(m_app.IsManualTicker()) {
     try {
       m_app.Update(std::chrono::milliseconds(ms));
     } catch (const std::exception &e) {
       Logger::LogExit(e);
       throw;
     }
-  }
+  //}
 
   return MakeJsonResponse(http::status::ok,
                           json::object(),
