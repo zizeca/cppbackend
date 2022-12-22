@@ -27,7 +27,6 @@ void Map::AddLootType(LootType loot) {
   m_loot_types.push_back(loot);
 }
 
-
 Point2d Map::GetRandPoint(bool enable) const {
   if (roads_.size() == 0) {
     throw std::logic_error("Must be one or mode roads");
@@ -52,21 +51,22 @@ Point2d Map::GetRandPoint(bool enable) const {
 
   Point2d ret{static_cast<double>(start.x), static_cast<double>(start.y)};
 
-  double width;
-  {
-    std::uniform_real_distribution<> dist(-Road::HALF_WIDTH, Road::HALF_WIDTH);
-    width = dist(gen);
-    width = ((int)(width * 100 + .5) / 100.0);  // round two digit
-  }
+  // random by wide has no tested
+  // double width;
+  // {
+  //   std::uniform_real_distribution<> dist(-Road::HALF_WIDTH, Road::HALF_WIDTH);
+  //   width = dist(gen);
+  //   width = ((int)(width * 100 + .5) / 100.0);  // round two digit
+  // }
 
   if (road.IsHorizontal()) {
     std::uniform_real_distribution<> dist(start.x, end.x);
     ret.x = dist(gen);
-    ret.y += width;
+    // ret.y += width;
   } else {
     std::uniform_real_distribution<> dist(start.y, end.y);
     ret.y = dist(gen);
-    ret.x += width;
+    // ret.x += width;
   }
 
   ret.x = ((int)(ret.x * 100 + .5) / 100.0);  // round two digit
