@@ -110,7 +110,7 @@ void tag_invoke(value_from_tag, value& jv, LootType const& lootType) {
     obj["type"] = *lootType.type;
   }
 
-  if (lootType.type) {
+  if (lootType.rotation) {
     obj["rotation"] = *lootType.rotation;
   }
 
@@ -242,24 +242,23 @@ LootType tag_invoke(value_to_tag<LootType>, value const& jv) {
   LootType ret;
   const object& obj = jv.as_object();
 
-  if (obj.contains("name")) {
-    ret.name = obj.at("name").as_string();
+  if (obj.contains(MapKey::name)) {
+    ret.name = obj.at(MapKey::name).as_string();
   }
-
-  if (obj.contains("file")) {
-    ret.file = obj.at("file").as_string();
+  if (obj.contains(MapKey::file)) {
+    ret.file = obj.at(MapKey::file).as_string();
   }
-  if (obj.contains("type")) {
-    ret.type = obj.at("type").as_string();
+  if (obj.contains(MapKey::type)) {
+    ret.type = obj.at(MapKey::type).as_string();
   }
-  if (obj.contains("rotation")) {
-    ret.rotation = obj.at("rotation").as_int64();
+  if (obj.contains(MapKey::rotation)) {
+    ret.rotation = obj.at(MapKey::rotation).as_int64();
   }
-  if (obj.contains("color")) {
-    ret.color = obj.at("color").as_string();
+  if (obj.contains(MapKey::color)) {
+    ret.color = obj.at(MapKey::color).as_string();
   }
-  if (obj.contains("scale")) {
-    ret.scale = obj.at("scale").as_double();
+  if (obj.contains(MapKey::scale)) {
+    ret.scale = obj.at(MapKey::scale).as_double();
   }
 
   return ret;
@@ -268,20 +267,20 @@ LootType tag_invoke(value_to_tag<LootType>, value const& jv) {
 Game tag_invoke(value_to_tag<Game>, value const& jv) {
   model::Game game;
 
-  if (jv.as_object().contains("defaultDogSpeed")) {
-    game.SetDefaultSpeed(jv.as_object().at("defaultDogSpeed").as_double());
+  if (jv.as_object().contains(MapKey::defaultDogSpeed)) {
+    game.SetDefaultSpeed(jv.as_object().at(MapKey::defaultDogSpeed).as_double());
   } else {
     game.SetDefaultSpeed(1.0);
   }
 
-  if (jv.as_object().contains("lootGeneratorConfig")) {
-    auto& loot = jv.as_object().at("lootGeneratorConfig");
-    game.LootGeneratorConfig(loot.at("period").as_double(), loot.at("probability").as_double());
+  if (jv.as_object().contains(MapKey::lootGeneratorConfig)) {
+    auto& loot = jv.as_object().at(MapKey::lootGeneratorConfig);
+    game.LootGeneratorConfig(loot.at(MapKey::period).as_double(), loot.at(MapKey::probability).as_double());
   } else {
     assert(!"no loot config");
   }
 
-  auto maps = jv.as_object().at("maps").as_array();
+  auto maps = jv.as_object().at(MapKey::maps).as_array();
 
   for (auto m = maps.cbegin(); m != maps.cend(); ++m) {
     model::Map ext_map = boost::json::value_to<model::Map>(*m);

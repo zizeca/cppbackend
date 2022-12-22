@@ -40,30 +40,33 @@ Game tag_invoke(value_to_tag<Game>, value const& jv);
 
   /// @brief json object key constant
 struct MapKey {
-  constexpr static string_view id = "id";
-  constexpr static string_view name = "name";
-  constexpr static string_view start_X = "x0";
-  constexpr static string_view start_Y = "y0";
-  constexpr static string_view end_X = "x1";
-  constexpr static string_view end_Y = "y1";
-  constexpr static string_view pos_X = "x";
-  constexpr static string_view pos_Y = "y";
-  constexpr static string_view height = "h";
-  constexpr static string_view width = "w";
-  constexpr static string_view offset_X = "offsetX";
-  constexpr static string_view offset_Y = "offsetY";
-  constexpr static string_view roads = "roads";
   constexpr static string_view buildings = "buildings";
-  constexpr static string_view offices = "offices";
+  constexpr static string_view color = "color";
   constexpr static string_view defaultDogSpeed = "defaultDogSpeed";
   constexpr static string_view dogSpeed = "dogSpeed";
-  constexpr static string_view lootTypes = "lootTypes";
+  constexpr static string_view end_X = "x1";
+  constexpr static string_view end_Y = "y1";
   constexpr static string_view file = "file";
-  constexpr static string_view type = "type";
+  constexpr static string_view height = "h";
+  constexpr static string_view id = "id";
+  constexpr static string_view lootGeneratorConfig = "lootGeneratorConfig";
+  constexpr static string_view lootTypes = "lootTypes";
+  constexpr static string_view maps = "maps";
+  constexpr static string_view name = "name";
+  constexpr static string_view offices = "offices";
+  constexpr static string_view offset_X = "offsetX";
+  constexpr static string_view offset_Y = "offsetY";
+  constexpr static string_view period = "period";
+  constexpr static string_view pos_X = "x";
+  constexpr static string_view pos_Y = "y";
+  constexpr static string_view probability = "probability";
+  constexpr static string_view roads = "roads";
   constexpr static string_view rotation = "rotation";
-  constexpr static string_view color = "color";
   constexpr static string_view scale = "scale";
-
+  constexpr static string_view start_X = "x0";
+  constexpr static string_view start_Y = "y0";
+  constexpr static string_view type = "type";
+  constexpr static string_view width = "w";
 };
 
 };  // namespace model
