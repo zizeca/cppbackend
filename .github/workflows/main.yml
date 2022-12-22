@@ -114,17 +114,17 @@ jobs:
           DELIVERY_APP: ${{ github.workspace }}/sprint1/problems/map_json/solution/build/bin/game_server
           CONFIG_PATH: ${{ github.workspace }}/sprint1/problems/map_json/solution/data/config.json
 
-      - name: build tests sprint1 final_task
-        run: |
-          cd sprint1/problems/final_task/solution
-          docker build -t final_task .
-          echo "COMMAND_RUN=docker run --rm --network ${DOCKER_NETWORK} --name cppserver -p 8080:8080 final_task" >> $GITHUB_ENV
+      # - name: build tests sprint1 final_task
+      #   run: |
+      #     cd sprint1/problems/final_task/solution
+      #     docker build -t final_task .
+      #     echo "COMMAND_RUN=docker run --rm --network ${DOCKER_NETWORK} --name cppserver -p 8080:8080 final_task" >> $GITHUB_ENV
 
-      - name: run tests sprint1 final_task
-        run: pytest --junitxml=${GITHUB_WORKSPACE}/final_task.xml cpp-backend-tests-practicum/tests/test_l05_final_task.py
-        env:
-          SERVER_DOMAIN: cppserver
-          CONFIG_PATH: ${{ github.workspace }}/sprint1/problems/final_task/solution/data/config.json
+      # - name: run tests sprint1 final_task
+      #   run: pytest --junitxml=${GITHUB_WORKSPACE}/final_task.xml cpp-backend-tests-practicum/tests/test_l05_final_task.py
+      #   env:
+      #     SERVER_DOMAIN: cppserver
+      #     CONFIG_PATH: ${{ github.workspace }}/sprint1/problems/final_task/solution/data/config.json
 
       # - name: build tests sprint2 static_content
       #   run: |

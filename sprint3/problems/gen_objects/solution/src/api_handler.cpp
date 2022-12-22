@@ -38,7 +38,7 @@ StringResponse ApiHandler::Response() {
 StringResponse ApiHandler::MapRequest() {
   assert(m_target.starts_with("/api/v1/maps"));
   if (m_req.method() != http::verb::get && m_req.method() != http::verb::head) {
-    return MakeJsonResponse(http::status::method_not_allowed, JsAnswer("invalidMethod", "Only GET method is expected"), CacheControl::NO_CACHE, "GET"sv);
+    return MakeJsonResponse(http::status::method_not_allowed, JsAnswer("invalidMethod", "Only GET method is expected"), CacheControl::NO_CACHE, "GET, HEAD"sv);
   }
 
   if (m_target == "/api/v1/maps"s) {
