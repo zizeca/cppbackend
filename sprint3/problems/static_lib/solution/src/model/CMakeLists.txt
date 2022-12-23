@@ -12,7 +12,7 @@ set(SRC_MODEL
   model_map.cpp
   player.cpp
   player_list.cpp
-  tag_invokers.cpp
+#  tag_invokers.cpp
   token_generator.cpp
 )
 
@@ -29,7 +29,7 @@ set(HEADER_MODEL
   player.h
   player_list.h
   road.h
-  tag_invokers.h
+#  tag_invokers.h
   token_generator.h
 )
 

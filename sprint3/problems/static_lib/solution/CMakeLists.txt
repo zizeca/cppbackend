@@ -11,12 +11,13 @@ set(SRCDIR src)
 
 set(EXECUTE game_server)
 set(MODEL_LIB model)
+set(JSON_LIB json_parser)
 
 
 set(SRC 
 	${SRCDIR}/main.cpp
   ${SRCDIR}/logger.cpp
-	${SRCDIR}/boost_json.cpp
+#	${SRCDIR}/boost_json.cpp
 	${SRCDIR}/json_loader.cpp
 #	${SRCDIR}/tag_invokers.cpp
   ${SRCDIR}/util.cpp
@@ -59,9 +60,10 @@ find_package(Threads REQUIRED)
 #catch_discover_tests(game_server_tests) 
 
 add_subdirectory(${SRCDIR}/model)
+add_subdirectory(${SRCDIR}/json_parser)
 
 add_executable(${EXECUTE} ${SRC} ${HEADER})
 target_include_directories(${EXECUTE} PRIVATE CONAN_PKG::boost)
-target_link_libraries(${EXECUTE} PRIVATE Threads::Threads CONAN_PKG::boost ${MODEL_LIB})
+target_link_libraries(${EXECUTE} PRIVATE Threads::Threads CONAN_PKG::boost ${MODEL_LIB} ${JSON_LIB})
 add_subdirectory(${SRCDIR}/http_server)
 add_subdirectory(tests)

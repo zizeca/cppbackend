@@ -15,7 +15,7 @@
 
 #include <boost/json.hpp>
 
-#include "game.h"
+#include "../model.h"
 
 namespace model {
 
