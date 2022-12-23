@@ -1,12 +1,12 @@
 #include <cmath>
 #include <catch2/catch_test_macros.hpp>
 
-#include "../src/model/loot_generator.h"
+#include "../src/model.h"
 
 using namespace std::literals;
 
 SCENARIO("Loot generation") {
-    using loot_gen::LootGenerator;
+    using model::LootGenerator;
     using TimeInterval = LootGenerator::TimeInterval;
 
     GIVEN("a loot generator") {

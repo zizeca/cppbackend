@@ -19,7 +19,7 @@ class GameSession {
  public:
   using LootContainer = std::list<Loot>;
 
-  explicit GameSession(const Map& map, loot_gen::LootGenerator gen);
+  explicit GameSession(const Map& map, LootGenerator gen);
   ~GameSession();
 
   const Map& GetMap() const noexcept;
@@ -44,7 +44,7 @@ class GameSession {
   std::vector<std::shared_ptr<Dog>> m_dogs;
   bool m_random_spawn;
 
-  loot_gen::LootGenerator m_loot_gen;
+  LootGenerator m_loot_gen;
 
   LootContainer m_loots;
 };

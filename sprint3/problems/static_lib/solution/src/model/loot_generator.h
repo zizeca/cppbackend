@@ -2,7 +2,7 @@
 #include <chrono>
 #include <functional>
 
-namespace loot_gen {
+namespace model {
 
 /*
  *  Генератор трофеев
@@ -45,4 +45,4 @@ private:
     RandomGenerator random_generator_;
 };
 
-}  // namespace loot_gen
+}  // namespace model

@@ -17,7 +17,7 @@ namespace {
 
 }
 
-GameSession::GameSession(const Map& map, loot_gen::LootGenerator gen) : m_map(map), m_random_spawn(false), m_loot_gen(std::move(gen)) {
+GameSession::GameSession(const Map& map, LootGenerator gen) : m_map(map), m_random_spawn(false), m_loot_gen(std::move(gen)) {
 }
 
 GameSession::~GameSession() {

@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <cmath>
 
-namespace loot_gen {
+namespace model {
 
 unsigned LootGenerator::Generate(TimeInterval time_delta, unsigned loot_count,
                                  unsigned looter_count) {
@@ -19,4 +19,4 @@ unsigned LootGenerator::Generate(TimeInterval time_delta, unsigned loot_count,
     return generated_loot;
 }
 
-} // namespace loot_gen
+} // namespace model
