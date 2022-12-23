@@ -10,6 +10,8 @@ conan_basic_setup(TARGETS)
 set(SRCDIR src)
 
 set(EXECUTE game_server)
+set(MODEL_LIB model)
+
 
 set(SRC 
 	${SRCDIR}/main.cpp
@@ -52,10 +54,14 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
 
+#include(CTest)
+#include(${CONAN_BUILD_DIRS_CATCH2}/Catch.cmake)
+#catch_discover_tests(game_server_tests) 
+
+add_subdirectory(${SRCDIR}/model)
 
 add_executable(${EXECUTE} ${SRC} ${HEADER})
 target_include_directories(${EXECUTE} PRIVATE CONAN_PKG::boost)
-target_link_libraries(${EXECUTE} PRIVATE Threads::Threads CONAN_PKG::boost)
+target_link_libraries(${EXECUTE} PRIVATE Threads::Threads CONAN_PKG::boost ${MODEL_LIB})
 add_subdirectory(${SRCDIR}/http_server)
-add_subdirectory(${SRCDIR}/model)
 add_subdirectory(tests)

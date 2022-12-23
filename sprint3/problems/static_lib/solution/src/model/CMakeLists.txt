@@ -33,4 +33,6 @@ set(HEADER_MODEL
   token_generator.h
 )
 
-target_sources(${EXECUTE} PUBLIC ${SRC_MODEL} ${HEADER_MODEL})
+add_library(${MODEL_LIB} STATIC ${SRC_MODEL} ${HEADER_MODEL})
+target_include_directories(${MODEL_LIB} PRIVATE CONAN_PKG::boost)
+target_link_libraries(${MODEL_LIB} PRIVATE CONAN_PKG::boost)
