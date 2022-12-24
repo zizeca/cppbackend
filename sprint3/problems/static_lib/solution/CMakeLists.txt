@@ -55,9 +55,8 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
 
-#include(CTest)
-#include(${CONAN_BUILD_DIRS_CATCH2}/Catch.cmake)
-#catch_discover_tests(game_server_tests) 
+include(CTest)
+include(${CONAN_BUILD_DIRS_CATCH2}/Catch.cmake)
 
 add_subdirectory(${SRCDIR}/model)
 add_subdirectory(${SRCDIR}/json_parser)
@@ -67,3 +66,4 @@ target_include_directories(${EXECUTE} PRIVATE CONAN_PKG::boost)
 target_link_libraries(${EXECUTE} PRIVATE Threads::Threads CONAN_PKG::boost ${MODEL_LIB} ${JSON_LIB})
 add_subdirectory(${SRCDIR}/http_server)
 add_subdirectory(tests)
+#catch_discover_tests(${CMAKE_BINARY_DIR}/bin/game_server_tests) 
