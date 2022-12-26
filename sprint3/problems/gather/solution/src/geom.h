@@ -81,6 +81,14 @@ struct Point2 {
     right *= scalar;
     return right;
   }
+
+  bool operator==(const Point2& other) const {
+    return (x == other.x) && (y == other.y);
+  }
+
+  bool operator!=(const Point2& other) const {
+    return !(*this == other);
+  }
 };
 
 using Point2i = Point2<int>;

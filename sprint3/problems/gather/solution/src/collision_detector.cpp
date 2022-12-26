@@ -33,8 +33,11 @@ std::vector<GatheringEvent> FindGatherEvents(const ItemGathererProvider& provide
     const Item& item = provider.GetItem(i);
     for (size_t j = 0; j < provider.GatherersCount(); j++) {
       const Gatherer& gather = provider.GetGatherer(j);
+      if(gather.start_pos == gather.end_pos) {
+        continue;
+      }
       auto result = TryCollectPoint(gather.start_pos, gather.end_pos, item.position);
-      if(result.IsCollected(0.6)) {
+      if(result.IsCollected(gather.width + item.width)) {
         GatheringEvent event;
         event.gatherer_id = j;
         event.item_id = i;
