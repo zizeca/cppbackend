@@ -97,24 +97,41 @@ ItemGatherer Init(size_t num, Point2D const& min, Point2D const& max, double con
 }
 /**/
 
+auto compTime = [](const GatheringEvent& a, const GatheringEvent& b) {
+  return a.time < b.time;
+};
+
+
 SCENARIO("Gather Events") {
   GIVEN("Random test") {
 
-    const size_t num = 20;
-    const double maxMove = 100.0;
+    const size_t num = GENERATE(5, 20, 100);
+    const double maxMove = GENERATE(25.0, 50.0, 100.0);
     const double width = 0.6f;
-
     auto itemg = Init (num, Point2D(0.0, 0.0), Point2D(500.0, 500.0), maxMove, width);
     auto arr = FindGatherEvents(itemg);
 
+
     WHEN("Check val"){
       THEN("check sq_distance"){
-        for(auto &i : arr) {
-          auto seq = i.sq_distance;
-          auto calc = width * width;
-          CHECK(seq == calc);
-        }
+        CHECK(arr.size()>=1);
+        CHECK(std::is_sorted(arr.begin(), arr.end(), compTime));
       }
+    }
+
+    AND_WHEN("Check throw") {
+        for(auto&i : arr) {
+          REQUIRE_NOTHROW(itemg.GetGatherer(i.gatherer_id));
+          REQUIRE_NOTHROW(itemg.GetItem(i.item_id));
+        }
+        THEN("Check collect") {
+          for(auto&i : arr) {
+            auto gath = itemg.GetGatherer(i.gatherer_id);
+            auto itm = itemg.GetItem(i.item_id);
+            auto collect = TryCollectPoint(gath.start_pos, gath.end_pos, itm.position);
+            CHECK(collect.IsCollected(width));
+          }
+        }
     }
   }
 }
