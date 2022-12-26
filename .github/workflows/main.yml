@@ -281,32 +281,32 @@ jobs:
 
       - run: chmod +x ${GITHUB_WORKSPACE}/sprint1/problems/map_json/solution/build/bin/game_server
 
-      - name: Load FlameGraph
-        uses: actions/checkout@v3
-        with:
-          repository: 'brendangregg/FlameGraph'
-          path: ${{ github.workspace }}/sprint3/problems/flamegraph/solution/FlameGraph
+      # - name: Load FlameGraph
+      #   uses: actions/checkout@v3
+      #   with:
+      #     repository: 'brendangregg/FlameGraph'
+      #     path: ${{ github.workspace }}/sprint3/problems/flamegraph/solution/FlameGraph
 
-      - name: run tests sprint3 flamegraph
-        run: |
-          cd sprint3/problems/flamegraph/solution
-          sudo python3 shoot.py "${GITHUB_WORKSPACE}/sprint1/problems/map_json/solution/build/bin/game_server ${GITHUB_WORKSPACE}/sprint1/problems/map_json/solution/data/config.json"
-          sudo chown -R runner:docker ${GITHUB_WORKSPACE}/sprint3/problems/flamegraph/solution
-          ls -l
-          pytest --junitxml=${GITHUB_WORKSPACE}/flamegraph.xml ${GITHUB_WORKSPACE}/cpp-backend-tests-practicum/tests/test_s03_flamegraph.py
-        env:
-          DIRECTORY: ${{ github.workspace }}/sprint3/problems/flamegraph/solution
+      # - name: run tests sprint3 flamegraph
+      #   run: |
+      #     cd sprint3/problems/flamegraph/solution
+      #     sudo python3 shoot.py "${GITHUB_WORKSPACE}/sprint1/problems/map_json/solution/build/bin/game_server ${GITHUB_WORKSPACE}/sprint1/problems/map_json/solution/data/config.json"
+      #     sudo chown -R runner:docker ${GITHUB_WORKSPACE}/sprint3/problems/flamegraph/solution
+      #     ls -l
+      #     pytest --junitxml=${GITHUB_WORKSPACE}/flamegraph.xml ${GITHUB_WORKSPACE}/cpp-backend-tests-practicum/tests/test_s03_flamegraph.py
+      #   env:
+      #     DIRECTORY: ${{ github.workspace }}/sprint3/problems/flamegraph/solution
 
-      - name: build tests sprint3 gen_objects
-        run: |
-          cd sprint3/problems/gen_objects/solution
-          docker build -t gen_objects .
-          echo "COMMAND_RUN=docker run --rm --entrypoint /app/game_server -p 8080:8080 gen_objects --config-file /app/data/config.json --www-root /app/static/" >> $GITHUB_ENV
+      # - name: build tests sprint3 gen_objects
+      #   run: |
+      #     cd sprint3/problems/gen_objects/solution
+      #     docker build -t gen_objects .
+      #     echo "COMMAND_RUN=docker run --rm --entrypoint /app/game_server -p 8080:8080 gen_objects --config-file /app/data/config.json --www-root /app/static/" >> $GITHUB_ENV
 
-      - name: run tests sprint3 gen_objects
-        run: pytest --junitxml=${GITHUB_WORKSPACE}/gen_objects.xml cpp-backend-tests-practicum/tests/test_s03_gen_objects.py
-        env:
-          CONFIG_PATH: ${{ github.workspace }}/sprint3/problems/gen_objects/solution/data/config.json
+      # - name: run tests sprint3 gen_objects
+      #   run: pytest --junitxml=${GITHUB_WORKSPACE}/gen_objects.xml cpp-backend-tests-practicum/tests/test_s03_gen_objects.py
+      #   env:
+      #     CONFIG_PATH: ${{ github.workspace }}/sprint3/problems/gen_objects/solution/data/config.json
 
       - name: build tests sprint3 static_lib
         run: |
