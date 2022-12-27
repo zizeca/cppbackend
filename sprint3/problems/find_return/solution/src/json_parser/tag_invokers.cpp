@@ -265,7 +265,7 @@ LootType tag_invoke(value_to_tag<LootType>, value const& jv) {
     ret.scale = obj.at(MapKey::scale).as_double();
   }
   if (obj.contains(MapKey::value)) {
-    ret.value = obj.at(MapKey::value).as_uint64();
+    ret.value = static_cast<size_t>(obj.at(MapKey::value).as_int64());
   }
 
   return ret;
