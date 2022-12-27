@@ -2,6 +2,7 @@
 #ifndef __MODEL__LOOT_H__
 #define __MODEL__LOOT_H__
 
+#include <optional>
 #include <string>
 
 #include "geometry.h"
@@ -15,6 +16,7 @@ struct LootType {
   std::optional<int> rotation;       // example -> = 90;
   std::optional<std::string> color;  // example -> = "#338844";
   std::optional<double> scale;       // example -> = 0.03;
+  std::optional<size_t> value;
 };
 
 class Loot {

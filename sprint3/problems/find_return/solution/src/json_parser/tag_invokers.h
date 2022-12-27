@@ -66,6 +66,7 @@ struct MapKey {
   constexpr static string_view start_X = "x0";
   constexpr static string_view start_Y = "y0";
   constexpr static string_view type = "type";
+  constexpr static string_view value = "value";
   constexpr static string_view width = "w";
 };
 
