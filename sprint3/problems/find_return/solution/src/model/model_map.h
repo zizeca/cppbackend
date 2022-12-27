@@ -13,7 +13,7 @@
 #include "office.h"
 #include "road.h"
 #include "building.h"
-#include "loot.h"
+#include "loot_type.h"
 
 namespace model {
 

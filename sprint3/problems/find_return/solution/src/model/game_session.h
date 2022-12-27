@@ -11,7 +11,7 @@
 #include "dog.h"
 #include "model_map.h"
 #include "loot_generator.h"
-#include "loot.h"
+#include "loot_type.h"
 
 namespace model {
 
