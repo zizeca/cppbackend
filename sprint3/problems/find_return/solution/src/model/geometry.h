@@ -81,6 +81,14 @@ struct Point2 {
     right *= scalar;
     return right;
   }
+
+  bool operator==(const Point2& other) const {
+    return (x == other.x) && (y == other.y);
+  }
+
+  bool operator!=(const Point2& other) const {
+    return !(*this == other);
+  }
 };
 
 using Point2i = Point2<int>;
@@ -112,6 +120,39 @@ struct Rect {
     const T maxY = max(top, static_cast<T>(top + height));
 
     return (point.x >= minX) && (point.x < maxX) && (point.y >= minY) && (point.y < maxY);
+  }
+
+  constexpr std::optional<Rect<T>> findIntersection(const Rect<T>& rectangle) const {
+    // Not using 'std::min' and 'std::max' to avoid depending on '<algorithm>'
+    const auto min = [](T a, T b) { return (a < b) ? a : b; };
+    const auto max = [](T a, T b) { return (a < b) ? b : a; };
+
+    // Rectangles with negative dimensions are allowed, so we must handle them correctly
+
+    // Compute the min and max of the first rectangle on both axes
+    const T r1MinX = min(left, static_cast<T>(left + width));
+    const T r1MaxX = max(left, static_cast<T>(left + width));
+    const T r1MinY = min(top, static_cast<T>(top + height));
+    const T r1MaxY = max(top, static_cast<T>(top + height));
+
+    // Compute the min and max of the second rectangle on both axes
+    const T r2MinX = min(rectangle.left, static_cast<T>(rectangle.left + rectangle.width));
+    const T r2MaxX = max(rectangle.left, static_cast<T>(rectangle.left + rectangle.width));
+    const T r2MinY = min(rectangle.top, static_cast<T>(rectangle.top + rectangle.height));
+    const T r2MaxY = max(rectangle.top, static_cast<T>(rectangle.top + rectangle.height));
+
+    // Compute the intersection boundaries
+    const T interLeft = max(r1MinX, r2MinX);
+    const T interTop = max(r1MinY, r2MinY);
+    const T interRight = min(r1MaxX, r2MaxX);
+    const T interBottom = min(r1MaxY, r2MaxY);
+
+    // If the intersection is valid (positive non zero area), then there is an intersection
+    if ((interLeft < interRight) && (interTop < interBottom)) {
+      return Rect<T>({interLeft, interTop}, {interRight - interLeft, interBottom - interTop});
+    } else {
+      return std::nullopt;
+    }
   }
 };
 
