@@ -1,6 +1,8 @@
 #ifndef __GEOMETRY_H__
 #define __GEOMETRY_H__
 
+#include <optional>
+
 namespace model {
 
 template <typename T>
