@@ -65,7 +65,7 @@ void GameSession::GenerateLoot(const double& delta)
   for(size_t i = 0; i < count; ++i) {
     const unsigned loot_index = Rand(max_loots-1);
     assert(loot_index <= m_map.GetLootTypes().size());
-    m_loots.emplace_back(m_map.GetLootTypes().at(loot_index),m_map.GetRandPoint(), loot_index);
+    m_loots.emplace_back(m_map.GetLootTypes().at(loot_index), m_map.GetRandPoint(), loot_index);
   }
 }
 

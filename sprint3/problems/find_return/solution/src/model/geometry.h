@@ -149,6 +149,7 @@ struct Rect {
 };
 
 using RectInt = Rect<int>;
+using RectDouble = Rect<double>;
 
 }  // namespace model
 

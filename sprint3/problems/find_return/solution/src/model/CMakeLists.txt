@@ -5,6 +5,7 @@ message("Model source")
 set(SRC_MODEL 
   dog.cpp
   game.cpp
+  game_object.cpp
   game_session.cpp
   #loot.cpp
   loot_generator.cpp
@@ -18,6 +19,7 @@ set(HEADER_MODEL
   building.h
   dog.h
   game.h
+  game_object.h
   game_session.h
   geometry.h
   loot.h

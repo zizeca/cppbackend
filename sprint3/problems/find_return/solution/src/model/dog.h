@@ -3,12 +3,13 @@
 
 #include "geometry.h"
 #include "token_generator.h"
+#include "game_object.h"
 
 namespace model {
 
 using namespace std::literals;
 
-class Dog {
+class Dog : public GameObject{
  public:
   explicit Dog(const Token& token = Token(""s));
 
@@ -17,10 +18,6 @@ class Dog {
   Token GetToken() const;
 
   bool SetToken(const Token& token);
-
-  const Point2d& GetPosition() const;
-
-  void SetPosition(const Point2d& pos);
 
   const Point2d& GetSpeed() const;
 
@@ -36,7 +33,6 @@ class Dog {
   Token m_token;
   int m_id;
 
-  Point2d m_pos;
   Point2d m_speed;
   std::string m_dir;
 

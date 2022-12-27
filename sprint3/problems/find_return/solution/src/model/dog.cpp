@@ -4,7 +4,7 @@ namespace model {
 
 int Dog::ID_COUNTER = 0;
 
-Dog::Dog(const Token& token) : m_token(token), m_id(ID_COUNTER++), m_pos(0.f, 0.f), m_speed(0.f, 0.f), m_dir("U"s), m_default_speed(0.0) {
+Dog::Dog(const Token& token) : m_token(token), m_id(ID_COUNTER++), m_speed(0.f, 0.f), m_dir("U"s), m_default_speed(0.0) {
 }
 
 bool Dog::SetToken(const Token& token) {
@@ -13,15 +13,6 @@ bool Dog::SetToken(const Token& token) {
     return true;
   }
   return false;  // if preset
-}
-
-const Point2d& Dog::GetPosition() const {
-  return m_pos;
-}
-
-void Dog::SetPosition(const Point2d& pos) {
-  m_pos.x = pos.x;
-  m_pos.y = pos.y;
 }
 
 const Point2d& Dog::GetSpeed() const {
