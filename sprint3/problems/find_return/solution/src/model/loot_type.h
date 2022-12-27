@@ -15,7 +15,7 @@ struct LootType {
   std::optional<int> rotation;       // example -> = 90;
   std::optional<std::string> color;  // example -> = "#338844";
   std::optional<double> scale;       // example -> = 0.03;
-  std::optional<size_t> value;
+  std::optional<int> value;
 };
 
 }  // namespace model
