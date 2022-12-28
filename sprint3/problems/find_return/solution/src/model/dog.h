@@ -17,17 +17,14 @@ class Dog : public GameObject{
 
   Token GetToken() const;
 
-  bool SetToken(const Token& token);
-
-  const Point2d& GetSpeed() const;
+  const Point2d& GetSpeed() const noexcept;
 
   void Stop();
 
   void SetDefaultSpeed(const double& speed);
 
-  const std::string& GetDir() const;
-
   void SetDir(const std::string& dir);
+  const std::string& GetDir() const noexcept;
 
  private:
   Token m_token;

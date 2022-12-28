@@ -7,15 +7,15 @@ int Dog::ID_COUNTER = 0;
 Dog::Dog(const Token& token) : m_token(token), m_id(ID_COUNTER++), m_speed(0.f, 0.f), m_dir("U"s), m_default_speed(0.0) {
 }
 
-bool Dog::SetToken(const Token& token) {
-  if ((*m_token).empty()) {
-    m_token = token;
-    return true;
-  }
-  return false;  // if preset
+int Dog::GetId() const {
+  return m_id;
 }
 
-const Point2d& Dog::GetSpeed() const {
+Token Dog::GetToken() const {
+  return m_token;
+}
+
+const Point2d& Dog::GetSpeed() const noexcept {
   return m_speed;
 }
 
@@ -28,7 +28,7 @@ void Dog::SetDefaultSpeed(const double& speed) {
   m_default_speed = speed;
 }
 
-const std::string& Dog::GetDir() const {
+const std::string& Dog::GetDir() const noexcept {
   return m_dir;
 }
 
@@ -55,13 +55,7 @@ void Dog::SetDir(const std::string& dir) {
 //   m_pos.y += offset.y;
 // }
 
-Token Dog::GetToken() const {
-  return m_token;
-}
 
-int Dog::GetId() const {
-  return m_id;
-}
 
 // double Dog::GetDefaultSpeed() const {
 //   return m_default_speed;
