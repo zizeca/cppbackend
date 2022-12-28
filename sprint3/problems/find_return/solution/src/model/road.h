@@ -54,16 +54,23 @@ class Road {
   const double& GetMinY() const { return m_min_Y; }
   const double& GetMaxY() const { return m_max_Y; }
 
+  void BorderExpansion(Point2d& up_left, Point2d& down_right) const {
+    up_left.x = std::min(up_left.x, m_min_X);
+    up_left.y = std::min(up_left.y, m_min_Y);
+    down_right.x = std::max(down_right.x, m_max_X);
+    down_right.y = std::max(down_right.y, m_max_Y);
+  }
+
   static constexpr double HALF_WIDTH = 0.4;
 
  private:
   Point2i start_;
   Point2i end_;
 
-  double m_min_X;
-  double m_max_X;
-  double m_min_Y;
-  double m_max_Y;
+  const double m_min_X;
+  const double m_max_X;
+  const double m_min_Y;
+  const double m_max_Y;
 };
 
 }  // namespace model

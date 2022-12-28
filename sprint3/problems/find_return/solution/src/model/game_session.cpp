@@ -80,48 +80,35 @@ void GameSession::DogsUpdate(const double& delta)
     auto pos = dog->GetPosition();
     auto speed = dog->GetSpeed();
 
-    auto posNew = pos + (speed * delta);
+    auto nextPos = pos + (speed * delta);
 
-    double border_up = pos.y;
-    double border_down = pos.y;
-    double border_left = pos.x;
-    double border_right = pos.x;
+    // border define
+    Point2d up_left = pos; 
+    Point2d down_right = pos;
 
-     for( auto road = m_map.GetRoads().cbegin(); road != m_map.GetRoads().cend(); ++road) {
+    // border update
+    for( auto road = m_map.GetRoads().cbegin(); road != m_map.GetRoads().cend(); ++road) {
       if(road->Contains(pos)) {
-        if(border_up > road->GetMinY()) {
-          border_up = road->GetMinY();
-        }
-
-        if(border_down < road->GetMaxY()) {
-          border_down = road->GetMaxY();
-        }
-
-        if(border_left > road->GetMinX()) {
-          border_left = road->GetMinX();
-        }
-
-        if(border_right < road->GetMaxX()) {
-          border_right = road->GetMaxX();
-        }
+        road->BorderExpansion(up_left, down_right);
       }
     }
 
-    if (posNew.y < border_up) {
-      posNew.y = border_up;
+    // next position slice if collision detect
+    if (nextPos.y < up_left.y) {
+      nextPos.y = up_left.y;
       dog->Stop();
-    } else if (posNew.y > border_down) {
-      posNew.y = border_down;
+    } else if (nextPos.y > down_right.y) {
+      nextPos.y = down_right.y;
       dog->Stop();
-    } else if (posNew.x < border_left) {
-      posNew.x = border_left;
+    } else if (nextPos.x < up_left.x) {
+      nextPos.x = up_left.x;
       dog->Stop();
-    } else if (posNew.x > border_right) {
-      posNew.x = border_right;
+    } else if (nextPos.x > down_right.x) {
+      nextPos.x = down_right.x;
       dog->Stop();
     }
 
-    dog->SetPosition(posNew);
+    dog->SetPosition(nextPos);
   }
 }
 
