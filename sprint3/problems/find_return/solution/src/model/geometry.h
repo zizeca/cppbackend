@@ -81,6 +81,14 @@ struct Point2 {
     right *= scalar;
     return right;
   }
+
+  constexpr T dot(const Point2& right) const {
+    return x * right.x + y * right.y;
+  }
+
+  constexpr T lenSq() {
+    return dot(*this);
+  }
 };
 
 using Point2i = Point2<int>;
