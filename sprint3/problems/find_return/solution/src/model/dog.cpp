@@ -4,7 +4,7 @@ namespace model {
 
 int Dog::ID_COUNTER = 0;
 
-Dog::Dog(const Token& token) : m_token(token), m_id(ID_COUNTER++), m_speed(0.f, 0.f), m_dir("U"s), m_default_speed(0.0) {
+Dog::Dog(const Token& token) : GameObject({0.0, 0.0}, 0.6),  m_token(token), m_id(ID_COUNTER++), m_speed(0.f, 0.f), m_dir("U"s), m_default_speed(0.0) {
 }
 
 int Dog::GetId() const {
@@ -49,16 +49,5 @@ void Dog::SetDir(const std::string& dir) {
   }
   m_dir = dir;
 }
-
-// void Dog::Move(const Point2d& offset) {
-//   m_pos.x += offset.x;
-//   m_pos.y += offset.y;
-// }
-
-
-
-// double Dog::GetDefaultSpeed() const {
-//   return m_default_speed;
-// }
 
 }  // namespace model
