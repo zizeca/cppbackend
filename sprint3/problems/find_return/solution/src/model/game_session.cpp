@@ -3,6 +3,7 @@
 #include <random>
 
 #include "../logger.h"
+#include "collector.h"
 
 namespace model {
 
@@ -26,6 +27,7 @@ namespace {
     max.x = std::max(road.GetMaxX(), max.x);
     max.y = std::max(road.GetMaxY(), max.y);
   }
+
 }
 
 GameSession::GameSession(const Map& map, LootGenerator gen) : m_map(map), m_random_spawn(false), m_loot_gen(std::move(gen)) {
@@ -72,7 +74,8 @@ void GameSession::GenerateLoot(const double& delta)
 
 void GameSession::DogsUpdate(const double& delta)
 {
-    // dog udate
+  Collector collector(m_loots, m_map.GetOffices());
+  // dog udate
   for (auto it = m_dogs.begin(); it != m_dogs.end(); ++it) {
     auto dog = *it;
     assert(dog != nullptr);
@@ -112,8 +115,11 @@ void GameSession::DogsUpdate(const double& delta)
       dog->Stop();
     }
 
-    dog->SetPosition(nextPos);
+    collector.AddDogToMoveUpdate(dog, nextPos);
+
+    // dog->SetPosition(nextPos);
   }
+  collector.Update();
 }
 
 

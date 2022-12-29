@@ -2,7 +2,8 @@
 
 message("Model source")
 
-set(SRC_MODEL 
+set(SRC_MODEL
+  collector.cpp
   dog.cpp
   game.cpp
   game_object.cpp
@@ -17,6 +18,7 @@ set(SRC_MODEL
 
 set(HEADER_MODEL 
   building.h
+  collector.h
   dog.h
   game.h
   game_object.h

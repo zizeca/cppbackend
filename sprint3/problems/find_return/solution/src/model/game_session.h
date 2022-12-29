@@ -30,7 +30,7 @@ class GameSession {
 
   void SetDogRandomSpawn(bool enable = true);
 
-  const LootContainer GetLoots() const noexcept { return m_loots;}
+  const LootContainer& GetLoots() const noexcept { return m_loots;}
 
  private:
 
