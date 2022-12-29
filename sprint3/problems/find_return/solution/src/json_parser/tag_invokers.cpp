@@ -31,12 +31,15 @@ void tag_invoke(value_from_tag, value& jv, Building const& building) {
 }
 
 void tag_invoke(value_from_tag, value& jv, Office const& office) {
+  const Point2i pos = office.GetPosition(); // cast to point2 intager
+  const Point2i offset = office.GetOffset();
+  const std::string id = *office.GetId();
   jv = {
-      {MapKey::id, *office.GetId()},
-      {MapKey::pos_X, office.GetPosition().x},
-      {MapKey::pos_Y, office.GetPosition().y},
-      {MapKey::offset_X, office.GetOffset().x},
-      {MapKey::offset_Y, office.GetOffset().y}};
+      {MapKey::id, id},
+      {MapKey::pos_X, pos.x},
+      {MapKey::pos_Y, pos.y},
+      {MapKey::offset_X, offset.x},
+      {MapKey::offset_Y, offset.y}};
 }
 
 void tag_invoke(value_from_tag, value& jv, Road const& road) {
