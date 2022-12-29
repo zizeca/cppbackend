@@ -82,6 +82,14 @@ struct Point2 {
     return right;
   }
 
+  bool operator==(const Point2& other) const noexcept {
+    return (x == other.x) && (y == other.y);
+  }
+
+  bool operator!=(const Point2& other) const noexcept {
+    return !(*this == other);
+  }
+
   constexpr T dot(const Point2& right) const {
     return x * right.x + y * right.y;
   }

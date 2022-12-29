@@ -8,13 +8,24 @@ namespace model {
 
 namespace {
 
+  // get random number between [0, max]
   unsigned int Rand( unsigned max) {
-    if (max <= 1) return max;
+    if (max == 0) return max;
     std::default_random_engine generator;
     std::uniform_int_distribution<int> distribution(0,max);
     return distribution(generator);
   }
 
+  /// decreasing the minimum point and increasing the maximum point 
+  /// depending on the road boundaries
+  inline void BoundExpand(const Road& road, Point2d& min, Point2d& max) {
+    // change min
+    min.x = std::min(road.GetMinX(), min.x);
+    min.y = std::min(road.GetMinY(), min.y);
+    // change max
+    max.x = std::max(road.GetMaxX(), max.x);
+    max.y = std::max(road.GetMaxY(), max.y);
+  }
 }
 
 GameSession::GameSession(const Map& map, LootGenerator gen) : m_map(map), m_random_spawn(false), m_loot_gen(std::move(gen)) {
@@ -25,16 +36,6 @@ GameSession::~GameSession() {
 
 const Map& GameSession::GetMap() const noexcept {
   return m_map;
-}
-
-std::shared_ptr<Dog> GameSession::GetDog(const Token& token) {
-  for (auto& i : m_dogs) {
-    auto ptr = i;
-    if (ptr->GetToken() == token) {
-      return ptr;
-    }
-  }
-  return nullptr;
 }
 
 void GameSession::AddDog(std::shared_ptr<Dog> dog) {
@@ -75,36 +76,39 @@ void GameSession::DogsUpdate(const double& delta)
   for (auto it = m_dogs.begin(); it != m_dogs.end(); ++it) {
     auto dog = *it;
     assert(dog != nullptr);
-    auto dir = dog->GetDir();
 
-    auto pos = dog->GetPosition();
-    auto speed = dog->GetSpeed();
+    const Point2d& pos = dog->GetPosition();
+    const Point2d& speed = dog->GetSpeed();
 
-    auto nextPos = pos + (speed * delta);
+    if(speed == Point2d()) {
+      continue;
+    }
+
+    Point2d nextPos = pos + (speed * delta);
 
     // border define
-    Point2d up_left = pos; 
-    Point2d down_right = pos;
+    Point2d min_pos = pos; 
+    Point2d max_pos = pos;
 
     // border update
     for( auto road = m_map.GetRoads().cbegin(); road != m_map.GetRoads().cend(); ++road) {
       if(road->Contains(pos)) {
-        road->BorderExpansion(up_left, down_right);
+        BoundExpand(*road, min_pos, max_pos);
       }
     }
 
     // next position slice if collision detect
-    if (nextPos.y < up_left.y) {
-      nextPos.y = up_left.y;
+    if (nextPos.y < min_pos.y) {
+      nextPos.y = min_pos.y;
       dog->Stop();
-    } else if (nextPos.y > down_right.y) {
-      nextPos.y = down_right.y;
+    } else if (nextPos.y > max_pos.y) {
+      nextPos.y = max_pos.y;
       dog->Stop();
-    } else if (nextPos.x < up_left.x) {
-      nextPos.x = up_left.x;
+    } else if (nextPos.x < min_pos.x) {
+      nextPos.x = min_pos.x;
       dog->Stop();
-    } else if (nextPos.x > down_right.x) {
-      nextPos.x = down_right.x;
+    } else if (nextPos.x > max_pos.x) {
+      nextPos.x = max_pos.x;
       dog->Stop();
     }
 

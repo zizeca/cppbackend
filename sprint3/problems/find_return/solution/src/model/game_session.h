@@ -24,8 +24,6 @@ class GameSession {
 
   const Map& GetMap() const noexcept;
 
-  std::shared_ptr<Dog> GetDog(const Token& token);
-
   void AddDog(std::shared_ptr<Dog> dog);
 
   void Update(const double& delta);

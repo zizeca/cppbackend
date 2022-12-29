@@ -45,27 +45,20 @@ class Road {
 
   Point2i GetEnd() const noexcept { return end_; }
 
-  bool Contains(const Point2d& point) const {
-    return point.x >= m_min_X && point.x <= m_max_X && point.y >= m_min_Y && point.y <= m_max_Y;
+  bool Contains(const Point2d& point) const noexcept {
+    return (point.x >= m_min_X) && (point.x <= m_max_X) && (point.y >= m_min_Y) && (point.y <= m_max_Y);
   }
 
-  const double& GetMinX() const { return m_min_X; }
-  const double& GetMaxX() const { return m_max_X; }
-  const double& GetMinY() const { return m_min_Y; }
-  const double& GetMaxY() const { return m_max_Y; }
-
-  void BorderExpansion(Point2d& up_left, Point2d& down_right) const {
-    up_left.x = std::min(up_left.x, m_min_X);
-    up_left.y = std::min(up_left.y, m_min_Y);
-    down_right.x = std::max(down_right.x, m_max_X);
-    down_right.y = std::max(down_right.y, m_max_Y);
-  }
+  const double& GetMinX() const noexcept { return m_min_X; }
+  const double& GetMaxX() const noexcept { return m_max_X; }
+  const double& GetMinY() const noexcept { return m_min_Y; }
+  const double& GetMaxY() const noexcept { return m_max_Y; }
 
   static constexpr double HALF_WIDTH = 0.4;
 
  private:
-  Point2i start_;
-  Point2i end_;
+  const Point2i start_;
+  const Point2i end_;
 
   const double m_min_X;
   const double m_max_X;
