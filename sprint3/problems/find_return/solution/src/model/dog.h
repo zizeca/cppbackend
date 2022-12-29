@@ -10,7 +10,7 @@ namespace model {
 
 using namespace std::literals;
 
-class Dog : public GameObject{
+class Dog : public GameObject {
  public:
   explicit Dog(const Token& token = Token(""s));
 
@@ -26,17 +26,21 @@ class Dog : public GameObject{
 
   /**
    * @brief set current speed to (0.0, 0.0)
-  */
+   */
   void Stop();
 
   void SetDefaultSpeed(const double& speed);
 
-  /// @brief set direction as "U", "D", "L", "R", "".
-  /// @exception  std::invalid_argument
+  /**
+   * @brief set direction as "U", "D", "L", "R", "".
+   * @exception  std::invalid_argument
+   */
   void SetDir(const std::string& dir);
 
-  /// @brief get direction.
-  /// @return std::string  with  "U", "D", "L", "R".
+  /**
+   * @brief get direction.
+   * @return std::string  with  "U", "D", "L", "R".
+   */
   const std::string& GetDir() const noexcept;
 
  private:
