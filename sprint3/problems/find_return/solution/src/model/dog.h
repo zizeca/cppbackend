@@ -1,6 +1,8 @@
 #ifndef __DOG_H__
 #define __DOG_H__
 
+#include <list> 
+
 #include "geometry.h"
 #include "token_generator.h"
 #include "game_object.h"
@@ -43,6 +45,14 @@ class Dog : public GameObject {
    */
   const std::string& GetDir() const noexcept;
 
+  void AddLoot(const Loot& loot);
+
+  bool IsFull() const;
+
+  std::list<Loot> UnloadLoots();
+
+  void AddPoints(int points);
+
  private:
   Token m_token;
   int m_id;
@@ -52,7 +62,10 @@ class Dog : public GameObject {
   std::string m_dir;
   double m_default_speed;
 
-  Bag m_bag;
+  std::list<Loot> m_loots;
+  size_t m_bag_size;
+
+  int m_points;
 };
 
 }  // namespace model

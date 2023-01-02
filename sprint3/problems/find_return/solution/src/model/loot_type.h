@@ -1,6 +1,8 @@
 #ifndef __LOOT_TYPE_H__
 #define __LOOT_TYPE_H__
 
+#include <compare>
+
 namespace model
 {
   struct LootType {
@@ -11,6 +13,9 @@ namespace model
   std::optional<std::string> color;  // example -> = "#338844";
   std::optional<double> scale;       // example -> = 0.03;
   std::optional<size_t> value;
+
+  auto operator<=>(const LootType&) const = default;
+
 };
 
 } // namespace model

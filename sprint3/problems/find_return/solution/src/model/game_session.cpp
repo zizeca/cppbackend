@@ -89,6 +89,8 @@ void GameSession::DogsUpdate(const double& delta)
 
     Point2d nextPos = pos + (speed * delta);
 
+
+
     // border define
     Point2d min_pos = pos; 
     Point2d max_pos = pos;
@@ -113,6 +115,10 @@ void GameSession::DogsUpdate(const double& delta)
     } else if (nextPos.x > max_pos.x) {
       nextPos.x = max_pos.x;
       dog->Stop();
+    }
+
+    if(pos == nextPos) {
+      continue;
     }
 
     collector.AddDogToMoveUpdate(dog, nextPos);

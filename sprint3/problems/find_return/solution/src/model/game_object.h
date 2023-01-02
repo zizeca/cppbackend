@@ -18,6 +18,8 @@ class GameObject {
   virtual ~GameObject() = default;
   Point2d m_position;
   double m_width;
+
+  
 };
 
 }  // namespace model

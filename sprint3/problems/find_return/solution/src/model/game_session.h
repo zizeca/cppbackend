@@ -17,7 +17,7 @@ namespace model {
 
 class GameSession {
  public:
-  using LootContainer = std::list<Loot>;
+  // using LootContainer = std::list<std::unique_ptr<Loot>>;
 
   explicit GameSession(const Map& map, LootGenerator gen);
   ~GameSession();
@@ -30,7 +30,8 @@ class GameSession {
 
   void SetDogRandomSpawn(bool enable = true);
 
-  const LootContainer& GetLoots() const noexcept { return m_loots;}
+  const std::list<Loot>& GetLoots() const noexcept { return m_loots;}
+  //const std::list<std::shared_ptr<GameObject>>& GetObjects() const noexcept { return m_objects;}
 
  private:
 
@@ -44,7 +45,7 @@ class GameSession {
 
   LootGenerator m_loot_gen;
 
-  LootContainer m_loots;
+  std::list<Loot> m_loots;
 };
 
 }  // namespace model

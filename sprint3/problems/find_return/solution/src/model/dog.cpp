@@ -32,6 +32,25 @@ const std::string& Dog::GetDir() const noexcept {
   return m_dir;
 }
 
+bool model::Dog::IsFull() const {
+  return m_bag_size == m_loots.size();
+}
+
+void Dog::AddLoot(const Loot& loot){
+  if(m_loots.size()>= m_bag_size) {
+    throw std::logic_error("Bag is full");
+  }
+  m_loots.push_back(loot);
+}
+
+std::list<Loot> Dog::UnloadLoots(){
+  return std::move(m_loots);
+}
+
+void Dog::AddPoints(int points){
+  m_points += points;
+}
+
 void Dog::SetDir(const std::string& dir) {
   if (dir == "U") {
     m_speed = {0.0, -m_default_speed};
