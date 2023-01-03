@@ -153,7 +153,7 @@ StringResponse ApiHandler::GetGameState() {
       resp["players"] = obj;
     }
 
-    boost::json::object lostLoots;
+    boost::json::object lostLoots{};
 
     auto sess = p.GetSession();
     int count = 0;
@@ -167,9 +167,9 @@ StringResponse ApiHandler::GetGameState() {
     }
 
 
-    if(!lostLoots.empty()) {
+//    if(!lostLoots.empty()) {
       resp["lostObjects"] = lostLoots;
-    }
+//    }
 
     assert(!obj.empty());
     return MakeJsonResponse(http::status::ok,
