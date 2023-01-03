@@ -46,6 +46,8 @@ class GameSession {
   LootGenerator m_loot_gen;
 
   std::list<Loot> m_loots;
+
+  int m_loot_id = 0;
 };
 
 }  // namespace model

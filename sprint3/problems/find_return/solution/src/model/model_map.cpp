@@ -24,6 +24,7 @@ void Map::AddOffice(Office office) {
 }
 
 void Map::AddLootType(LootType loot) {
+  loot.typeIndex = m_loot_types.size();
   m_loot_types.push_back(loot);
 }
 
@@ -81,6 +82,14 @@ void Map::SetDogSpeed(double speed) {
 
 double Map::GetDogSpeed() const noexcept {
   return m_dog_speed;
+}
+
+void Map::SetBagCapacity(const int &size) {
+  m_bag_capacity = size;
+}
+
+const int& Map::GetBagCapacity() const noexcept {
+  return m_bag_capacity;
 }
 
 }  // namespace model

@@ -17,8 +17,6 @@
 
 namespace model {
 
-
-
 class Map {
  public:
   using Id = util::Tagged<std::string, Map>;
@@ -27,7 +25,11 @@ class Map {
   using Offices = std::vector<Office>;
   using LootTypes = std::vector<LootType>;
 
-  Map(Id id, std::string name) noexcept : id_(std::move(id)), name_(std::move(name)), m_dog_speed(0.0) {}
+  Map(Id id, std::string name) noexcept
+      : id_(std::move(id)),
+        name_(std::move(name)),
+        m_dog_speed(0.0),
+        m_bag_capacity(0) {}
 
   const Id& GetId() const noexcept { return id_; }
 
@@ -39,8 +41,8 @@ class Map {
 
   const Offices& GetOffices() const noexcept { return offices_; }
 
-  void AddRoad(const Road& road) { 
-    roads_.emplace_back(road); 
+  void AddRoad(const Road& road) {
+    roads_.emplace_back(road);
   }
 
   void AddBuilding(const Building& building) { buildings_.emplace_back(building); }
@@ -56,6 +58,10 @@ class Map {
   double GetDogSpeed() const noexcept;
 
   Point2d GetRandPoint(bool enable = true) const;
+
+  void SetBagCapacity(const int& size);
+  const int& GetBagCapacity() const noexcept;
+
  private:
   using OfficeIdToIndex = std::unordered_map<Office::Id, size_t, util::TaggedHasher<Office::Id>>;
 
@@ -70,6 +76,8 @@ class Map {
   double m_dog_speed;
 
   LootTypes m_loot_types;
+
+  int m_bag_capacity;
 };
 
 }  // namespace model

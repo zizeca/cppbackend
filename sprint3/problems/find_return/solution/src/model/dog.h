@@ -6,7 +6,7 @@
 #include "geometry.h"
 #include "token_generator.h"
 #include "game_object.h"
-#include "bag.h"
+#include "loot.h"
 
 namespace model {
 
@@ -51,7 +51,11 @@ class Dog : public GameObject {
 
   std::list<Loot> UnloadLoots();
 
+  const std::list<Loot>& GetLoots() const noexcept;
+
   void AddPoints(int points);
+
+  void SetBagSize(const int& size);
 
  private:
   Token m_token;

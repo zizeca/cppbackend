@@ -158,7 +158,10 @@ StringResponse ApiHandler::GetGameState() {
     auto sess = p.GetSession();
     int count = 0;
     for(auto& i : sess->GetLoots()) {
-      lostLoots[std::to_string(count++)] = {{"type", i.GetLootIndex()}, {
+      // lostLoots[std::to_string(count++)] = {{"type", i.GetLootType().typeIndex}, {
+      //   "pos", {i.GetPosition().x, i.GetPosition().y}
+      // }};
+      lostLoots[std::to_string(i.GetId())] = {{"type", i.GetLootType().typeIndex}, {
         "pos", {i.GetPosition().x, i.GetPosition().y}
       }};
     }
@@ -226,7 +229,7 @@ StringResponse ApiHandler::PostTick() {
     return MakeJsonResponse(http::status::bad_request, JsAnswer("invalidArgument", "Failed to parse tick request JSON "s + e.what()), CacheControl::NO_CACHE);
   }
 
-  if(m_app.IsManualTicker()) {
+  if (m_app.IsManualTicker()) {
     try {
       m_app.Update(std::chrono::milliseconds(ms));
     } catch (const std::exception &e) {

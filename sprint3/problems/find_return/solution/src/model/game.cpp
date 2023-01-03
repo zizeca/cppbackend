@@ -11,6 +11,11 @@ void Game::AddMap(Map map) {
     map.SetDogSpeed(GetDefaultSpeed());
   }
 
+  // if bag size not set, set default size from game
+  if (map.GetBagCapacity() == 0) {
+    map.SetBagCapacity(GetDefaultBagCapacity());
+  }
+
   const size_t index = maps_.size();
   if (auto [it, inserted] = map_id_to_index_.emplace(map.GetId(), index); !inserted) {
     throw std::invalid_argument("Map with id "s + *map.GetId() + " already exists"s);
@@ -63,5 +68,15 @@ void Game::LootGeneratorConfig(const double &period, const double &probability) 
   m_period_loot_gen = period;
   m_probability_loot_gen = probability;
 }
+
+void Game::SetDefaultBagCapacity(const int& size) {
+  m_default_bag_capacity = size;
+}
+
+const int& Game::GetDefaultBagCapacity() const noexcept {
+  return m_default_bag_capacity;
+}
+
+
 
 }  // namespace model

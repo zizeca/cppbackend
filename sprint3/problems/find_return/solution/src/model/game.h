@@ -40,6 +40,9 @@ class Game {
 
   void LootGeneratorConfig(const double &period, const double &probability);
 
+  void SetDefaultBagCapacity(const int& size);
+  const int& GetDefaultBagCapacity() const noexcept;
+
  private:
   using MapIdHasher = util::TaggedHasher<Map::Id>;
   using MapIdToIndex = std::unordered_map<Map::Id, size_t, MapIdHasher>;
@@ -55,6 +58,7 @@ class Game {
 
   double m_period_loot_gen = 0.0;
   double m_probability_loot_gen = 0.0;
+  int m_default_bag_capacity = 3;
 };
 
 }  // namespace model

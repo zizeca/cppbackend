@@ -40,8 +40,10 @@ Game tag_invoke(value_to_tag<Game>, value const& jv);
 
   /// @brief json object key constant
 struct MapKey {
+  constexpr static string_view bagCapacity = "bagCapacity";
   constexpr static string_view buildings = "buildings";
   constexpr static string_view color = "color";
+  constexpr static string_view defaultBagCapacity = "defaultBagCapacity";
   constexpr static string_view defaultDogSpeed = "defaultDogSpeed";
   constexpr static string_view dogSpeed = "dogSpeed";
   constexpr static string_view end_X = "x1";

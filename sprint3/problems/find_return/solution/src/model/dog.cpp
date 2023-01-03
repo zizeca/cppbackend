@@ -4,7 +4,15 @@ namespace model {
 
 int Dog::ID_COUNTER = 0;
 
-Dog::Dog(const Token& token) : GameObject({0.0, 0.0}, 0.6),  m_token(token), m_id(ID_COUNTER++), m_speed(0.f, 0.f), m_dir("U"s), m_default_speed(0.0) {
+Dog::Dog(const Token& token)
+    : GameObject({0.0, 0.0}, 0.6),
+      m_token(token),
+      m_id(ID_COUNTER++),
+      m_speed(0.f, 0.f),
+      m_dir("U"s),
+      m_default_speed(0.0),
+      m_bag_size(0),
+      m_points(0) {
 }
 
 int Dog::GetId() const {
@@ -36,18 +44,22 @@ bool model::Dog::IsFull() const {
   return m_bag_size == m_loots.size();
 }
 
-void Dog::AddLoot(const Loot& loot){
-  if(m_loots.size()>= m_bag_size) {
+void Dog::AddLoot(const Loot& loot) {
+  if (m_loots.size() >= m_bag_size) {
     throw std::logic_error("Bag is full");
   }
   m_loots.push_back(loot);
 }
 
-std::list<Loot> Dog::UnloadLoots(){
+std::list<Loot> Dog::UnloadLoots() {
   return std::move(m_loots);
 }
 
-void Dog::AddPoints(int points){
+const std::list<Loot>& Dog::GetLoots() const noexcept {
+  return m_loots;
+}
+
+void Dog::AddPoints(int points) {
   m_points += points;
 }
 
@@ -68,5 +80,10 @@ void Dog::SetDir(const std::string& dir) {
   }
   m_dir = dir;
 }
+
+void Dog::SetBagSize(const int& size) {
+  m_bag_size = size;
+}
+
 
 }  // namespace model

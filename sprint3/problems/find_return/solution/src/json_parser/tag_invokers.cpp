@@ -31,7 +31,7 @@ void tag_invoke(value_from_tag, value& jv, Building const& building) {
 }
 
 void tag_invoke(value_from_tag, value& jv, Office const& office) {
-  const Point2i pos = office.GetPosition(); // cast to point2 intager
+  const Point2i pos = office.GetPosition();  // cast to point2 intager
   const Point2i offset = office.GetOffset();
   const std::string id = *office.GetId();
   jv = {
@@ -133,10 +133,28 @@ void tag_invoke(value_from_tag, value& jv, LootType const& lootType) {
 }
 
 void tag_invoke(value_from_tag, value& jv, Dog const& dog) {
-  jv = {
-      {"pos", {dog.GetPosition().x, dog.GetPosition().y}},
-      {"speed", {dog.GetSpeed().x, dog.GetSpeed().y}},
-      {"dir", dog.GetDir()}};
+  object obj;
+  obj["pos"] = {dog.GetPosition().x, dog.GetPosition().y};
+  obj["speed"] = {dog.GetSpeed().x, dog.GetSpeed().y};
+  obj["dir"] = dog.GetDir();
+
+  array bag;
+  auto loots = dog.GetLoots();
+  for (auto const& i : loots) {
+    object loot;
+    loot["id"] = i.GetId();
+    loot["type"] = i.GetLootType().typeIndex;
+    bag.push_back(loot);
+  }
+
+  obj["bag"] = bag;
+  
+  jv = obj;
+
+      // jv = {
+      //     {"pos", {dog.GetPosition().x, dog.GetPosition().y}},
+      //     {"speed", {dog.GetSpeed().x, dog.GetSpeed().y}},
+      //     {"dir", dog.GetDir()}};
 }
 
 // ------------------------------------
@@ -214,8 +232,12 @@ Map tag_invoke(value_to_tag<Map>, value const& jv) {
       Map::Id(extruct<std::string>(jv, MapKey::id)),
       extruct<std::string>(jv, MapKey::name));
 
-  if (m.contains("dogSpeed")) {
-    map.SetDogSpeed(m.at("dogSpeed").as_double());
+  if (m.contains(MapKey::dogSpeed)) {
+    map.SetDogSpeed(m.at(MapKey::dogSpeed).as_double());
+  }
+
+  if (m.contains(MapKey::bagCapacity)) {
+    map.SetBagCapacity(static_cast<int>(m.at(MapKey::bagCapacity).as_int64()));
   }
 
   for (auto i = m.cbegin(); i != m.cend(); ++i) {
@@ -280,14 +302,20 @@ Game tag_invoke(value_to_tag<Game>, value const& jv) {
   if (jv.as_object().contains(MapKey::defaultDogSpeed)) {
     game.SetDefaultSpeed(jv.as_object().at(MapKey::defaultDogSpeed).as_double());
   } else {
-    game.SetDefaultSpeed(1.0);
+    // game.SetDefaultSpeed(1.0);
+  }
+
+  if (jv.as_object().contains(MapKey::defaultBagCapacity)) {
+    game.SetDefaultBagCapacity(jv.as_object().at(MapKey::defaultBagCapacity).as_int64());
+  } else {
+    // game.SetDefaultBagCapacity(3);
   }
 
   if (jv.as_object().contains(MapKey::lootGeneratorConfig)) {
     auto& loot = jv.as_object().at(MapKey::lootGeneratorConfig);
     game.LootGeneratorConfig(loot.at(MapKey::period).as_double(), loot.at(MapKey::probability).as_double());
   } else {
-    assert(!"no loot config");
+    // assert(!"no loot config");
   }
 
   auto maps = jv.as_object().at(MapKey::maps).as_array();
