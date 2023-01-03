@@ -63,6 +63,11 @@ void Dog::AddPoints(int points) {
   m_points += points;
 }
 
+const int& Dog::GetPoinst() const noexcept {
+  return m_points;
+}
+
+
 void Dog::SetDir(const std::string& dir) {
   if (dir == "U") {
     m_speed = {0.0, -m_default_speed};

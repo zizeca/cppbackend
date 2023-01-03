@@ -54,6 +54,7 @@ class Dog : public GameObject {
   const std::list<Loot>& GetLoots() const noexcept;
 
   void AddPoints(int points);
+  const int& GetPoinst() const noexcept;
 
   void SetBagSize(const int& size);
 

@@ -149,6 +149,7 @@ void tag_invoke(value_from_tag, value& jv, Dog const& dog) {
 
   obj["bag"] = bag;
   
+  obj["score"] = dog.GetPoinst();
   jv = obj;
 
       // jv = {
