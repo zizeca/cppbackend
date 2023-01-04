@@ -40,7 +40,7 @@ std::optional<std::reference_wrapper<const model::Map>>  FindMap(const model::Ma
 
   model::Player& JoinGame(model::Map::Id id, const std::string& user_name);
 
-  model::Player* FindPlayer(const model::Token& t);
+  std::optional<std::reference_wrapper<model::Player>> FindPlayer(const model::Token& t);
 
   const model::PlayerList::Container& GetPlayers() const noexcept;
 

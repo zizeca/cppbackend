@@ -5,6 +5,7 @@
 #include <random>
 #include <unordered_map>
 #include <vector>
+#include <optional>
 
 #include "../tagged.h"
 #include "player.h"
@@ -18,7 +19,7 @@ class PlayerList {
 
   using Container = std::unordered_map<Token, Player, TokenHasher>;
 
-  Player* FindPlayer(const Token& token);
+  std::optional<std::reference_wrapper<Player>> FindPlayer(const Token& token);
 
   Player& CreatePlayer(const std::string& name);
 

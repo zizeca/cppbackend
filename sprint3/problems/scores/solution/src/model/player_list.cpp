@@ -8,11 +8,11 @@ PlayerList::PlayerList() {
 PlayerList::~PlayerList() {
 }
 
-Player* PlayerList::FindPlayer(const Token& token) {
+std::optional<std::reference_wrapper<Player>> PlayerList::FindPlayer(const Token& token) {
   if (m_players.contains(token)) {
-    return &m_players.at(token);
+    return m_players.at(token);
   }
-  return nullptr;
+  return std::nullopt;
 }
 
 Player& PlayerList::CreatePlayer(const std::string& name) {

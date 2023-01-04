@@ -59,7 +59,7 @@ model::Player &Application::JoinGame(model::Map::Id id, const std::string &user_
   return player;
 }
 
-model::Player *Application::FindPlayer(const model::Token &t) {
+std::optional<std::reference_wrapper<model::Player>> Application::FindPlayer(const model::Token &t) {
   return m_player_list.FindPlayer(t);
 }
 
