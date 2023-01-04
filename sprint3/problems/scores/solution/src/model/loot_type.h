@@ -5,9 +5,8 @@
 #include <optional>
 #include <string>
 
-namespace model
-{
-  struct LootType {
+namespace model {
+struct LootType {
   std::optional<std::string> name = std::nullopt;   // example -> = "key";
   std::optional<std::string> file = std::nullopt;   // example -> = "assets/key.obj";
   std::optional<std::string> type = std::nullopt;   // example -> = "obj";
@@ -16,12 +15,11 @@ namespace model
   std::optional<double> scale = std::nullopt;       // example -> = 0.03;
   std::optional<size_t> value = std::nullopt;
 
-  int typeIndex = -1;
+  int type_num = -1;
 
   auto operator<=>(const LootType&) const = default;
 };
 
-} // namespace model
+}  // namespace model
 
-
-#endif // __LOOT_TYPE_H__
+#endif  // __LOOT_TYPE_H__

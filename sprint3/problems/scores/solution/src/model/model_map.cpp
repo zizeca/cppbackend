@@ -24,7 +24,7 @@ void Map::AddOffice(Office office) {
 }
 
 void Map::AddLootType(LootType loot) {
-  loot.typeIndex = m_loot_types.size();
+  loot.type_num = m_loot_types.size();
   m_loot_types.push_back(loot);
 }
 

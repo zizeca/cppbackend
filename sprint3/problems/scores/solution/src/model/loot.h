@@ -21,7 +21,7 @@ class Loot : public GameObject{
   const unsigned& GetId() const noexcept {return m_id;}
 
   bool operator==(const Loot& l) const {
-    return m_id == l.m_id && m_loot_type.typeIndex == l.m_loot_type.typeIndex;
+    return m_id == l.m_id && m_loot_type.type_num == l.m_loot_type.type_num;
   }
 
   bool operator!=(const Loot& l) const {

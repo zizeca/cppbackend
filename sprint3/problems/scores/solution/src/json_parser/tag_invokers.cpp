@@ -143,7 +143,7 @@ void tag_invoke(value_from_tag, value& jv, Dog const& dog) {
   for (auto const& i : loots) {
     object loot;
     loot["id"] = i.GetId();
-    loot["type"] = i.GetLootType().typeIndex;
+    loot["type"] = i.GetLootType().type_num;
     bag.push_back(loot);
   }
 
