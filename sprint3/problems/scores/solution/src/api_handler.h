@@ -3,7 +3,6 @@
 
 #define BOOST_BEAST_USE_STD_STRING_VIEW
 #include <boost/beast/http.hpp>
-// #include <boost/json.hpp>
 #include <functional>
 #include <string_view>
 
@@ -19,6 +18,17 @@ using namespace std::literals;
 
 using StringResponse = http::response<http::string_body>;
 using StringRequest = http::request<http::string_body>;
+
+/// Api constexpr values
+struct ApiKey {
+  static constexpr std::string_view Action = "/api/v1/game/player/action"sv;
+  static constexpr std::string_view Join = "/api/v1/game/join"sv;
+  static constexpr std::string_view Maps = "/api/v1/maps"sv;
+  static constexpr std::string_view MapsPrefix = "/api/v1/maps/"sv;
+  static constexpr std::string_view Players = "/api/v1/game/players"sv;
+  static constexpr std::string_view State = "/api/v1/game/state"sv;
+  static constexpr std::string_view Tick = "/api/v1/game/tick"sv;
+};
 
 class ApiHandler {
  public:
@@ -40,6 +50,7 @@ class ApiHandler {
   StringResponse GetGameState();
 
   StringResponse PostAction();
+
   StringResponse PostTick();
 
   /**

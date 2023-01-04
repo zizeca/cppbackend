@@ -18,17 +18,17 @@ ApiHandler::ApiHandler(Application &app, const StringRequest &req) : m_app(app),
 }
 
 StringResponse ApiHandler::Response() {
-  if (m_target.starts_with("/api/v1/maps")) {
+  if (m_target.starts_with(ApiKey::Maps)) {
     return MapRequest();
-  } else if (m_target == "/api/v1/game/join") {
+  } else if (m_target == ApiKey::Join) {
     return PlayerJoinRequest();
-  } else if (m_target == "/api/v1/game/players") {
+  } else if (m_target == ApiKey::Players) {
     return PlayerListRequest();
-  } else if (m_target == "/api/v1/game/state") {
+  } else if (m_target == ApiKey::State) {
     return GetGameState();
-  } else if (m_target == "/api/v1/game/player/action") {
+  } else if (m_target == ApiKey::Action) {
     return PostAction();
-  } else if (m_target == "/api/v1/game/tick") {
+  } else if (m_target == ApiKey::Tick) {
     return PostTick();
   } else {
     return MakeJsonResponse(http::status::bad_request, JsAnswer("badRequest", "Bad request"));
@@ -36,49 +36,51 @@ StringResponse ApiHandler::Response() {
 }
 
 StringResponse ApiHandler::MapRequest() {
-  assert(m_target.starts_with("/api/v1/maps"));
+  // check method
   if (m_req.method() != http::verb::get && m_req.method() != http::verb::head) {
     return MakeJsonResponse(http::status::method_not_allowed, JsAnswer("invalidMethod", "Only GET method is expected"), CacheControl::NO_CACHE, "GET, HEAD"sv);
   }
 
-  if (m_target == "/api/v1/maps"s) {
-    json::array arr;
-    for (auto i : m_app.GetMaps()) {
-      json::value v = {{"id", *i.GetId()}, {"name", i.GetName()}};
+  // maps array request
+  if (m_target == ApiKey::Maps) {
+    json::array arr{};
+    for (const auto &map : m_app.GetMaps()) {
+      json::value v = {{"id", *map.GetId()}, {"name", map.GetName()}};
       arr.push_back(v);
     }
     return MakeJsonResponse(http::status::ok, arr, CacheControl::NO_CACHE);
   }
 
-  if (m_target.starts_with("/api/v1/maps/")) {
-    std::string s = m_target.substr(("/api/v1/maps/"s).size());
-    auto m = m_app.FindMap(model::Map::Id(s));
-    if (m) {
-      return MakeJsonResponse(http::status::ok, json::value_from(*m), CacheControl::NO_CACHE);
+  // map by name request
+  if (m_target.starts_with(ApiKey::MapsPrefix)) {
+    const std::string map_name = m_target.substr(ApiKey::MapsPrefix.size());
+    auto map = m_app.FindMap(model::Map::Id(map_name));
+    if (map) {
+      return MakeJsonResponse(http::status::ok, json::value_from(*map), CacheControl::NO_CACHE);
     } else {
       return MakeJsonResponse(http::status::not_found, JsAnswer("mapNotFound", "Map not found"));
     }
   }
+
+  // fail map request
   return MakeJsonResponse(http::status::bad_request, JsAnswer("badRequest", "Bad request"));
 }
 
 StringResponse ApiHandler::PlayerJoinRequest() {
-  assert(m_target == "/api/v1/game/join");
-
   // check method
   if (m_req.method() != http::verb::post) {
     return MakeJsonResponse(http::status::method_not_allowed, JsAnswer("invalidMethod", "Only POST method is expected"), CacheControl::NO_CACHE, "POST"sv);
   }
 
-  std::string user_name;
-  std::string map_id;
+  std::string user_name{};
+  std::string map_id{};
 
   // check parsing
   try {
     boost::json::value jv = boost::json::parse(m_req.body());
     user_name = jv.as_object().at("userName").as_string();
     map_id = jv.as_object().at("mapId").as_string();
-  } catch (...) {
+  } catch (const std::exception &) {
     return MakeJsonResponse(http::status::bad_request, JsAnswer("invalidArgument", "Join game request parse error"), CacheControl::NO_CACHE);
   }
 
@@ -92,17 +94,13 @@ StringResponse ApiHandler::PlayerJoinRequest() {
     return MakeJsonResponse(http::status::not_found, JsAnswer("mapNotFound", "Map not found"), CacheControl::NO_CACHE);
   }
 
-  boost::json::object object;
-  try {
-    const model::Player &player = m_app.JoinGame(model::Map::Id(map_id), user_name);
+  boost::json::object js_response{};
+  const model::Player &player = m_app.JoinGame(model::Map::Id(map_id), user_name);
+  js_response = {
+      {"authToken", *player.GetToken()},
+      {"playerId", player.GetId()}};
 
-    object = {
-        {"authToken", *player.GetToken()},
-        {"playerId", player.GetId()}};
-  } catch (const std::exception &e) {
-    return MakeJsonResponse(http::status::internal_server_error, JsAnswer("exception", "Join Game Error :( call the fixies "s + e.what()));
-  }
-  return MakeJsonResponse(http::status::ok, object, CacheControl::NO_CACHE);
+  return MakeJsonResponse(http::status::ok, js_response, CacheControl::NO_CACHE);
 }
 
 StringResponse ApiHandler::PlayerListRequest() {
@@ -114,16 +112,18 @@ StringResponse ApiHandler::PlayerListRequest() {
   }
 
   return ExecuteAuthorized([this](model::Player &p) {
-    boost::json::object obj;
+    boost::json::object js_response{};
     for (auto it = m_app.GetPlayers().cbegin(); it != m_app.GetPlayers().cend(); ++it) {
       if (it->second.GetSession() == p.GetSession())
-        obj[std::to_string(it->second.GetId())] = {{"name", it->second.GetName()}};
+        js_response[std::to_string(it->second.GetId())] = {{"name", it->second.GetName()}};
     }
 
-    assert(!obj.empty());
+    if(js_response.empty()) {
+      throw std::logic_error("Response can not be empty in Player List request");
+    }
 
     return MakeJsonResponse(http::status::ok,
-                            obj,
+                            js_response,
                             CacheControl::NO_CACHE); });
 }
 
@@ -135,51 +135,37 @@ StringResponse ApiHandler::GetGameState() {
                             "GET, HEAD"sv);
   }
 
-  return ExecuteAuthorized([this](model::Player &p) {
-    boost::json::object resp{};
-    
-    boost::json::object obj;
+  return ExecuteAuthorized([this](model::Player &player) {
+    boost::json::object js_response{};
+    boost::json::object js_players{};  // part of response
+    boost::json::object js_lost_loots{};  // part of response
 
-    assert(m_app.GetPlayers().size() != 0);
-
+    // get list of players
     for (auto it = m_app.GetPlayers().cbegin(); it != m_app.GetPlayers().cend(); ++it) {
-      if (it->second.GetSession() == p.GetSession()) {
+      if (it->second.GetSession() == player.GetSession()) {
         assert(it->second.GetDog() != nullptr);
-        obj[std::to_string(it->second.GetId())] = boost::json::value_from(*it->second.GetDog());
+        js_players[std::to_string(it->second.GetId())] = boost::json::value_from(*it->second.GetDog());
       }
     }
 
-    if (!obj.empty()) {
-      resp["players"] = obj;
-    }
-
-    boost::json::object lostLoots{};
-
-    auto sess = p.GetSession();
-    int count = 0;
-    for(auto& i : sess->GetLoots()) {
-      // lostLoots[std::to_string(count++)] = {{"type", i.GetLootType().typeIndex}, {
-      //   "pos", {i.GetPosition().x, i.GetPosition().y}
-      // }};
-      lostLoots[std::to_string(i.GetId())] = {{"type", i.GetLootType().typeIndex}, {
-        "pos", {i.GetPosition().x, i.GetPosition().y}
+    // get list of loot
+    const auto& sess = player.GetSession();
+    for(const auto& loot : sess->GetLoots()) {
+      js_lost_loots[std::to_string(loot.GetId())] = {{"type", loot.GetLootType().type_num}, {
+        "pos", {loot.GetPosition().x, loot.GetPosition().y}
       }};
     }
 
+    // formation of the response
+    js_response["players"] = js_players;
+    js_response["lostObjects"] = js_lost_loots;
 
-//    if(!lostLoots.empty()) {
-      resp["lostObjects"] = lostLoots;
-//    }
-
-    assert(!obj.empty());
     return MakeJsonResponse(http::status::ok,
-                            resp,
+                            js_response,
                             CacheControl::NO_CACHE); });
 }
 
 StringResponse ApiHandler::PostAction() {
-  assert(m_target == "/api/v1/game/player/action");
-
   // check method
   if (m_req.method() != http::verb::post) {
     return MakeJsonResponse(http::status::method_not_allowed,
@@ -188,40 +174,35 @@ StringResponse ApiHandler::PostAction() {
                             "POST"sv);
   }
 
-  if (!m_req.count(http::field::content_type) || m_req.at(http::field::content_type) != "application/json"sv) {
+  if (!m_req.count(http::field::content_type) || m_req.at(http::field::content_type) != ContentType::APP_JSON) {
     return MakeJsonResponse(http::status::unauthorized,
                             JsAnswer("invalidArgument", "Invalid content type"),
                             CacheControl::NO_CACHE);
   }
 
   return ExecuteAuthorized([this](model::Player &p) {
-    boost::json::object obj;
-    // todo
-    
+    // check parsing
     try{
       boost::json::value jv = boost::json::parse(m_req.body());
-      
       p.GetDog()->SetDir( static_cast<std::string>(jv.as_object().at("move").as_string()));
-      // std::cout << "dog dir " << p.GetDog()->GetDir() << " id" << p.GetDog()->GetId() << std::endl;
-
     } catch (const std::exception&) {
       return MakeJsonResponse(http::status::bad_request, JsAnswer("invalidArgument","Failed to parse action"),CacheControl::NO_CACHE );
     }
 
+    // empty response
     return MakeJsonResponse(http::status::ok,
                             json::object(),
                             CacheControl::NO_CACHE); });
 }
 
 StringResponse ApiHandler::PostTick() {
-  assert(m_target == "/api/v1/game/tick");
   // check method
   if (m_req.method() != http::verb::post) {
     return MakeJsonResponse(http::status::method_not_allowed, {{"code", "invalidMethod"}, {"message", "Only POST method is expected"}}, CacheControl::NO_CACHE, "POST"sv);
   }
 
-  boost::json::object obj;
   int64_t ms;
+  // check parsing
   try {
     boost::json::value jv = boost::json::parse(m_req.body());
     ms = jv.as_object().at("timeDelta").as_int64();
@@ -238,13 +219,14 @@ StringResponse ApiHandler::PostTick() {
     }
   }
 
+  // empty response
   return MakeJsonResponse(http::status::ok,
                           json::object(),
                           CacheControl::NO_CACHE);
 }
 
 std::optional<model::Token> ApiHandler::TryExtractToken() {
-  std::string auth;  // for return value
+  std::string auth{};  // for return value
 
   // check field
   if (m_req.count(http::field::authorization)) {
@@ -281,7 +263,7 @@ StringResponse ApiHandler::MakeJsonResponse(const http::status &status,
                                             std::string_view cache_control,
                                             std::string_view allow) {
   StringResponse response(status, m_req.version());
-  response.set(http::field::content_type, "application/json"sv);
+  response.set(http::field::content_type, ContentType::APP_JSON);
   response.body() = json::serialize(val);
   response.prepare_payload();
   response.keep_alive(m_req.keep_alive());
@@ -296,14 +278,14 @@ StringResponse ApiHandler::MakeJsonResponse(const http::status &status,
 
 StringResponse ApiHandler::ExecuteAuthorized(std::function<StringResponse(model::Player &player)> action) {
   if (auto token = this->TryExtractToken()) {
-    model::Player *p = m_app.FindPlayer(*token);
-    if (p == nullptr) {
+    auto player = m_app.FindPlayer(*token);
+    if (player == std::nullopt) {
       return MakeJsonResponse(http::status::unauthorized,
                               JsAnswer("unknownToken", "Player token has not been found"),
                               CacheControl::NO_CACHE);
     }
 
-    return action(*p);
+    return action(*player);
   } else {
     return MakeJsonResponse(http::status::unauthorized,
                             JsAnswer("invalidToken", "Authorization header is missing"),
