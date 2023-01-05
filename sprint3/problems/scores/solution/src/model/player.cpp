@@ -28,15 +28,15 @@ const Token& Player::GetToken() const {
 }
 
 std::shared_ptr<GameSession> Player::GetSession() {
-  return m_gs;
+  return m_gsess;
 }
 
 const std::shared_ptr<GameSession> Player::GetSession() const {
-  return m_gs;
+  return m_gsess;
 }
 
 void Player::SetSession(std::shared_ptr<GameSession> sess) {
-  m_gs = sess;
+  m_gsess = sess;
 }
 
 }  // namespace model

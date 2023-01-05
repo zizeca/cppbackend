@@ -9,28 +9,31 @@ namespace model {
 
 namespace {
 
-  // get random number between [0, max]
-  unsigned int Rand( unsigned max) {
-    if (max == 0) return max;
-    std::default_random_engine generator;
-    std::uniform_int_distribution<int> distribution(0,max);
-    return distribution(generator);
-  }
-
-  /// decreasing the minimum point and increasing the maximum point 
-  /// depending on the road boundaries
-  inline void BoundExpand(const Road& road, Point2d& min, Point2d& max) {
-    // change min
-    min.x = std::min(road.GetMinX(), min.x);
-    min.y = std::min(road.GetMinY(), min.y);
-    // change max
-    max.x = std::max(road.GetMaxX(), max.x);
-    max.y = std::max(road.GetMaxY(), max.y);
-  }
-
+// get random number between [0, max]
+size_t Rand(size_t max) {
+  if (max == 0) return max;
+  std::default_random_engine generator;
+  std::uniform_int_distribution<> distribution(0, max);
+  return distribution(generator);
 }
 
-GameSession::GameSession(const Map& map, LootGenerator gen) : m_map(map), m_random_spawn(false), m_loot_gen(std::move(gen)) {
+/// decreasing the minimum point and increasing the maximum point
+/// depending on the road boundaries
+inline void BoundExpand(const Road& road, Point2d& min, Point2d& max) {
+  // change min
+  min.x = std::min(road.GetMinX(), min.x);
+  min.y = std::min(road.GetMinY(), min.y);
+  // change max
+  max.x = std::max(road.GetMaxX(), max.x);
+  max.y = std::max(road.GetMaxY(), max.y);
+}
+
+}  // namespace
+
+GameSession::GameSession(const Map& map, LootGenerator gen)
+    : m_map(map),
+      m_random_spawn(false),
+      m_loot_gen(std::move(gen)) {
 }
 
 GameSession::~GameSession() {
@@ -47,36 +50,35 @@ void GameSession::AddDog(std::shared_ptr<Dog> dog) {
   m_dogs.emplace_back(dog);
 }
 
-void GameSession::Update(const double& delta) {
-  GenerateLoot(delta);
+void GameSession::Update(double delta_time) {
+  GenerateLoot(delta_time);
 
-  DogsUpdate(delta);
+  DogsUpdate(delta_time);
 }
 
-void GameSession::SetDogRandomSpawn(bool enable){
+void GameSession::SetDogRandomSpawn(bool enable) {
   m_random_spawn = enable;
 }
 
-void GameSession::GenerateLoot(const double& delta)
-{
-  const size_t max_loots = m_map.GetLootTypes().size(); 
-  if(max_loots == 0 || m_loots.size() >= m_dogs.size()) return;
+void GameSession::GenerateLoot(double delta_time) {
+  const size_t max_loots = m_map.GetLootTypes().size();
+  if (max_loots == 0 || m_loots.size() >= m_dogs.size()) return;
 
-  const std::chrono::milliseconds ms (static_cast<int64_t>(delta*1000));
+  const std::chrono::milliseconds ms(static_cast<int64_t>(delta_time * 1000));
 
-  const unsigned count = m_loot_gen.Generate(ms, m_loots.size(), m_dogs.size());
+  const size_t count = m_loot_gen.Generate(ms, m_loots.size(), m_dogs.size());
 
-  for(size_t i = 0; i < count; ++i) {
-    const unsigned loot_index = Rand(max_loots-1);
-    assert(loot_index <= m_map.GetLootTypes().size());
+  for (size_t i = 0; i < count; ++i) {
+    const size_t loot_index = Rand(max_loots - 1);
     m_loots.emplace_back(m_map.GetLootTypes().at(loot_index), m_map.GetRandPoint(), m_loot_id++);
   }
 }
 
-void GameSession::DogsUpdate(const double& delta)
-{
+void GameSession::DogsUpdate(double delta_time) {
+  // create collector for delegate collect loot
   Collector collector(m_loots, m_map.GetOffices());
-  // dog udate
+
+  // dog udate (calculate next position, and detect road bound)
   for (auto it = m_dogs.begin(); it != m_dogs.end(); ++it) {
     auto dog = *it;
     assert(dog != nullptr);
@@ -84,21 +86,20 @@ void GameSession::DogsUpdate(const double& delta)
     const Point2d& pos = dog->GetPosition();
     const Point2d& speed = dog->GetSpeed();
 
-    if(speed == Point2d()) {
+    // if not move
+    if (speed == Point2d()) {
       continue;
     }
 
-    Point2d nextPos = pos + (speed * delta);
-
-
+    Point2d nextPos = pos + (speed * delta_time);
 
     // border define
-    Point2d min_pos = pos; 
+    Point2d min_pos = pos;
     Point2d max_pos = pos;
 
     // border update
-    for( auto road = m_map.GetRoads().cbegin(); road != m_map.GetRoads().cend(); ++road) {
-      if(road->Contains(pos)) {
+    for (auto road = m_map.GetRoads().cbegin(); road != m_map.GetRoads().cend(); ++road) {
+      if (road->Contains(pos)) {
         BoundExpand(*road, min_pos, max_pos);
       }
     }
@@ -118,16 +119,20 @@ void GameSession::DogsUpdate(const double& delta)
       dog->Stop();
     }
 
-    if(pos == nextPos) {
+    // if dog not move (check again because road collision detect)
+    if (pos == nextPos) {
       continue;
     }
 
+    // delegate move update and collect loot
     collector.AddDogToMoveUpdate(dog, nextPos);
 
+    // eraly code, obsolete
     // dog->SetPosition(nextPos);
   }
+
+  // update state of the collector
   collector.Update();
 }
-
 
 }  // namespace model

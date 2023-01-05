@@ -35,48 +35,48 @@ std::shared_ptr<GameSession> Game::GetSession(const model::Map::Id& id) {
     throw std::invalid_argument("Map"s + *id + "id not exist"s);
   }
 
-  for (auto& it : m_sess) {
-    if (it->GetMap().GetId() == id) {
-      return it;
+  // if session exist? find and return
+  for (auto& sess : m_sess) {
+    if (sess->GetMap().GetId() == id) {
+      return sess;
     }
   }
 
   std::chrono::milliseconds ms(static_cast<int>(m_period_loot_gen * 1000));
 
-  auto sess = std::make_shared<GameSession>(*map, LootGenerator( ms , m_probability_loot_gen));
+  // creat ne session if fail to find exist
+  auto sess = std::make_shared<GameSession>(*map, LootGenerator(ms, m_probability_loot_gen));
   sess->SetDogRandomSpawn(m_random_dog_spawn);
   m_sess.push_back(sess);
 
   return sess;
 }
 
-void Game::Update(const double& delta) {
-  for(auto& i : m_sess) {
-    i->Update(delta);
+void Game::Update(double delta_time) {
+  for (const auto& sess : m_sess) {
+    sess->Update(delta_time);
   }
 }
 
-void Game::SetRandomSpawn(const bool &enable){
+void Game::SetRandomSpawn(bool enable) {
   m_random_dog_spawn = enable;
 }
 
-const bool Game::IsRandomSpawn() const{
+bool Game::IsRandomSpawn() const {
   return m_random_dog_spawn;
 }
 
-void Game::LootGeneratorConfig(const double &period, const double &probability) {
+void Game::SetLootGeneratorConfig(double period, double probability) {
   m_period_loot_gen = period;
   m_probability_loot_gen = probability;
 }
 
-void Game::SetDefaultBagCapacity(const int& size) {
+void Game::SetDefaultBagCapacity(size_t size) {
   m_default_bag_capacity = size;
 }
 
-const int& Game::GetDefaultBagCapacity() const noexcept {
+size_t Game::GetDefaultBagCapacity() const noexcept {
   return m_default_bag_capacity;
 }
-
-
 
 }  // namespace model

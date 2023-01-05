@@ -16,7 +16,7 @@ bool IsSubPath(fs::path path, fs::path base) {
   return true;
 }
 
-std::string url_decode(const std::string &s) {
+std::string UrlDecode(const std::string &s) {
   std::string str;
   str.reserve(s.size());
   for (size_t i = 0; i < s.size(); ++i) {

@@ -14,12 +14,11 @@ bool IsSubPath(fs::path path, fs::path base);
 
 /**
  * @brief decode url path to ascii string
- * 
+ *
  * @param url encoded utl path
  * @return std::string decoded url path
  */
-std::string url_decode(const std::string &url);
-
+std::string UrlDecode(const std::string &url);
 
 };      // namespace util
 #endif  // __UTIL_H__

@@ -63,7 +63,7 @@ void Dog::AddPoints(int points) {
   m_points += points;
 }
 
-const int& Dog::GetPoinst() const noexcept {
+int Dog::GetPoinst() const noexcept {
   return m_points;
 }
 
@@ -86,7 +86,7 @@ void Dog::SetDir(const std::string& dir) {
   m_dir = dir;
 }
 
-void Dog::SetBagSize(const int& size) {
+void Dog::SetBagSize(size_t size) {
   m_bag_size = size;
 }
 

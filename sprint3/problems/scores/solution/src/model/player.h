@@ -34,7 +34,7 @@ class Player {
   Token m_token;
   std::string m_name;
 
-  std::shared_ptr<GameSession> m_gs;
+  std::shared_ptr<GameSession> m_gsess;
   std::shared_ptr<Dog> m_dog;
 
   static int ID_COUNTER;

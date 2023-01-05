@@ -2,10 +2,11 @@
 
 void Logger::LogExit(const int& code) {
   boost::json::object obj{{"code", code}};
-  if (code)
+  if (code) {
     BOOST_LOG_TRIVIAL(error) << boost::log::add_value(additional_data, obj) << "server exited"sv;
-  else
+  } else {
     BOOST_LOG_TRIVIAL(info) << boost::log::add_value(additional_data, obj) << "server exited"sv;
+  }
 }
 
 void Logger::LogExit(const std::exception& ex) {
@@ -57,7 +58,7 @@ void Logger::Init() {
       boost::log::keywords::format = &LogFormatter);
 }
 
-void Logger::LogDebug(const std::string& deb,const std::string& where){
+void Logger::LogDebug(const std::string& deb, const std::string& where) {
   boost::json::object obj = {
       {"text", deb},
       {"where", where},

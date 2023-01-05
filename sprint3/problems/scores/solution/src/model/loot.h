@@ -15,10 +15,10 @@ namespace model {
 
 class Loot : public GameObject{
  public:
-  Loot(const LootType& type,const Point2d& pos, const unsigned& id) : m_loot_type(type), GameObject(pos), m_id(id) {}
+  Loot(const LootType& type, const Point2d& pos, unsigned id) : m_loot_type(type), GameObject(pos), m_id(id) {}
 
   const LootType& GetLootType() const noexcept { return m_loot_type;}
-  const unsigned& GetId() const noexcept {return m_id;}
+  unsigned GetId() const noexcept {return m_id;}
 
   bool operator==(const Loot& l) const {
     return m_id == l.m_id && m_loot_type.type_num == l.m_loot_type.type_num;

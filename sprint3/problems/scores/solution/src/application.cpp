@@ -28,10 +28,9 @@ bool Application::IsManualTicker() const {
   return m_manual_ticker;
 }
 
-void Application::SetRandomSpawn(bool enable){
+void Application::SetRandomSpawn(bool enable) {
   m_game.SetRandomSpawn(enable);
 }
-
 
 const std::filesystem::path &Application::GetContentDir() const noexcept {
   return dir_to_content_;
@@ -45,7 +44,7 @@ const model::Game::Maps &Application::GetMaps() const noexcept {
   return m_game.GetMaps();
 }
 
-model::Player &Application::JoinGame(model::Map::Id id, const std::string &user_name) {
+model::Player &Application::JoinGame(const model::Map::Id &id, const std::string &user_name) {
   //  get if exist or get created session
   auto sess = m_game.GetSession(id);
   if (!sess) {
@@ -68,10 +67,10 @@ const model::PlayerList::Container &Application::GetPlayers() const noexcept {
 }
 
 void Application::Update(std::chrono::milliseconds ms) {
-  if(!m_manual_ticker && ms.count() > 30000ul){   // fail if more than 30s
+  if (!m_manual_ticker && (ms.count() > timeout)) {  // fail if timeout
     throw std::runtime_error("Time for aplication update state is very long");
   }
 
-  double delta = std::chrono::duration<double>(ms).count();
-  m_game.Update(delta);
+  const double delta_time = std::chrono::duration<double>(ms).count();
+  m_game.Update(delta_time);
 }

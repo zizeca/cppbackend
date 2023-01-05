@@ -1,6 +1,7 @@
 #ifndef __LOGGER_H__
 #define __LOGGER_H__
 
+#define BOOST_BEAST_USE_STD_STRING_VIEWJsAnswer
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/beast/http.hpp>
 #include <boost/date_time.hpp>
@@ -42,8 +43,6 @@ class Logger final {
 
   static void Init();
 
-
-
  private:
   static void LogFormatter(boost::log::record_view const& rec, boost::log::formatting_ostream& strm);
 };
@@ -51,7 +50,7 @@ class Logger final {
 template <class RequestHandler>
 class LogRequestHandler {
   template <typename Body, typename Allocator>
-  static void LogRequest(const boost::asio::ip::tcp::endpoint &endp ,http::request<Body, http::basic_fields<Allocator>>& req) {
+  static void LogRequest(const boost::asio::ip::tcp::endpoint& endp, http::request<Body, http::basic_fields<Allocator>>& req) {
     // message — строка request received
     // data — объект с полями:
     // ip — IP-адрес клиента (полученный через endpoint.address().to_string()),
@@ -66,8 +65,6 @@ class LogRequestHandler {
         {"method", req.method_string()}};
     BOOST_LOG_TRIVIAL(info) << boost::log::add_value(additional_data, obj) << "request received"sv;
   }
- 
- 
 
   static void LogResponse(int delta, int code, std::string content) {
     // message — строка response sent
@@ -75,7 +72,7 @@ class LogRequestHandler {
     // response_time — время формирования ответа в миллисекундах (целое число).
     // code — статус-код ответа, например, 200 (http::response<T>::result_int()).
     // content_type — строка или null, если заголовок в ответе отсутствует.
-    if(content.empty()){
+    if (content.empty()) {
       content = "null";
     }
     boost::json::object obj;
@@ -86,30 +83,26 @@ class LogRequestHandler {
     BOOST_LOG_TRIVIAL(info) << boost::log::add_value(additional_data, obj) << "response sent"sv;
   }
 
- 
- 
  public:
   LogRequestHandler(RequestHandler& h) : decorated_(h) {}
 
   template <typename Body, typename Allocator, typename Send>
-  void operator()(const boost::asio::ip::tcp::endpoint &endp, http::request<Body, http::basic_fields<Allocator>>&& req, Send&& send) {
-
-    LogRequest( endp, req);
-    decorated_(endp, std::move(req), [s = std::move(send)](auto&& response) {
+  void operator()(const boost::asio::ip::tcp::endpoint& endp, http::request<Body, http::basic_fields<Allocator>>&& req, Send&& send) {
+    LogRequest(endp, req);
+    decorated_(endp, std::move(req), [send = std::move(send)](auto&& response) {
       std::chrono::high_resolution_clock timer;
       auto start = timer.now();
 
       const int code_result = response.result_int();
       const std::string content_type = static_cast<std::string>(response.at(http::field::content_type));
-      s(response);
+      
+      send(response);
 
       auto stop = timer.now();
       auto deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count();
 
       LogRequestHandler::LogResponse(deltaTime, code_result, content_type);
     });
-   
-    return;
   }
 
  private:

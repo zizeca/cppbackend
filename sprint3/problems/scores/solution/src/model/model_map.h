@@ -59,8 +59,8 @@ class Map {
 
   Point2d GetRandPoint(bool enable = true) const;
 
-  void SetBagCapacity(const int& size);
-  const int& GetBagCapacity() const noexcept;
+  void SetBagCapacity(size_t size);
+  size_t GetBagCapacity() const noexcept;
 
  private:
   using OfficeIdToIndex = std::unordered_map<Office::Id, size_t, util::TaggedHasher<Office::Id>>;

@@ -6,10 +6,8 @@
 #include <filesystem>
 #include <optional>
 #include <string>
-#include <string_view>
 #include <chrono>
 
-using namespace std::string_view_literals;
 using namespace std::string_literals;
 
 #include "json_loader.h"
@@ -23,6 +21,7 @@ class Application {
   Application& operator=(const Application&) = delete;
   Application& operator=(Application&&) = delete;
 
+  static constexpr unsigned timeout = 30000u;
  public:
   Application(boost::asio::io_context& ioc, std::filesystem::path config, std::filesystem::path dir_to_content);
   ~Application();
@@ -38,7 +37,7 @@ std::optional<std::reference_wrapper<const model::Map>>  FindMap(const model::Ma
 
   const std::vector<model::Map>& GetMaps() const noexcept;
 
-  model::Player& JoinGame(model::Map::Id id, const std::string& user_name);
+  model::Player& JoinGame(const model::Map::Id& id, const std::string& user_name);
 
   std::optional<std::reference_wrapper<model::Player>> FindPlayer(const model::Token& t);
 

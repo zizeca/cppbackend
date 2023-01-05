@@ -6,7 +6,6 @@ namespace http_handler {
 
 using namespace std::literals;
 
-
 const std::unordered_map<std::string, std::string> ContentType::DICT = {
     {".htm", "text/html"},
     {".html", "text/html"},
@@ -15,7 +14,7 @@ const std::unordered_map<std::string, std::string> ContentType::DICT = {
     {".txt", "text/plain"},
     {".js", "text/javascript"},
     {".json", "application/json"},
-    {"json", "application/json"},  
+    {"json", "application/json"},
     {".xml", "application/xml"},
     {".png", "image/png"},
     {".jpg", "image/jpeg"},
@@ -31,4 +30,4 @@ const std::unordered_map<std::string, std::string> ContentType::DICT = {
     {".mp3", "audio/mpeg"},
 };
 
-}
+}  // namespace http_handler

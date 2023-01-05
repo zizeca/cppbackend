@@ -43,7 +43,7 @@ void tag_invoke(value_from_tag, value& jv, Office const& office) {
 }
 
 void tag_invoke(value_from_tag, value& jv, Road const& road) {
-  object obj;
+  object obj{};
   obj[MapKey::start_X] = road.GetStart().x;
   obj[MapKey::start_Y] = road.GetStart().y;
   if (road.IsHorizontal()) {
@@ -56,13 +56,13 @@ void tag_invoke(value_from_tag, value& jv, Road const& road) {
 }
 
 void tag_invoke(value_from_tag, value& jv, Map const& map) {
-  object obj;
+  object obj{};
   obj[MapKey::id] = *map.GetId();
   obj[MapKey::name] = map.GetName();
 
   // loot types parse
   if (!map.GetLootTypes().empty()) {
-    array arr;
+    array arr{};
     for (auto& i : map.GetLootTypes()) {
       arr.push_back(value_from(i));
     }
@@ -71,7 +71,7 @@ void tag_invoke(value_from_tag, value& jv, Map const& map) {
 
   // road parse
   if (!map.GetRoads().empty()) {
-    array arr;
+    array arr{};
     for (auto& i : map.GetRoads()) {
       arr.push_back(value_from(i));
     }
@@ -81,7 +81,7 @@ void tag_invoke(value_from_tag, value& jv, Map const& map) {
 
   // building parse
   if (!map.GetBuildings().empty()) {
-    array arr;
+    array arr{};
     for (auto& i : map.GetBuildings()) {
       arr.push_back(value_from(i));
     }
@@ -90,7 +90,7 @@ void tag_invoke(value_from_tag, value& jv, Map const& map) {
 
   // office parse
   if (!map.GetOffices().empty()) {
-    array arr;
+    array arr{};
     for (auto& office : map.GetOffices()) {
       arr.push_back(value_from(office));
     }
@@ -100,7 +100,7 @@ void tag_invoke(value_from_tag, value& jv, Map const& map) {
 }
 
 void tag_invoke(value_from_tag, value& jv, LootType const& lootType) {
-  object obj;
+  object obj{};
   if (lootType.name) {
     obj[MapKey::name] = *lootType.name;
   }
@@ -133,12 +133,12 @@ void tag_invoke(value_from_tag, value& jv, LootType const& lootType) {
 }
 
 void tag_invoke(value_from_tag, value& jv, Dog const& dog) {
-  object obj;
+  object obj{};
   obj["pos"] = {dog.GetPosition().x, dog.GetPosition().y};
   obj["speed"] = {dog.GetSpeed().x, dog.GetSpeed().y};
   obj["dir"] = dog.GetDir();
 
-  array bag;
+  array bag{};
   auto loots = dog.GetLoots();
   for (auto const& i : loots) {
     object loot;
@@ -151,11 +151,6 @@ void tag_invoke(value_from_tag, value& jv, Dog const& dog) {
   
   obj["score"] = dog.GetPoinst();
   jv = obj;
-
-      // jv = {
-      //     {"pos", {dog.GetPosition().x, dog.GetPosition().y}},
-      //     {"speed", {dog.GetSpeed().x, dog.GetSpeed().y}},
-      //     {"dir", dog.GetDir()}};
 }
 
 // ------------------------------------
@@ -165,7 +160,7 @@ Building tag_invoke(value_to_tag<Building>, value const& jv) {
     throw std::logic_error("wrong building val");
   }
 
-  RectInt rect;
+  RectInt rect{};
 
   rect.left = extruct<int>(jv, MapKey::pos_X);
   rect.top = extruct<int>(jv, MapKey::pos_Y);
@@ -184,8 +179,8 @@ Office tag_invoke(value_to_tag<Office>, value const& jv) {
 
   Office::Id id(extruct<std::string>(jv, MapKey::id));
 
-  Point2i position;
-  Point2i offset;
+  Point2i position{};
+  Point2i offset{};
 
   position.x = extruct<int>(jv, MapKey::pos_X);
   position.y = extruct<int>(jv, MapKey::pos_Y);
@@ -196,8 +191,8 @@ Office tag_invoke(value_to_tag<Office>, value const& jv) {
 }
 
 Road tag_invoke(value_to_tag<Road>, value const& jv) {
-  Point2i start;
-  int finish;
+  Point2i start{};
+  int finish{0};
 
   auto& road = jv.as_object();
   if (road.size() != 3) {
@@ -314,7 +309,7 @@ Game tag_invoke(value_to_tag<Game>, value const& jv) {
 
   if (jv.as_object().contains(MapKey::lootGeneratorConfig)) {
     auto& loot = jv.as_object().at(MapKey::lootGeneratorConfig);
-    game.LootGeneratorConfig(loot.at(MapKey::period).as_double(), loot.at(MapKey::probability).as_double());
+    game.SetLootGeneratorConfig(loot.at(MapKey::period).as_double(), loot.at(MapKey::probability).as_double());
   } else {
     // assert(!"no loot config");
   }

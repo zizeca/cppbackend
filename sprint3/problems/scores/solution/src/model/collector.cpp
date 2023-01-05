@@ -26,23 +26,23 @@ std::list<CollisionEvent> Collector::FindEvent() const {
 
   for (auto& dogmove : m_dogs) {
     // handle loot collision
-    for (auto& li : m_loots) {
-      auto colres = TryCollectPoint(dogmove.dog->GetPosition(), dogmove.nextPos, li.GetPosition());
-      if (colres.IsIntersect(dogmove.dog->GetWidth() + li.GetWidth())) {
-        event.emplace_back(dogmove.dog, li, colres.sq_distance, colres.proj_ratio);
+    for (const auto& loot : m_loots) {
+      const auto col_result = TryCollectPoint(dogmove.dog->GetPosition(), dogmove.nextPos, loot.GetPosition());
+      if (col_result.IsIntersect(dogmove.dog->GetWidth() + loot.GetWidth())) {
+        event.emplace_back(dogmove.dog, loot, col_result.sq_distance, col_result.proj_ratio);
       }
     }
 
     // handle office collision
-    for (auto& oi : m_offices) {
-      auto colres = TryCollectPoint(dogmove.dog->GetPosition(), dogmove.nextPos, oi.GetPosition());
-      if (colres.IsIntersect(dogmove.dog->GetWidth() + oi.GetWidth())) {
-        event.emplace_back(dogmove.dog, oi, colres.sq_distance, colres.proj_ratio);
+    for (const auto& office : m_offices) {
+      auto col_result = TryCollectPoint(dogmove.dog->GetPosition(), dogmove.nextPos, office.GetPosition());
+      if (col_result.IsIntersect(dogmove.dog->GetWidth() + office.GetWidth())) {
+        event.emplace_back(dogmove.dog, office, col_result.sq_distance, col_result.proj_ratio);
       }
     }
   }
 
-  event.sort([](const CollisionEvent& a, const CollisionEvent& b) { return a.time < b.time; });
+  event.sort([](const CollisionEvent& lhs, const CollisionEvent& rhs) { return lhs.time < rhs.time; });
 
   return event;
 }
@@ -52,33 +52,33 @@ void Collector::CollisionEventHandler() {
 
   for (auto it = event.begin(); it != event.end(); it = event.erase(it)) {
     // if Office need unload and calculte points
-    if (std::holds_alternative<Office>(it->obj)) {
+    if (std::holds_alternative<Office>(it->game_object)) {
       // get loots
       auto loots = it->dog->UnloadLoots();
 
       // calculate
-      auto points = std::accumulate(loots.begin(), loots.end(), 0, [](const int& a, const Loot& l) {
-        auto val = l.GetLootType().value;
+      auto points = std::accumulate(loots.begin(), loots.end(), 0, [](const int& sum, const Loot& loot) {
+        auto val = loot.GetLootType().value;
         if (val) {
-          return static_cast<int>(a + *val);
+          return static_cast<int>(sum + *val);
         }
-        return a;
+        return sum;
       });
 
       // add points
       it->dog->AddPoints(points);
 
-    } else if (std::holds_alternative<Loot>(it->obj) && !it->dog->IsFull()) {
-      Loot l = std::get<Loot>(it->obj);
-      it->dog->AddLoot(l);
+    } else if (std::holds_alternative<Loot>(it->game_object) && !it->dog->IsFull()) {
+      Loot loot = std::get<Loot>(it->game_object);
+      it->dog->AddLoot(loot);
 
       // remove collected loots from list
-      m_loots.remove(l);
+      m_loots.remove(loot);
 
       // remove event with collected loot
       for (auto j = std::next(it); j != event.end();) {
-        if (std::holds_alternative<Loot>(j->obj)) {
-          if (std::get<Loot>(j->obj) == l) {
+        if (std::holds_alternative<Loot>(j->game_object)) {
+          if (std::get<Loot>(j->game_object) == loot) {
             j = event.erase(j);
           } else {
             ++j;

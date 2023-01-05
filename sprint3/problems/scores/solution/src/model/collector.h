@@ -36,7 +36,7 @@ struct CollisionResult {
 
 struct CollisionEvent {
   std::shared_ptr<Dog> dog;
-  std::variant<Loot, Office> obj;  // maybe need replace to std::shared_ptr<GameObject>
+  std::variant<Loot, Office> game_object;  // maybe need replace to std::shared_ptr<GameObject>
   double sq_distance;
   double time;
 };
@@ -54,8 +54,8 @@ class Collector {
   void Update() {
     CollisionEventHandler();
 
-    for (auto& i : m_dogs) {
-      i.UpdateMove();
+    for (auto& dog : m_dogs) {
+      dog.UpdateMove();
     }
   }
 

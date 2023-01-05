@@ -26,10 +26,7 @@ void tag_invoke(value_from_tag, value& jv, Office const& office);
 void tag_invoke(value_from_tag, value& jv, Road const& road);
 void tag_invoke(value_from_tag, value& jv, Map const& map);
 void tag_invoke(value_from_tag, value& jv, LootType const& lootType);
-
-
 void tag_invoke(value_from_tag, value& jv, Dog const& dog);
-
 
 Building tag_invoke(value_to_tag<Building>, value const& jv);
 Office tag_invoke(value_to_tag<Office>, value const& jv);

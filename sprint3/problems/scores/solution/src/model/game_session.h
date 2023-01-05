@@ -26,7 +26,7 @@ class GameSession {
 
   void AddDog(std::shared_ptr<Dog> dog);
 
-  void Update(const double& delta);
+  void Update(double delta_time);
 
   void SetDogRandomSpawn(bool enable = true);
 
@@ -35,9 +35,9 @@ class GameSession {
 
  private:
 
-  void GenerateLoot(const double& delta);
+  void GenerateLoot(double delta_time);
 
-  void DogsUpdate(const double& delta);
+  void DogsUpdate(double delta_time);
 
   const Map& m_map;
   std::vector<std::shared_ptr<Dog>> m_dogs;

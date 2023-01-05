@@ -7,7 +7,6 @@
 namespace http_handler {
 using namespace std::string_view_literals;
 
-
 struct ErrStr {
   ErrStr() = delete;
   constexpr static std::string_view MAP_NOT_FOUND = R"({"code": "mapNotFound", "message": "Map not found"})"sv;
@@ -23,7 +22,6 @@ struct CacheControl {
   constexpr static std::string_view NO_CACHE = "no-cache"sv;
 };
 
-
 struct ContentType {
   ContentType() = delete;
   constexpr static std::string_view TEXT_HTML = "text/html"sv;
@@ -33,9 +31,5 @@ struct ContentType {
   static const std::unordered_map<std::string, std::string> DICT;
 };
 
-
-
-
-
 }  // namespace http_handler
-#endif // __CONTENT_TYPE_H__
+#endif  // __CONTENT_TYPE_H__

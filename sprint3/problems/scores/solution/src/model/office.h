@@ -7,13 +7,15 @@
 #include "../tagged.h"
 #include "game_object.h"
 
-namespace model
-{
-  class Office : public GameObject{
+namespace model {
+class Office : public GameObject {
  public:
   using Id = util::Tagged<std::string, Office>;
 
-  Office(Id const& id, Point2i const& position, Point2i const& offset, double const& width = 0.5) noexcept : m_id(id), GameObject(position, width), m_offset{offset} {}
+  Office(Id const& id, Point2i const& position, Point2i const& offset, double const& width = 0.5) noexcept
+      : m_id(id),
+        GameObject(position, width),
+        m_offset{offset} {}
 
   const Id& GetId() const noexcept { return m_id; }
 
@@ -24,7 +26,6 @@ namespace model
   const Point2i m_offset;
 };
 
-} // namespace model
+}  // namespace model
 
-
-#endif // __OFFICE_H__
+#endif  // __OFFICE_H__

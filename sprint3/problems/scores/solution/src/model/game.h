@@ -28,20 +28,20 @@ class Game {
   }
 
   void SetDefaultSpeed(double speed) { m_default_speed = speed; }
-  const double& GetDefaultSpeed() const { return m_default_speed; }
+  double GetDefaultSpeed() const { return m_default_speed; }
 
   // get exist or create new & return pointer
   std::shared_ptr<GameSession> GetSession(const model::Map::Id& id);
 
-  void Update(const double& delta);
+  void Update(double delta_time);
 
-  void SetRandomSpawn(const bool &enable = true);
-  const bool IsRandomSpawn() const;
+  void SetRandomSpawn(bool enable = true);
+  bool IsRandomSpawn() const;
 
-  void LootGeneratorConfig(const double &period, const double &probability);
+  void SetLootGeneratorConfig(double period, double probability);
 
-  void SetDefaultBagCapacity(const int& size);
-  const int& GetDefaultBagCapacity() const noexcept;
+  void SetDefaultBagCapacity(size_t size);
+  size_t GetDefaultBagCapacity() const noexcept;
 
  private:
   using MapIdHasher = util::TaggedHasher<Map::Id>;
@@ -58,9 +58,9 @@ class Game {
 
   double m_period_loot_gen = 0.0;
   double m_probability_loot_gen = 0.0;
-  int m_default_bag_capacity = 3;
+  size_t m_default_bag_capacity = 3;
 };
 
 }  // namespace model
 
-#endif // __GAME_H__
+#endif  // __GAME_H__

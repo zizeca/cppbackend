@@ -4,6 +4,7 @@
 
 #include "content_type.h"
 #include "logger.h"
+#include "util.h"
 
 namespace http_handler {
 
@@ -11,7 +12,10 @@ json::value JsAnswer(std::string code, std::string message) {
   return json::object{{"code", code}, {"message", message}};
 }
 
-ApiHandler::ApiHandler(Application &app, const StringRequest &req) : m_app(app), m_req(req), m_target(req.target()) {
+ApiHandler::ApiHandler(Application &app, const StringRequest &req)
+    : m_app(app),
+      m_req(req),
+      m_target(util::UrlDecode(static_cast<std::string>(req.target()))) {
   if (!m_target.starts_with("/api/")) {
     throw std::invalid_argument("Request target for ApiHandler should starts with \"api\" but target =="s + m_target);
   }
@@ -198,7 +202,7 @@ StringResponse ApiHandler::PostAction() {
 StringResponse ApiHandler::PostTick() {
   // check method
   if (m_req.method() != http::verb::post) {
-    return MakeJsonResponse(http::status::method_not_allowed, {{"code", "invalidMethod"}, {"message", "Only POST method is expected"}}, CacheControl::NO_CACHE, "POST"sv);
+    return MakeJsonResponse(http::status::method_not_allowed, JsAnswer("invalidMethod", "Only POST method is expected"), CacheControl::NO_CACHE, "POST"sv);
   }
 
   int64_t ms;
