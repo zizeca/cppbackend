@@ -36,7 +36,7 @@ std::shared_ptr<GameSession> Game::GetSession(const model::Map::Id& id) {
   }
 
   // if session exist? find and return
-  for (auto& sess : m_sess) {
+  for (const auto& sess : m_sess) {
     if (sess->GetMap().GetId() == id) {
       return sess;
     }
