@@ -1,7 +1,7 @@
 #ifndef __LOGGER_H__
 #define __LOGGER_H__
 
-#define BOOST_BEAST_USE_STD_STRING_VIEWJsAnswer
+#define BOOST_BEAST_USE_STD_STRING_VIEW
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/beast/http.hpp>
 #include <boost/date_time.hpp>
