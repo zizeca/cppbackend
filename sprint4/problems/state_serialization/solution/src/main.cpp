@@ -36,7 +36,7 @@ void RunWorkers(unsigned n, const Fn& fn) {
 
 int main(int argc, const char* argv[]) {
 
-  c_parse::Args arg;
+  c_parse::Args arg{};
 
   try {
     if (auto args = c_parse::ParseCommandLine(argc, argv)) {
