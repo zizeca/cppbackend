@@ -49,6 +49,7 @@ class Dog : public GameObject {
 
   bool IsFull() const;
 
+  [[nodiscard("Unload all resource from the Dog object")]]
   std::list<Loot> UnloadLoots();
 
   const std::list<Loot>& GetLoots() const noexcept;
