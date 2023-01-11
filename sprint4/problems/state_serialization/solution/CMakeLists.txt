@@ -16,6 +16,7 @@ set(JSON_LIB json_parser)
 
 set(SRC 
 	${SRCDIR}/main.cpp
+  ${SRCDIR}/command_parse.cpp
   ${SRCDIR}/logger.cpp
 #	${SRCDIR}/boost_json.cpp
 	${SRCDIR}/json_loader.cpp
@@ -30,6 +31,7 @@ set(SRC
 
 set(HEADER 
   ${SRCDIR}/sdk.h
+  ${SRCDIR}/command_parse.h
   ${SRCDIR}/logger.h
   ${SRCDIR}/json_loader.h
   ${SRCDIR}/http_server.h

@@ -36,10 +36,10 @@ void RunWorkers(unsigned n, const Fn& fn) {
 
 int main(int argc, const char* argv[]) {
 
-  Args arg;
+  c_parse::Args arg;
 
   try {
-    if (auto args = ParseCommandLine(argc, argv)) {
+    if (auto args = c_parse::ParseCommandLine(argc, argv)) {
       arg = *args;
     } else {
       return EXIT_FAILURE;
@@ -57,15 +57,8 @@ int main(int argc, const char* argv[]) {
     net::io_context ioc(num_threads);
 
     // Application app(ioc, argv[1], argv[2]);
-    Application app(ioc, arg.config, arg.www_root);
-
-    // auto update
-    if (arg.period) {
-      std::make_shared<util::Ticker>(app.strand, std::chrono::milliseconds(100), std::bind(&Application::Update, &app, std::placeholders::_1))->Start();
-      app.SetManualTicker(false);
-    }
-
-    app.SetRandomSpawn(arg.random);
+    // Application app(ioc, arg.config, arg.www_root);
+    Application app(ioc, arg);
 
     // signal handler
     net::signal_set signals(ioc, SIGINT, SIGTERM);

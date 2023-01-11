@@ -13,6 +13,7 @@ using namespace std::string_literals;
 #include "json_loader.h"
 #include "model.h"
 #include "ticker.h"
+#include "command_parse.h"
 
 class Application {
   Application() = delete;
@@ -23,7 +24,7 @@ class Application {
 
   static constexpr unsigned timeout = 30000u;
  public:
-  Application(boost::asio::io_context& ioc, std::filesystem::path config, std::filesystem::path dir_to_content);
+  Application(boost::asio::io_context& ioc, const c_parse::Args& args);
   ~Application();
 
   void SetManualTicker(bool enable = true);
@@ -50,7 +51,7 @@ std::optional<std::reference_wrapper<const model::Map>>  FindMap(const model::Ma
 
  private:
   boost::asio::io_context& m_ioc;
-  const std::filesystem::path dir_to_content_;
+  std::filesystem::path m_dir_to_content;
   model::Game m_game;
   model::PlayerList m_player_list;
   bool m_manual_ticker;

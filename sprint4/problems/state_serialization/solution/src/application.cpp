@@ -2,18 +2,37 @@
 
 #include <cassert>
 #include <chrono>
-#include "logger.h"
 
-Application::Application(boost::asio::io_context &ioc, std::filesystem::path config, std::filesystem::path dir_to_content)
+#include "logger.h"
+#include "ticker.h"
+
+Application::Application(boost::asio::io_context &ioc, const c_parse::Args& args) 
     : m_ioc(ioc),
-      dir_to_content_(dir_to_content),
-      strand(boost::asio::make_strand(ioc)),
-      m_manual_ticker(true) {
-  if (!(std::filesystem::exists(config) && std::filesystem::exists(dir_to_content_))) {
-    throw std::logic_error("Wrong path, config="s + config.string() + ", content="s + dir_to_content.string());  //? maybe need more output information
+    strand(boost::asio::make_strand(ioc)) {
+
+  // required pathes
+  if (!(std::filesystem::exists(args.config_file) && std::filesystem::exists(args.www_root))) {
+    throw std::logic_error("Wrong path, config="s +args.config_file + ", content="s + args.www_root);  //? maybe need more output information
   }
-  m_game = json_loader::LoadGame(config);
+
+  // path to static files
+  m_dir_to_content = args.www_root;
+
+  // create game form json config
+  m_game = json_loader::LoadGame(args.config_file);
+
+  // random spawn
+  m_game.SetRandomSpawn(args.random_spawn);
+  
+  // auto update
+  if (args.tick_period) {
+    std::make_shared<util::Ticker>(this->strand, std::chrono::milliseconds(args.tick_period), std::bind(&Application::Update, this, std::placeholders::_1))->Start();
+    m_manual_ticker = false;
+  } else {
+    m_manual_ticker = true;
+  }
 }
+
 
 Application::~Application() {
   // todo
@@ -33,7 +52,7 @@ void Application::SetRandomSpawn(bool enable) {
 }
 
 const std::filesystem::path &Application::GetContentDir() const noexcept {
-  return dir_to_content_;
+  return m_dir_to_content;
 }
 
 std::optional<std::reference_wrapper<const model::Map>> Application::FindMap(const model::Map::Id &id) const noexcept {
