@@ -4,6 +4,7 @@
 #include <boost/program_options.hpp>
 #include <optional>
 #include <vector>
+#include <iostream>
 
 using namespace std::literals;
 
@@ -11,13 +12,13 @@ struct Args {
   unsigned int period = 0;
   std::string config;
   std::string www_root;
-  bool random;
+  bool random = false;
 };
 
 [[nodiscard]] std::optional<Args> ParseCommandLine(int argc, const char* const argv[]) {
   namespace po = boost::program_options;
 
-  po::options_description desc{"All options"s};
+  po::options_description desc{"Allowed options"s};
   Args args;
 
   // Allowed options:
@@ -31,7 +32,7 @@ struct Args {
       ("tick-period,t", po::value<unsigned int>(&args.period)->value_name("milliseconds"), "set tick period")  //
       ("config-file,c", po::value(&args.config)->value_name("file"), "set config file path")                   //
       ("www-root,w", po::value(&args.www_root)->value_name("dir"), "set static files root")                    //
-      ("randomize-spawn-points", po::value<bool>(&args.random), "spawn dogs at random positions");
+      ("randomize-spawn-points", po::bool_switch(&args.random), "spawn dogs at random positions");
 
   po::variables_map vm;
   po::store(po::parse_command_line(argc, argv, desc), vm);
