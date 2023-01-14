@@ -51,6 +51,7 @@ int main(int argc, const char* argv[]) {
 
   // initial logger
   Logger::Init();
+  
   try {
     // 2. Инициализируем io_context
     const unsigned num_threads = std::thread::hardware_concurrency();
@@ -86,6 +87,8 @@ int main(int argc, const char* argv[]) {
 
     //  run async process
     RunWorkers(std::max(1u, num_threads), [&ioc] { ioc.run(); });
+    app.SaveState();
+
   } catch (const std::exception& ex) {
     Logger::LogExit(ex);
     return EXIT_FAILURE;

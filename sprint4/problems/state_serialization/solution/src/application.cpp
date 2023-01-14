@@ -31,6 +31,18 @@ Application::Application(boost::asio::io_context &ioc, const c_parse::Args& args
   } else {
     m_manual_ticker = true;
   }
+
+  // load state
+  if(std::filesystem::exists(args.state_file)) {
+    LoadState(args.state_file);
+  }
+
+  // auto save
+  if (!args.state_file.empty() && args.save_state_period) {
+    // todo
+    std::make_shared<util::Ticker>(this->strand, std::chrono::milliseconds(args.save_state_period), std::bind(&Application::SaveState, this, std::placeholders::_1))->Start();
+  }
+
 }
 
 
@@ -92,4 +104,22 @@ void Application::Update(std::chrono::milliseconds ms) {
 
   const double delta_time = std::chrono::duration<double>(ms).count();
   m_game.Update(delta_time);
+}
+
+void Application::SaveState() {
+  std::cout << "Noimplement Save\n";
+  boost::archive::text_oarchive oa{m_ss};
+
+  oa << m_game;
+  oa << m_player_list;
+
+}
+
+void Application::LoadState(const std::filesystem::path& path) {
+  std::cout << "Noimplement Load\n";
+  boost::archive::text_iarchive ia{m_ss};
+  
+  ia >> m_game;
+  ia >> m_player_list;
+
 }
