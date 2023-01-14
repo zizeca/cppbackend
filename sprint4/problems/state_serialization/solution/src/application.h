@@ -12,7 +12,7 @@
 #include <string>
 #include <chrono>
 #include <iostream>
-#include <sstream>
+#include <fstream>
 
 
 using namespace std::string_literals;
@@ -66,7 +66,7 @@ class Application {
   model::Game m_game;
   model::PlayerList m_player_list;
   bool m_manual_ticker;
-  std::stringstream m_ss;
+  std::ofstream m_ofstream;
 };
 
 #endif  // __APPLICATION_H__

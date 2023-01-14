@@ -67,5 +67,6 @@ add_executable(${EXECUTE} ${SRC} ${HEADER})
 target_include_directories(${EXECUTE} PRIVATE CONAN_PKG::boost)
 target_link_libraries(${EXECUTE} PRIVATE Threads::Threads CONAN_PKG::boost ${MODEL_LIB} ${JSON_LIB})
 add_subdirectory(${SRCDIR}/http_server)
-#add_subdirectory(tests)
+
+add_subdirectory(tests)
 #catch_discover_tests(${CMAKE_BINARY_DIR}/bin/game_server_tests) 

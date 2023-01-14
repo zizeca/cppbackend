@@ -5,6 +5,8 @@
 
 #include "logger.h"
 #include "ticker.h"
+#include "model_serialization.h"
+
 
 Application::Application(boost::asio::io_context &ioc, const c_parse::Args& args) 
     : m_ioc(ioc),
@@ -40,7 +42,7 @@ Application::Application(boost::asio::io_context &ioc, const c_parse::Args& args
   // auto save
   if (!args.state_file.empty() && args.save_state_period) {
     // todo
-    std::make_shared<util::Ticker>(this->strand, std::chrono::milliseconds(args.save_state_period), std::bind(&Application::SaveState, this, std::placeholders::_1))->Start();
+    std::make_shared<util::Ticker>(this->strand, std::chrono::milliseconds(args.save_state_period), std::bind(&Application::SaveState, this))->Start();
   }
 
 }
@@ -108,18 +110,27 @@ void Application::Update(std::chrono::milliseconds ms) {
 
 void Application::SaveState() {
   std::cout << "Noimplement Save\n";
-  boost::archive::text_oarchive oa{m_ss};
+  // boost::archive::text_oarchive oa{m_ss};
 
-  oa << m_game;
-  oa << m_player_list;
+  // GameSer gs(m_game);
+
+  // oa << gs;
+  // oa << m_player_list;
 
 }
 
 void Application::LoadState(const std::filesystem::path& path) {
   std::cout << "Noimplement Load\n";
-  boost::archive::text_iarchive ia{m_ss};
-  
-  ia >> m_game;
-  ia >> m_player_list;
+  std::ifstream ifs(path);
+  if(!ifs.is_open()) {
+    throw std::runtime_error("fail to open file");
+  }
 
+  boost::archive::text_iarchive ia{ifs};
+  
+  // GameSer gs(m_game, m_player_list);
+
+  // ia >> gs;
+
+  ifs.close();
 }
