@@ -1,5 +1,6 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
+#include <boost/serialization/optional.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <sstream>
 
@@ -36,5 +37,29 @@ SCENARIO_METHOD(Fixture, "Point serialization") {
     }
 }
 
+SCENARIO_METHOD(Fixture, "LootType serialization") {
+    GIVEN("A LootType") {
 
+        const model::LootType loot{
+          .name{"key"},
+          .file{"assets/key.obj"},
+          .type{"obj"},
+          .rotation{std::nullopt},
+          .color{"#338844"},
+          .scale{0.03},
+          .value{0},
+          .type_num{1}
+        };
 
+        WHEN("LootType is serialized") {
+            output_archive << loot;
+
+            THEN("it is equal to point after serialization") {
+                InputArchive input_archive{strm};
+                model::LootType restored_loot;
+                input_archive >> restored_loot;
+                CHECK(loot == restored_loot);
+            }
+        }
+    }
+}

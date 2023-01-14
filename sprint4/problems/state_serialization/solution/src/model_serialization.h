@@ -2,6 +2,10 @@
 #define __STATE_SERIALIZE_H__
 
 #include <boost/serialization/vector.hpp>
+// #include <boost/serialization/optional.hpp>
+#include <boost/serialization/utility.hpp>
+
+#include "optional_serialization.h"
 
 #include "model.h"
 
@@ -19,6 +23,22 @@ template <typename Archive>
 void serialize(Archive& ar, GameObject& game_object, [[maybe_unused]] const unsigned version) {
   ar & game_object.GetPosition();
   ar & game_object.GetWidth();
+}
+
+template <typename Archive>
+
+void serialize(Archive& ar, LootType& loot_type, [[maybe_unused]] const unsigned version) {
+
+  ar & loot_type.name;
+  ar & loot_type.file;
+  ar & loot_type.type;
+  ar & loot_type.rotation;
+  ar & loot_type.color;
+  ar & loot_type.scale;
+  ar & loot_type.value;
+
+  //! may be wrong behaviour
+  ar & loot_type.type_num; 
 }
 
 } // namespace model
