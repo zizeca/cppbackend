@@ -101,16 +101,16 @@ void tag_invoke(value_from_tag, value& jv, Map const& map) {
 
 void tag_invoke(value_from_tag, value& jv, LootType const& lootType) {
   object obj{};
-  if (lootType.name) {
-    obj[MapKey::name] = *lootType.name;
+  if (!lootType.name.empty()) {
+    obj[MapKey::name] = lootType.name;
   }
 
-  if (lootType.file) {
-    obj[MapKey::file] = *lootType.file;
+  if (!lootType.file.empty()) {
+    obj[MapKey::file] = lootType.file;
   }
 
-  if (lootType.type) {
-    obj[MapKey::type] = *lootType.type;
+  if (!lootType.type.empty()) {
+    obj[MapKey::type] = lootType.type;
   }
 
   if (lootType.rotation) {
@@ -125,8 +125,8 @@ void tag_invoke(value_from_tag, value& jv, LootType const& lootType) {
     obj[MapKey::scale] = *lootType.scale;
   }
 
-  if (lootType.value) {
-    obj[MapKey::value] = *lootType.value;
+  if (lootType.value != 0) {
+    obj[MapKey::value] = lootType.value;
   }
 
   jv = std::move(obj);
