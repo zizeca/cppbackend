@@ -6,59 +6,16 @@
 // #include <boost/serialization/optional.hpp>
 #include <boost/serialization/utility.hpp>
 
-#include "optional_serialization.h"
-
 #include "model.h"
+
+#include "serialization/point_serialization.h"
+#include "serialization/loot_type_serialization.h"
+#include "serialization/game_object_serialization.h"
+
 
 namespace model {
 
-/// For Point2d
-template <typename Archive>
-void serialize(Archive& ar, Point2d& point, [[maybe_unused]] const unsigned version) {
-  ar& point.x;
-  ar& point.y;
-}
 
-/// LootType
-template <typename Archive>
-void serialize(Archive& ar, LootType& loot_type, [[maybe_unused]] const unsigned version) {
-  ar& loot_type.name;
-  ar& loot_type.file;
-  ar& loot_type.type;
-  ar& loot_type.rotation;
-  ar& loot_type.color;
-  ar& loot_type.scale;
-  ar& loot_type.value;
-
-  //! may be wrong behaviour becaus type_num depend on vector index
-  ar& loot_type.type_num;
-}
-
-/// Base Class GameObject
-/// Splited function
-template <typename Archive>
-void save(Archive& ar, const GameObject& game_object, unsigned int version) {
-  Point2d pos = game_object.GetPosition();
-  double width = game_object.GetWidth();
-  ar << pos;
-  ar << width;
-}
-
-template <typename Archive>
-void load(Archive& ar, GameObject& game_object, unsigned int version) {
-  Point2d pos;
-  double width;
-  ar >> pos;
-  ar >> width;
-  game_object.SetPosition(pos);
-  game_object.SetWidth(width);
-}
-
-template <class Archive>
-void serialize(Archive& ar, GameObject& t, const unsigned int file_version) {
-  boost::serialization::split_free(ar, t, file_version);
-}
-/// ==============
 
 }  // namespace model
 
