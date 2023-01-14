@@ -11,7 +11,7 @@
 #include "serialization/point_serialization.h"
 #include "serialization/loot_type_serialization.h"
 #include "serialization/game_object_serialization.h"
-
+#include "serialization/loot_serialization.h"
 
 namespace model {
 

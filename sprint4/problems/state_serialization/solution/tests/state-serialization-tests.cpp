@@ -45,9 +45,9 @@ SCENARIO_METHOD(Fixture, "Point serialization") {
   }
 }
 
-SCENARIO_METHOD(Fixture, "LootType serialization") {
+SCENARIO_METHOD(Fixture, "Loot & LootType serialization") {
   GIVEN("A LootType") {
-    const model::LootType loot{
+    const LootType loot_type{
         .name{"key"},
         .file{"assets/key.obj"},
         .type{"obj"},
@@ -57,14 +57,43 @@ SCENARIO_METHOD(Fixture, "LootType serialization") {
         .value{0},
         .type_num{1}};
 
-    WHEN("LootType is serialized") {
-      output_archive << loot;
+  
 
-      THEN("it is equal to loot after serialization") {
+    WHEN("LootType is serialized") {
+      output_archive << loot_type;
+
+      THEN("it is equal to loot_type after serialization") {
         InputArchive input_archive{strm};
-        model::LootType restored_loot;
-        input_archive >> restored_loot;
-        CHECK(loot == restored_loot);
+        LootType restored_loot_type;
+        input_archive >> restored_loot_type;
+        CHECK(loot_type == restored_loot_type);
+      }
+    }
+
+    AND_GIVEN("A Loot") {
+      const Point2d pos{10, 20};
+      const Point2d wrong_pos{20, 10};
+      const unsigned id = 5;
+      
+      const Loot loot(loot_type, pos, id);
+      WHEN("Loot is serialised") {
+        REQUIRE(loot.GetLootType() == loot_type);
+        const Loot* ptr = &loot;
+        output_archive << ptr;
+
+        THEN("it is equal to loot after serialization") {
+          InputArchive input_archive{strm};
+          // Loot *restored_loot = static_cast<Loot*>(::operator new(sizeof(Loot)));
+          Loot *restored_loot = nullptr;
+          input_archive >> restored_loot;
+          REQUIRE(restored_loot != nullptr);
+          CHECK(loot == *restored_loot);
+          CHECK(pos == restored_loot->GetPosition());
+          CHECK(id == restored_loot->GetId());
+          if(restored_loot) {
+            delete restored_loot;
+          }
+        }
       }
     }
   }
