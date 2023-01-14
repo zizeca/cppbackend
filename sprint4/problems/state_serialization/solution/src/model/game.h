@@ -15,6 +15,9 @@ namespace model {
 class Game {
  public:
   using Maps = std::vector<Map>;
+  using SessPtr = std::shared_ptr<GameSession>;
+  using SessPtrList = std::vector<SessPtr>;
+
 
   void AddMap(Map map);
 
@@ -43,6 +46,10 @@ class Game {
   void SetDefaultBagCapacity(size_t size);
   size_t GetDefaultBagCapacity() const noexcept;
 
+  void AddSession(std::shared_ptr<GameSession> sess);
+
+  const SessPtrList& GetSessionList() const;
+
  private:
   using MapIdHasher = util::TaggedHasher<Map::Id>;
   using MapIdToIndex = std::unordered_map<Map::Id, size_t, MapIdHasher>;
@@ -50,7 +57,7 @@ class Game {
   std::vector<Map> maps_;
   MapIdToIndex map_id_to_index_;
 
-  std::vector<std::shared_ptr<GameSession>> m_sess;
+  SessPtrList m_sess;
 
   double m_default_speed = 1.0;
 
