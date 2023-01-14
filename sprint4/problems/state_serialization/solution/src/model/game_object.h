@@ -13,9 +13,9 @@ class GameObject {
   void SetWidth(double width);
   double GetWidth() const noexcept;
 
+  virtual ~GameObject() = default;
  protected:
   GameObject(Point2d const& pos = Point2d(), double width = 0.0);
-  virtual ~GameObject() = default;
   Point2d m_position;
   double m_width;
 };
