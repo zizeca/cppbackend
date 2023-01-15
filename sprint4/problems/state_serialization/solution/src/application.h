@@ -14,7 +14,6 @@
 #include <iostream>
 #include <fstream>
 
-
 using namespace std::string_literals;
 
 #include "json_loader.h"
@@ -67,6 +66,9 @@ class Application {
   model::PlayerList m_player_list;
   bool m_manual_ticker;
   std::ofstream m_ofstream;
+
+  size_t m_max_player_id;
+  size_t m_max_dog_id;
 };
 
 #endif  // __APPLICATION_H__

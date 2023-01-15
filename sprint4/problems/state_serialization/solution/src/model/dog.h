@@ -14,10 +14,13 @@ using namespace std::literals;
 
 class Dog : public GameObject {
  public:
-  explicit Dog(const Token& token = Token(""s));
+  using Id = util::Tagged<uint32_t, Dog>;
 
-  int GetId() const;
+  explicit Dog(const Dog::Id& id);
 
+  const Id& GetId() const;
+
+  void SetToken(const Token& token);
   Token GetToken() const;
 
   /**
@@ -61,7 +64,7 @@ class Dog : public GameObject {
 
  private:
   Token m_token;
-  int m_id;
+  Id m_id;
   static int ID_COUNTER;
 
   Point2d m_speed;

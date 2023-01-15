@@ -7,14 +7,14 @@
 #include "ticker.h"
 #include "model_serialization.h"
 
-
-Application::Application(boost::asio::io_context &ioc, const c_parse::Args& args) 
+Application::Application(boost::asio::io_context &ioc, const c_parse::Args &args)
     : m_ioc(ioc),
-    strand(boost::asio::make_strand(ioc)) {
-
+      strand(boost::asio::make_strand(ioc)),
+      m_max_player_id{0},
+      m_max_dog_id{0} {
   // required pathes
   if (!(std::filesystem::exists(args.config_file) && std::filesystem::exists(args.www_root))) {
-    throw std::logic_error("Wrong path, config="s +args.config_file + ", content="s + args.www_root);  //? maybe need more output information
+    throw std::logic_error("Wrong path, config="s + args.config_file + ", content="s + args.www_root);  //? maybe need more output information
   }
 
   // path to static files
@@ -25,7 +25,7 @@ Application::Application(boost::asio::io_context &ioc, const c_parse::Args& args
 
   // random spawn
   m_game.SetRandomSpawn(args.random_spawn);
-  
+
   // auto update
   if (args.tick_period) {
     std::make_shared<util::Ticker>(this->strand, std::chrono::milliseconds(args.tick_period), std::bind(&Application::Update, this, std::placeholders::_1))->Start();
@@ -35,7 +35,7 @@ Application::Application(boost::asio::io_context &ioc, const c_parse::Args& args
   }
 
   // load state
-  if(std::filesystem::exists(args.state_file)) {
+  if (std::filesystem::exists(args.state_file)) {
     LoadState(args.state_file);
   }
 
@@ -44,9 +44,7 @@ Application::Application(boost::asio::io_context &ioc, const c_parse::Args& args
     // todo
     std::make_shared<util::Ticker>(this->strand, std::chrono::milliseconds(args.save_state_period), std::bind(&Application::SaveState, this))->Start();
   }
-
 }
-
 
 Application::~Application() {
   // todo
@@ -84,9 +82,12 @@ model::Player &Application::JoinGame(const model::Map::Id &id, const std::string
     throw std::runtime_error("Fail to open or create ssesion");
   }
 
-  auto &player = m_player_list.CreatePlayer(user_name);
+  auto &player = m_player_list.CreatePlayer(user_name, m_max_player_id++);
+
+  auto dog = std::make_shared<model::Dog>(model::Dog::Id(m_max_dog_id++));
+
+  player.SetDog(dog);
   player.SetSession(sess);
-  sess->AddDog(player.GetDog());
 
   return player;
 }
@@ -116,10 +117,9 @@ void Application::SaveState() {
 
   // oa << gs;
   // oa << m_player_list;
-
 }
 
-void Application::LoadState(const std::filesystem::path& path) {
+void Application::LoadState(const std::filesystem::path &path) {
   std::cout << "Noimplement Load\n";
   // std::ifstream ifs(path);
   // if(!ifs.is_open()) {
@@ -127,10 +127,10 @@ void Application::LoadState(const std::filesystem::path& path) {
   // }
 
   // boost::archive::text_iarchive ia{ifs};
-  
+
   // GameSer gs(m_game, m_player_list);
 
   // ia >> gs;
 
-  //ifs.close();
+  // ifs.close();
 }

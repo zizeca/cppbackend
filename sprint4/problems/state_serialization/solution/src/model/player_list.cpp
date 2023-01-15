@@ -15,18 +15,17 @@ std::optional<std::reference_wrapper<Player>> PlayerList::FindPlayer(const Token
   return std::nullopt;
 }
 
-Player& PlayerList::CreatePlayer(const std::string& name) {
+Player& PlayerList::CreatePlayer(const std::string& name, size_t id) {
   Token token = GenerateToken();
-  auto pr = m_players.emplace(token, Player(token, name));
+  auto pr = m_players.emplace(token, Player(token, name, Player::Id(id)));
   if (pr.second) {
     return m_players.at(token);
   }
   throw std::runtime_error("Fail to add or create Player");
 }
 
-const PlayerList::Container& PlayerList::GetContainer() const{
+const PlayerList::Container& PlayerList::GetContainer() const {
   return m_players;
 }
-
 
 }  // namespace model

@@ -44,6 +44,10 @@ const Map& GameSession::GetMap() const noexcept {
 }
 
 void GameSession::AddDog(std::shared_ptr<Dog> dog) {
+  if (dog == nullptr) {
+    throw std::invalid_argument("Try to add Dog as null");
+  }
+
   dog->SetPosition(m_map.GetRandPoint(m_random_spawn));
   dog->SetDefaultSpeed(m_map.GetDogSpeed());
   dog->SetBagSize(m_map.GetBagCapacity());

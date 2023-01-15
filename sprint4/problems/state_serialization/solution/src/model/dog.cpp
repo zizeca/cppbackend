@@ -2,12 +2,10 @@
 
 namespace model {
 
-int Dog::ID_COUNTER = 0;
-
-Dog::Dog(const Token& token)
+Dog::Dog(const Dog::Id& id)
     : GameObject({0.0, 0.0}, 0.6),
-      m_token(token),
-      m_id(ID_COUNTER++),
+      m_token(""),
+      m_id(id),
       m_speed(0.f, 0.f),
       m_dir("U"s),
       m_default_speed(0.0),
@@ -15,9 +13,14 @@ Dog::Dog(const Token& token)
       m_points(0) {
 }
 
-int Dog::GetId() const {
+const Dog::Id& Dog::GetId() const {
   return m_id;
 }
+
+void Dog::SetToken(const Token& token) {
+  m_token = token;
+}
+
 
 Token Dog::GetToken() const {
   return m_token;

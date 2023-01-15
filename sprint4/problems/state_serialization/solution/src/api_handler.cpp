@@ -102,7 +102,7 @@ StringResponse ApiHandler::PlayerJoinRequest() {
   const model::Player &player = m_app.JoinGame(model::Map::Id(map_id), user_name);
   js_response = {
       {"authToken", *player.GetToken()},
-      {"playerId", player.GetId()}};
+      {"playerId", *player.GetId()}};
 
   return MakeJsonResponse(http::status::ok, js_response, CacheControl::NO_CACHE);
 }
@@ -119,7 +119,7 @@ StringResponse ApiHandler::PlayerListRequest() {
     boost::json::object js_response{};
     for (auto it = m_app.GetPlayers().cbegin(); it != m_app.GetPlayers().cend(); ++it) {
       if (it->second.GetSession() == p.GetSession())
-        js_response[std::to_string(it->second.GetId())] = {{"name", it->second.GetName()}};
+        js_response[std::to_string(*it->second.GetId())] = {{"name", it->second.GetName()}};
     }
 
     if(js_response.empty()) {
@@ -148,7 +148,7 @@ StringResponse ApiHandler::GetGameState() {
     for (auto it = m_app.GetPlayers().cbegin(); it != m_app.GetPlayers().cend(); ++it) {
       if (it->second.GetSession() == player.GetSession()) {
         assert(it->second.GetDog() != nullptr);
-        js_players[std::to_string(it->second.GetId())] = boost::json::value_from(*it->second.GetDog());
+        js_players[std::to_string(*it->second.GetId())] = boost::json::value_from(*it->second.GetDog());
       }
     }
 
