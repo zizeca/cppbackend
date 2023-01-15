@@ -1,5 +1,6 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
+#include <boost/serialization/list.hpp>
 
 #include <catch2/catch_test_macros.hpp>
 #include <sstream>
@@ -96,6 +97,38 @@ SCENARIO_METHOD(Fixture, "Loot & LootType serialization") {
         }
       }
     }
+
+
+    AND_GIVEN("List of loot") {
+      const size_t count = 10;
+      std::list<Loot> loots;
+      for(auto i = 0, x = 0, y = 0; i < count; i++, x+=2, y+=3) {
+        loots.emplace_back(loot_type, Point2d{x,y}, i);
+      }
+
+      WHEN("List Loot is serialised") {
+        output_archive << loots;
+
+        THEN("it is equal to every loot after serialization") {
+          InputArchive input_archive{strm};
+          std::list<Loot> restored_loots;
+          input_archive >> restored_loots;
+          REQUIRE(restored_loots.size() == count);
+
+          auto it_source = loots.begin();
+          auto it_target = restored_loots.begin();
+
+          while(it_source != loots.end()) {
+            CHECK(*it_source == *it_target);
+            ++it_source;
+            ++it_target;
+          }
+
+        }
+      }
+
+    }
+
   }
 }
 
