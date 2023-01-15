@@ -1,7 +1,8 @@
 #ifndef __DOG_H__
 #define __DOG_H__
 
-#include <list> 
+#include <list>
+#include <memory>
 
 #include "geometry.h"
 #include "token_generator.h"
@@ -21,7 +22,7 @@ class Dog : public GameObject {
   const Id& GetId() const;
 
   void SetToken(const Token& token);
-  Token GetToken() const;
+  const Token& GetToken() const;
 
   /**
    * @brief get current speed

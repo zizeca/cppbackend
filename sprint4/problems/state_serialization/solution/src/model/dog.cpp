@@ -22,7 +22,7 @@ void Dog::SetToken(const Token& token) {
 }
 
 
-Token Dog::GetToken() const {
+const Token& Dog::GetToken() const {
   return m_token;
 }
 
