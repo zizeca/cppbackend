@@ -43,7 +43,7 @@ const Map& GameSession::GetMap() const noexcept {
   return m_map;
 }
 
-void GameSession::AddDog(std::shared_ptr<Dog> dog) {
+void GameSession::AddDog(DogPtr dog) {
   if (dog == nullptr) {
     throw std::invalid_argument("Try to add Dog as null");
   }

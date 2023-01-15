@@ -77,6 +77,9 @@ class Dog : public GameObject {
   int m_points;
 };
 
+using DogPtr = std::shared_ptr<Dog>;
+using DogConstPtr = std::shared_ptr<const Dog>;
+
 }  // namespace model
 
 #endif  // __DOG_H__

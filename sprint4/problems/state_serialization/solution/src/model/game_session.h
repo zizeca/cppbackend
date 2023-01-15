@@ -24,7 +24,7 @@ class GameSession {
 
   const Map& GetMap() const noexcept;
 
-  void AddDog(std::shared_ptr<Dog> dog);
+  void AddDog(DogPtr dog);
 
   void Update(double delta_time);
 
@@ -33,6 +33,8 @@ class GameSession {
   const std::list<Loot>& GetLoots() const noexcept { return m_loots;}
   //const std::list<std::shared_ptr<GameObject>>& GetObjects() const noexcept { return m_objects;}
 
+
+
  private:
 
   void GenerateLoot(double delta_time);
@@ -40,7 +42,7 @@ class GameSession {
   void DogsUpdate(double delta_time);
 
   const Map& m_map;
-  std::vector<std::shared_ptr<Dog>> m_dogs;
+  std::vector<DogPtr> m_dogs;
   bool m_random_spawn;
 
   LootGenerator m_loot_gen;

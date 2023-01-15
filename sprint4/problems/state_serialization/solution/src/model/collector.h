@@ -15,7 +15,7 @@
 namespace model {
 
 struct DogMove {
-  std::shared_ptr<Dog> dog;
+  DogPtr dog;
   Point2d nextPos;
   void UpdateMove() {
     dog->SetPosition(nextPos);
@@ -35,7 +35,7 @@ struct CollisionResult {
 };
 
 struct CollisionEvent {
-  std::shared_ptr<Dog> dog;
+  DogPtr dog;
   std::variant<Loot, Office> game_object;  // maybe need replace to std::shared_ptr<GameObject>
   double sq_distance;
   double time;
@@ -47,7 +47,7 @@ class Collector {
  public:
   Collector(std::list<Loot>& loots, const std::vector<Office>& offices) : m_loots(loots), m_offices(offices) {}
 
-  void AddDogToMoveUpdate(std::shared_ptr<Dog> dog, const Point2d& nextPos) {
+  void AddDogToMoveUpdate(DogPtr dog, const Point2d& nextPos) {
     m_dogs.emplace_back(dog, nextPos);
   }
 

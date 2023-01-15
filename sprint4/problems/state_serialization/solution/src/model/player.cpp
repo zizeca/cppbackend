@@ -13,16 +13,16 @@ const std::string& Player::GetName() const noexcept {
   return m_name;
 }
 
-void Player::SetDog(std::shared_ptr<Dog> dog) {
+void Player::SetDog(DogPtr dog) {
   m_dog = dog;
   m_dog->SetToken(m_token);
 }
 
-std::shared_ptr<Dog> Player::GetDog() {
+DogPtr Player::GetDog() {
   return m_dog;
 }
 
-const std::shared_ptr<Dog> Player::GetDog() const {
+DogConstPtr Player::GetDog() const {
   return m_dog;
 }
 

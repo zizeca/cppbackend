@@ -19,9 +19,9 @@ class Player {
 
   const std::string& GetName() const noexcept;
 
-  void SetDog(std::shared_ptr<Dog> dog);
-  std::shared_ptr<Dog> GetDog();
-  const std::shared_ptr<Dog> GetDog() const;
+  void SetDog(DogPtr dog);
+  DogPtr GetDog();
+  DogConstPtr GetDog() const;
 
   const Token& GetToken() const;
 
@@ -36,7 +36,7 @@ class Player {
   std::string m_name;
 
   std::shared_ptr<GameSession> m_gsess;
-  std::shared_ptr<Dog> m_dog;
+  DogPtr m_dog;
 };
 
 }  // namespace model
