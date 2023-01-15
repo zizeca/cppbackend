@@ -62,6 +62,7 @@ class Dog : public GameObject {
   int GetPoinst() const noexcept;
 
   void SetBagSize(size_t size);
+  size_t GetBagSize() const noexcept;
 
  private:
   Token m_token;

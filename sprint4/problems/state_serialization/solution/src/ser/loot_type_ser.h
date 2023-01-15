@@ -1,8 +1,9 @@
 #ifndef __LOOT_TYPE_SERIALIZATION_H__
 #define __LOOT_TYPE_SERIALIZATION_H__
 
-#include "../model.h"
+//#include <boost/serialization/optional.hpp>
 #include "optional_ser.h"
+#include "../model.h"
 
 namespace model
 {

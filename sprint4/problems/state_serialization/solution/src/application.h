@@ -53,9 +53,9 @@ class Application {
 
   void Update(std::chrono::milliseconds ms);
 
-  [[deprecated("no implement")]] void SaveState();
+  void SaveState();
 
-  [[deprecated("no implement")]] void LoadState(const std::filesystem::path& path);
+  void LoadState(const std::filesystem::path& path);
 
   boost::asio::strand<boost::asio::io_context::executor_type> strand;
 

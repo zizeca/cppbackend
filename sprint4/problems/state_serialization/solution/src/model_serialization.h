@@ -12,6 +12,7 @@
 #include "ser/loot_type_ser.h"
 #include "ser/game_object_ser.h"
 #include "ser/loot_ser.h"
+#include "ser/dog_ser.h"
 
 namespace model {
 

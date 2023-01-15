@@ -93,5 +93,9 @@ void Dog::SetBagSize(size_t size) {
   m_bag_size = size;
 }
 
+size_t Dog::GetBagSize() const noexcept{
+  return m_bag_size;
+}
+
 
 }  // namespace model

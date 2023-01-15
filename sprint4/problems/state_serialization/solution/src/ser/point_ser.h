@@ -5,8 +5,9 @@
 
 namespace model
 {
-template <typename Archive>
-void serialize(Archive& ar, Point2d& point, [[maybe_unused]] const unsigned version) {
+
+template <typename Archive, typename T>
+void serialize(Archive& ar, Point2<T>& point, [[maybe_unused]] const unsigned version) {
   ar& point.x;
   ar& point.y;
 }
