@@ -2,7 +2,7 @@
 #define __GAME_OBJECT_SERIALIZATION_H__
 
 #include "../model.h"
-#include "point_serialization.h"
+#include "point_ser.h"
 
 namespace model {
 

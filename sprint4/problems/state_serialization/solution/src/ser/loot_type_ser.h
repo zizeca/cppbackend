@@ -2,7 +2,7 @@
 #define __LOOT_TYPE_SERIALIZATION_H__
 
 #include "../model.h"
-#include "optional_serialization.h"
+#include "optional_ser.h"
 
 namespace model
 {

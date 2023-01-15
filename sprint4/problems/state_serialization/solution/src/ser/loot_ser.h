@@ -4,8 +4,8 @@
 #include "../model.h"
 
 // depends
-#include "loot_type_serialization.h"
-#include "game_object_serialization.h"
+#include "loot_type_ser.h"
+#include "game_object_ser.h"
 
 namespace boost {
 namespace serialization {

@@ -8,10 +8,10 @@
 
 #include "model.h"
 
-#include "serialization/point_serialization.h"
-#include "serialization/loot_type_serialization.h"
-#include "serialization/game_object_serialization.h"
-#include "serialization/loot_serialization.h"
+#include "ser/point_ser.h"
+#include "ser/loot_type_ser.h"
+#include "ser/game_object_ser.h"
+#include "ser/loot_ser.h"
 
 namespace model {
 
