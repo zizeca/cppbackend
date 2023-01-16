@@ -15,6 +15,7 @@
 
 #include "../src/model.h"
 #include "../src/model_serialization.h"
+#include "../src/ser/player_ser.h"
 
 using namespace model;
 using namespace std::literals;
@@ -28,9 +29,51 @@ struct Fixture {
   OutputArchive output_archive{strm};
   Point2d point;
   LootType loot_type;
+
+  Fixture() {
+    loot_type = LootType{
+        .name{"key"},
+        .file{"assets/key.obj"},
+        .type{"obj"},
+        .rotation{std::nullopt},
+        .color{"#338844"},
+        .scale{0.03},
+        .value{10},
+        .type_num{1}};
+
+    point = Point2d{10.5, 20.5};
+
+    const size_t count_loot = 10;
+    const size_t dog_id = 12;
+    const double width = 0.6;
+    const std::string token = "0123456789abcdef0123456789abcdef";
+    const size_t points = 100;
+
+    dog = std::make_shared<Dog>(Dog::Id(dog_id));
+    dog->SetBagSize(count_loot);
+    dog->SetPosition(point);
+    dog->SetWidth(width);
+    dog->SetToken(Token(token));
+    dog->AddPoints(points);
+
+    for (auto i = 0, x = 0, y = 0; i < count_loot; i++, x += 2, y += 3) {
+      LootType lt = loot_type;
+      lt.value = (i + 1) * 10;
+      Loot loot(lt, Point2d{x, y}, i);
+      loots.push_back(loot);
+
+      dog->AddLoot(loot);
+    }
+
+    const std::string name = "player_one";
+    const size_t pl_id = 50;
+    player = std::make_shared<Player>(dog->GetToken(), name, Player::Id(pl_id));
+    player->SetDog(dog);
+  }
+
   std::list<Loot> loots;
-  // std::shared_ptr<Loot> loot_ptr;
-  std::shared_ptr<Dog> dog_ptr;
+  std::shared_ptr<Dog> dog;
+  std::shared_ptr<Player> player;
 };
 
 struct GameObjectDerived : public model::GameObject {
@@ -61,15 +104,7 @@ SCENARIO_METHOD(Fixture, "Point serialization") {
 
 SCENARIO_METHOD(Fixture, "Loot & LootType serialization") {
   GIVEN("A LootType") {
-    loot_type = LootType{
-        .name{"key"},
-        .file{"assets/key.obj"},
-        .type{"obj"},
-        .rotation{std::nullopt},
-        .color{"#338844"},
-        .scale{0.03},
-        .value{10},
-        .type_num{1}};
+    REQUIRE(loot_type != LootType());
 
     WHEN("LootType is serialized") {
       output_archive << loot_type;
@@ -77,6 +112,7 @@ SCENARIO_METHOD(Fixture, "Loot & LootType serialization") {
       THEN("it is equal to loot_type after serialization") {
         InputArchive input_archive{strm};
         LootType restored_loot_type;
+        REQUIRE(loot_type != restored_loot_type);
         input_archive >> restored_loot_type;
         CHECK(loot_type == restored_loot_type);
       }
@@ -108,13 +144,7 @@ SCENARIO_METHOD(Fixture, "Loot & LootType serialization") {
     }
 
     AND_GIVEN("List of loot") {
-      const size_t count = 10;
-
-      for (auto i = 0, x = 0, y = 0; i < count; i++, x += 2, y += 3) {
-        LootType lt = loot_type;
-        lt.value = (i + 1) * 10;
-        loots.emplace_back(lt, Point2d{x, y}, i);
-      }
+      REQUIRE(loots.size() != 0);
 
       WHEN("List Loot is serialised") {
         output_archive << loots;
@@ -123,16 +153,8 @@ SCENARIO_METHOD(Fixture, "Loot & LootType serialization") {
           InputArchive input_archive{strm};
           std::list<Loot> restored_loots;
           input_archive >> restored_loots;
-          REQUIRE(restored_loots.size() == count);
-
-          auto it_source = loots.begin();
-          auto it_target = restored_loots.begin();
-
-          while (it_source != loots.end()) {
-            CHECK(*it_source == *it_target);
-            ++it_source;
-            ++it_target;
-          }
+          REQUIRE(restored_loots.size() == loots.size());
+          CHECK(std::equal(loots.cbegin(), loots.cend(), restored_loots.cbegin()));
         }
       }
     }
@@ -161,72 +183,54 @@ SCENARIO_METHOD(Fixture, "GameObjectBase serialization") {
 }
 
 SCENARIO_METHOD(Fixture, "Dog serialization") {
-  GIVEN("A Dog id") {
-    const Dog::Id dog_id(1);
+  GIVEN("A Dog") {
 
-    WHEN("ID serialized") {
-      output_archive << &dog_id;
+    REQUIRE(dog != nullptr);
 
-      THEN("Is dog id equal") {
+    WHEN("Dog serialized") {
+      output_archive << dog;
+
+      THEN("it is equal to Dog after serialization") {
         InputArchive input_archive{strm};
-        Dog::Id* restored_id = nullptr;
-        // boost::shared_ptr<Dog::Id> restored_id;
-        // std::shared_ptr<Dog::Id> restored_id;
-        // std::unique_ptr<Dog::Id> restored_id;
-        input_archive >> restored_id;
-        REQUIRE(restored_id != nullptr);
-        CHECK((*dog_id) == (**restored_id));
-        delete restored_id;
-      }
-    }
-
-    AND_GIVEN("A Dog") {
-      // dog create
-      const size_t count_loot = loots.size();
-      const int num_points = 10;
-
-      // Dog dog(dog_id);
-      dog_ptr = std::make_shared<Dog>(dog_id);
-      const Token token("123456789012345678901234567890ff");
-      dog_ptr->SetToken(token);
-      dog_ptr->SetBagSize(count_loot);
-
-      // fill loot
-      for (const auto& loot : loots) {
-        dog_ptr->AddLoot(loot);
-      }
-
-      // points
-      dog_ptr->AddPoints(num_points);
-
-      // position
-      dog_ptr->SetPosition(point);
-      const double width = 0.6;
-      dog_ptr->SetWidth(width);
-
-      WHEN("Dog serialized") {
-        output_archive << dog_ptr;
-
-        THEN("it is equal to Dog after serialization") {
-          InputArchive input_archive{strm};
-          // Dog* restored_dog = nullptr;
-          DogPtr restored_dog;
-          input_archive >> restored_dog;
-          CHECK(dog_ptr->GetId() == restored_dog->GetId());
-          CHECK(dog_ptr->GetToken() == restored_dog->GetToken());
-          CHECK(dog_ptr->GetPoinst() == restored_dog->GetPoinst());
-          CHECK(dog_ptr->GetPosition() == point);
-          CHECK(dog_ptr->GetPosition() == restored_dog->GetPosition());
-          CHECK(dog_ptr->GetWidth() == width);
-          CHECK(dog_ptr->GetWidth() == restored_dog->GetWidth());
-          REQUIRE(dog_ptr->GetLoots().size() == restored_dog->GetLoots().size());
-          CHECK(std::equal(dog_ptr->GetLoots().cbegin(), dog_ptr->GetLoots().cend(), restored_dog->GetLoots().cbegin()));
-        }
+        // Dog* restored_dog = nullptr;
+        DogPtr restored_dog;
+        input_archive >> restored_dog;
+        CHECK(dog->GetId() == restored_dog->GetId());
+        CHECK(dog->GetToken() == restored_dog->GetToken());
+        CHECK(dog->GetPoinst() == restored_dog->GetPoinst());
+        CHECK(dog->GetPosition() == restored_dog->GetPosition());
+        CHECK(dog->GetWidth() == restored_dog->GetWidth());
+        REQUIRE(dog->GetLoots().size() == restored_dog->GetLoots().size());
+        CHECK(std::equal(dog->GetLoots().cbegin(), dog->GetLoots().cend(), restored_dog->GetLoots().cbegin()));
       }
     }
   }
 }
 
-SCENARIO_METHOD(Fixture, "Player serialization") { 
 
+SCENARIO_METHOD(Fixture, "Player serialization (whithout session)") {
+
+  GIVEN("A Player") {
+    REQUIRE(dog != nullptr);
+    REQUIRE(player != nullptr);
+
+    //? player->SetSession();
+    WHEN("Player serialize") {
+      output_archive << player;
+
+      THEN("it is equal to Player after serialization") {
+        InputArchive input_archive{strm};
+        std::shared_ptr<Player> restored_player;
+        input_archive >> restored_player;
+        CHECK(player->GetId() == restored_player->GetId());
+        CHECK(player->GetName() == restored_player->GetName());
+        CHECK(player->GetToken() == restored_player->GetToken());
+
+        auto r_dog = restored_player->GetDog();
+
+        CHECK(dog->GetId() == r_dog->GetId());
+        CHECK(dog->GetToken() == r_dog->GetToken());
+      }
+    }
+  }
 }
