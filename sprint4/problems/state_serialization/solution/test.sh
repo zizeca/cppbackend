@@ -1,4 +1,4 @@
 #!/bin/bash
 
 cd ./build
-ctest .
+ctest -v --output-on-failure .
