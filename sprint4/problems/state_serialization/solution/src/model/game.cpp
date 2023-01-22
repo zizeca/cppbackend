@@ -79,9 +79,12 @@ size_t Game::GetDefaultBagCapacity() const noexcept {
   return m_default_bag_capacity;
 }
 
-void Game::AddSession(std::shared_ptr<GameSession> sess) {
-  m_sess.emplace_back(sess);
-}
+// void Game::AddSession(std::shared_ptr<GameSession> sess) {
+//   m_sess.emplace_back(sess);
+// }
 
+const Game::SessPtrList& Game::GetSessionList() const {
+  return m_sess;
+}
 
 }  // namespace model

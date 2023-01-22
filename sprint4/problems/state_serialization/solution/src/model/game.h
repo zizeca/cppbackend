@@ -34,7 +34,7 @@ class Game {
   double GetDefaultSpeed() const { return m_default_speed; }
 
   // get exist or create new & return pointer
-  std::shared_ptr<GameSession> GetSession(const model::Map::Id& id);
+  SessPtr GetSession(const model::Map::Id& id);
 
   void Update(double delta_time);
 
@@ -46,7 +46,7 @@ class Game {
   void SetDefaultBagCapacity(size_t size);
   size_t GetDefaultBagCapacity() const noexcept;
 
-  void AddSession(std::shared_ptr<GameSession> sess);
+  //// void AddSession(SessPtr sess);
 
   const SessPtrList& GetSessionList() const;
 

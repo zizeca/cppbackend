@@ -16,7 +16,7 @@ void save_construct_data(Archive& ar, const Player* ptr, const unsigned int file
   ar << token;
   ar << name;
   ar << id;
-  ar << dog;
+  // ar << dog;
 
 }
 
@@ -30,7 +30,7 @@ void load_construct_data(Archive& ar, Player* ptr, const unsigned int file_versi
   ar >> token;
   ar >> name;
   ar >> id;
-  ar >> dog;
+  // ar >> dog;
   
   ::new (ptr) Player(Token(token), name, Player::Id(id));
 
