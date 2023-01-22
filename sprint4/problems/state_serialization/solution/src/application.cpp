@@ -120,17 +120,16 @@ void Application::SaveState() {
 }
 
 void Application::LoadState(const std::filesystem::path &path) {
-  std::cout << "Noimplement Load\n";
-  // std::ifstream ifs(path);
-  // if(!ifs.is_open()) {
-  //   throw std::runtime_error("fail to open file");
-  // }
+  std::ifstream file(path);
+  if(!file.is_open()) {
+    throw std::logic_error("Fail to open file - "s + path.string());
+  }
 
-  // boost::archive::text_iarchive ia{ifs};
+  InputArchive input_archive{file};
 
-  // GameSer gs(m_game, m_player_list);
+  model::GameSessionSer ser;
+  input_archive >> ser;
 
-  // ia >> gs;
+  ser.UpdateGame(m_game, m_player_list);
 
-  // ifs.close();
 }

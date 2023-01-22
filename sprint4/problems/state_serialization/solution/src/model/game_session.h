@@ -21,8 +21,10 @@ class GameSession {
   using Id = util::Tagged<uint32_t, GameSession>;
   using DogPtrList = std::vector<DogPtr>;
 
-  explicit GameSession(const Map& map, LootGenerator gen);
+  explicit GameSession(/*Id id,*/ const Map& map, LootGenerator gen);
   ~GameSession();
+
+  Id GetId() const noexcept { return m_id; } 
 
   const Map& GetMap() const noexcept;
 
@@ -45,6 +47,7 @@ class GameSession {
 
   void DogsUpdate(double delta_time);
 
+  Id m_id;
   const Map& m_map;
   DogPtrList m_dogs;
   bool m_random_spawn;

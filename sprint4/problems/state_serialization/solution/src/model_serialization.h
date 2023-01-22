@@ -3,6 +3,7 @@
 
 #include <boost/serialization/split_free.hpp>
 #include <boost/serialization/vector.hpp>
+#include <boost/serialization/list.hpp>
 // #include <boost/serialization/optional.hpp>
 #include <boost/serialization/utility.hpp>
 
@@ -13,6 +14,7 @@
 #include "ser/game_object_ser.h"
 #include "ser/loot_ser.h"
 #include "ser/dog_ser.h"
+#include "ser/game_session_ser.h"
 
 namespace model {
 

@@ -3,67 +3,64 @@
 
 #include <boost/serialization/split_member.hpp>
 #include <boost/serialization/vector.hpp>
+#include <boost/serialization/map.hpp>
+#include <boost/serialization/list.hpp>
+#define BOOST_NO_MEMBER_TEMPLATE_FRIENDS
 #include <boost/serialization/shared_ptr.hpp>
 
+#include <map>
+#include <string>
+#include <list>
+
 #include "../model.h"
+#include "loot_ser.h"
+#include "player_ser.h"
 
 namespace model {
 
 class GameSessionSer {
  public:
-  explicit GameSessionSer(Game& game, PlayerList& players, size_t& max_dog_id, size_t& max_player_id)
-      : m_game(game),
-        m_players(players),
-        m_num_sess(game.GetSessionList().size()),
-        m_max_dog_id(max_dog_id),
-        m_max_player_id(max_player_id) {}
+  GameSessionSer() = default;
+
+  explicit GameSessionSer(Game::SessPtrList& sess_list, PlayerList::Container& players)
+      : m_sess_list(sess_list) {
+    
+    for(const auto& [ _, player] : players) {
+      m_players.emplace_back(player);
+    }
+    //
+    for (const auto& player : m_players) {
+      map_id.push_back(*player.GetSession()->GetMap().GetId());
+    }
+    
+    for(const auto& sess : m_sess_list){
+      m_loots.insert( std::pair<std::string, std::list<Loot>>(*sess->GetMap().GetId(), sess->GetLoots()));
+    }
+
+    if (map_id.size() != players.size()) {
+      throw std::logic_error("serialization logic error");
+    }
+  }
 
   template <class Archive>
   void save(Archive& ar, const unsigned int version) const {
-    // get max id
-    ar << m_max_dog_id;
-    ar << m_max_player_id;
 
-    // sess serialiation
-    ar << game.GetSessionList().size();
-    for (auto sess : m_game.GetSessionList()) {
-      ar << *sess->GetMap().GetId();
-      ar << sess->GetDogs();
-    }
-
-    ar << m_players.GetContainer();
+    ar << map_id;
+    ar << m_players;
+    ar << m_loots;
   }
 
   template <class Archive>
   void load(Archive& ar, const unsigned int version) {
-    ar >> m_max_dog_id;
-    ar >> m_max_player_id;
-    
-    size_t count_sess{0};
 
-    ar >> count_sess;
+    ar >> map_id;
+    ar >> m_players;
+    ar >> m_loots;
 
-    for(size_t i = 0; i < count_sess; ++i) {
-      std::string map_id;
-      ar >> map_id;
-
-      auto sess = m_game.GetSession(Map::Id(map_id));
-      if(sess == nullptr) {
-        throw std::logic_error("can not get or create session");
-      }
-
-      GameSession::DogPtrList list;
-      ar >> list;
-
-      for(auto dog : list) {
-        sess->AddDog(dog);
-      }
-
-      PlayerList::Container player_list;
-
-      ar >> player_list;
-
+    if (map_id.size() == m_players.size()) {
+      throw std::logic_error("serialization logic error");
     }
+
 
   }
 
@@ -72,13 +69,30 @@ class GameSessionSer {
     boost::serialization::split_member(ar, *this, file_version);
   }
 
- private:
-  Game& m_game;
-  PlayerList& m_players;
+  void UpdateGame(Game& game, PlayerList& plist) {
+        // restore player list & gamesession
+    assert(map_id.size() == m_players.size());
 
-  size_t m_num_sess;
-  size_t & m_max_dog_id;
-  size_t & m_max_player_id;
+    for (size_t i = 0; i < m_players.size(); ++i) {
+      auto sess = game.GetSession(Map::Id(map_id[i]));
+      m_players[i].SetSession(sess);
+      plist.AddPlayer(std::move(m_players[i]));
+    }
+
+    // restore uncollected loots
+    for (auto [id, loot_list] : m_loots) {
+      auto sess = game.GetSession(Map::Id(id));
+      for (auto& loot : loot_list) {
+        sess->AddLoot(std::move(loot));
+      }
+    }
+  }
+
+ private:
+  Game::SessPtrList m_sess_list;
+  std::vector<Player> m_players;
+  std::vector<std::string> map_id;
+  std::map<std::string, std::list<Loot>> m_loots;
 };
 
 }  // namespace model

@@ -16,6 +16,7 @@
 #include "../src/model.h"
 #include "../src/model_serialization.h"
 #include "../src/ser/player_ser.h"
+#include "../src/ser/game_session_ser.h"
 
 using namespace model;
 using namespace std::literals;

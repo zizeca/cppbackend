@@ -30,8 +30,9 @@ inline void BoundExpand(const Road& road, Point2d& min, Point2d& max) {
 
 }  // namespace
 
-GameSession::GameSession(const Map& map, LootGenerator gen)
-    : m_map(map),
+GameSession::GameSession(/*GameSession::Id id,*/ const Map& map, LootGenerator gen)
+    : m_id(0),
+      m_map(map),
       m_random_spawn(false),
       m_loot_gen(std::move(gen)) {
 }

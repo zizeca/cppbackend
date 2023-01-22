@@ -20,6 +20,7 @@ using namespace std::string_literals;
 #include "model.h"
 #include "ticker.h"
 #include "command_parse.h"
+#include "model_serialization.h"
 
 class Application {
   Application() = delete;
@@ -31,6 +32,9 @@ class Application {
   static constexpr unsigned timeout = 30000u;
 
  public:
+  using InputArchive = boost::archive::text_iarchive;
+  using OutputArchive = boost::archive::text_oarchive;
+
   Application(boost::asio::io_context& ioc, const c_parse::Args& args);
   ~Application();
 

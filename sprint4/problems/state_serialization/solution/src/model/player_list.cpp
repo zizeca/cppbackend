@@ -26,7 +26,7 @@ Player& PlayerList::CreatePlayer(const std::string& name, size_t id) {
 
 void PlayerList::AddPlayer(Player&& player) {
   const Token token = player.GetToken();
-  m_players[token] = std::move(player); 
+  m_players.emplace(token, player);
 }
 
 const PlayerList::Container& PlayerList::GetContainer() const {
