@@ -80,6 +80,10 @@ class GameSessionSer {
   void UpdateGame(Game& game, PlayerList& plist) {
     assert(map_id.size() == m_players.size());
 
+    // tempolary save random status
+    const bool b_random = game.IsRandomSpawn();
+    game.SetRandomSpawn(false);
+
     // restore player list & gamesession
     for (size_t i = 0; i < m_players.size(); ++i) {
       auto sess = game.GetSession(Map::Id(map_id[i]));
@@ -94,6 +98,9 @@ class GameSessionSer {
         sess->AddLoot(std::move(loot));
       }
     }
+
+    // restore random status
+    game.SetRandomSpawn(b_random);
   }
 
  private:

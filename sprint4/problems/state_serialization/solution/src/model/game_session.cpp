@@ -49,7 +49,11 @@ void GameSession::AddDog(DogPtr dog) {
     throw std::invalid_argument("Try to add Dog as null");
   }
 
-  dog->SetPosition(m_map.GetRandPoint(m_random_spawn));
+  //! crutch
+  if(dog->GetPosition() == Point2d()) {
+    dog->SetPosition(m_map.GetRandPoint(m_random_spawn));
+  }
+
   dog->SetDefaultSpeed(m_map.GetDogSpeed());
   dog->SetBagSize(m_map.GetBagCapacity());
   m_dogs.emplace_back(dog);
