@@ -73,6 +73,8 @@ class Application {
 
   size_t m_max_player_id;
   size_t m_max_dog_id;
+
+  std::filesystem::path m_state_file;
 };
 
 #endif  // __APPLICATION_H__

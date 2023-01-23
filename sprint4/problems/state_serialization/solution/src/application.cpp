@@ -11,14 +11,14 @@ Application::Application(boost::asio::io_context &ioc, const c_parse::Args &args
     : m_ioc(ioc),
       strand(boost::asio::make_strand(ioc)),
       m_max_player_id{0},
-      m_max_dog_id{0} {
+      m_max_dog_id{0},
+      m_dir_to_content(args.www_root),
+      m_state_file(args.state_file) {
+
   // required pathes
   if (!(std::filesystem::exists(args.config_file) && std::filesystem::exists(args.www_root))) {
     throw std::logic_error("Wrong path, config="s + args.config_file + ", content="s + args.www_root);  //? maybe need more output information
   }
-
-  // path to static files
-  m_dir_to_content = args.www_root;
 
   // create game form json config
   m_game = json_loader::LoadGame(args.config_file);
@@ -41,7 +41,6 @@ Application::Application(boost::asio::io_context &ioc, const c_parse::Args &args
 
   // auto save
   if (!args.state_file.empty() && args.save_state_period) {
-    // todo
     std::make_shared<util::Ticker>(this->strand, std::chrono::milliseconds(args.save_state_period), std::bind(&Application::SaveState, this))->Start();
   }
 }
@@ -110,10 +109,23 @@ void Application::Update(std::chrono::milliseconds ms) {
 }
 
 void Application::SaveState() {
-  std::cout << "Noimplement Save\n";
-  // boost::archive::text_oarchive oa{m_ss};
+  if( std::filesystem::exists(m_state_file)) {
+    // todo rename
+  }
 
-  // GameSer gs(m_game);
+  std::ofstream file(m_state_file);
+  if(!file.is_open()) {
+    throw std::logic_error("Fail to open file - "s + m_state_file.string());
+  }
+
+  OutputArchive output_archive{file};
+
+  output_archive << m_max_player_id;
+  output_archive << m_max_dog_id;
+
+  model::GameSessionSer ser(m_game.GetSessionList() , m_player_list.GetContainer());
+  
+  output_archive << ser;
 
   // oa << gs;
   // oa << m_player_list;
@@ -126,6 +138,9 @@ void Application::LoadState(const std::filesystem::path &path) {
   }
 
   InputArchive input_archive{file};
+
+  input_archive >> m_max_player_id;
+  input_archive >> m_max_dog_id;
 
   model::GameSessionSer ser;
   input_archive >> ser;
