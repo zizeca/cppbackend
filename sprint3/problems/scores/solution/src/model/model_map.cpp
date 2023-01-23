@@ -1,6 +1,8 @@
 #include "model_map.h"
 
 #include <random>
+#include <cassert>
+#include <iostream>
 
 namespace model {
 
@@ -54,6 +56,7 @@ Point2d Map::GetRandPoint(bool enable) const {
   const Point2i& start = road.GetStart();
   const Point2i& end = road.GetEnd();
 
+  ret = road.GetStart();
 
   // random by wide has no tested
   // double width;
@@ -76,6 +79,7 @@ Point2d Map::GetRandPoint(bool enable) const {
   ret.x = (static_cast<int>(ret.x * 100 + .5) / 100.0);  // round two digit
   ret.y = (static_cast<int>(ret.y * 100 + .5) / 100.0);  // round two digit
 
+  assert(road.Contains(ret));
   return ret;
 }
 
