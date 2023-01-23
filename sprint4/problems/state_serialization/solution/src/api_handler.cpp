@@ -217,6 +217,7 @@ StringResponse ApiHandler::PostTick() {
   if (m_app.IsManualTicker()) {
     try {
       m_app.Update(std::chrono::milliseconds(ms));
+      m_app.SaveState();
     } catch (const std::exception &e) {
       Logger::LogExit(e);
       throw;
