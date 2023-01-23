@@ -109,8 +109,15 @@ void Application::Update(std::chrono::milliseconds ms) {
 }
 
 void Application::SaveState() {
+  if(m_state_file.empty()) {
+    return;
+  }
+
   if( std::filesystem::exists(m_state_file)) {
     // todo rename
+    std::filesystem::path bak_file = m_state_file;
+    bak_file += ".bak";
+    std::filesystem::rename(m_state_file, bak_file);
   }
 
   std::ofstream file(m_state_file);
@@ -126,9 +133,7 @@ void Application::SaveState() {
   model::GameSessionSer ser(m_game.GetSessionList() , m_player_list.GetContainer());
   
   output_archive << ser;
-
-  // oa << gs;
-  // oa << m_player_list;
+  file.close();
 }
 
 void Application::LoadState(const std::filesystem::path &path) {
