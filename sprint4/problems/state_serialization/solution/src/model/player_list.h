@@ -21,7 +21,8 @@ class PlayerList {
 
   std::optional<std::reference_wrapper<Player>> FindPlayer(const Token& token);
 
-  Player& CreatePlayer(const std::string& name);
+  Player& CreatePlayer(const std::string& name, size_t id);
+  void AddPlayer(Player&& player);
 
   const Container& GetContainer() const;
 

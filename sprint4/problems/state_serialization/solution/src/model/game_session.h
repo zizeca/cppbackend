@@ -17,21 +17,29 @@ namespace model {
 
 class GameSession {
  public:
-  // using LootContainer = std::list<std::unique_ptr<Loot>>;
 
-  explicit GameSession(const Map& map, LootGenerator gen);
+  using Id = util::Tagged<uint32_t, GameSession>;
+  using DogPtrList = std::vector<DogPtr>;
+
+  explicit GameSession(/*Id id,*/ const Map& map, LootGenerator gen);
   ~GameSession();
+
+  Id GetId() const noexcept { return m_id; } 
 
   const Map& GetMap() const noexcept;
 
-  void AddDog(std::shared_ptr<Dog> dog);
+  void AddDog(DogPtr dog);
 
   void Update(double delta_time);
 
   void SetDogRandomSpawn(bool enable = true);
 
+  void AddLoot(Loot&& loot) { m_loots.emplace_back(std::move(loot)); }
+
   const std::list<Loot>& GetLoots() const noexcept { return m_loots;}
   //const std::list<std::shared_ptr<GameObject>>& GetObjects() const noexcept { return m_objects;}
+
+  const DogPtrList& GetDogs() const noexcept { return m_dogs; }
 
  private:
 
@@ -39,8 +47,9 @@ class GameSession {
 
   void DogsUpdate(double delta_time);
 
+  Id m_id;
   const Map& m_map;
-  std::vector<std::shared_ptr<Dog>> m_dogs;
+  DogPtrList m_dogs;
   bool m_random_spawn;
 
   LootGenerator m_loot_gen;

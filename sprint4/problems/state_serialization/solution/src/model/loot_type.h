@@ -7,15 +7,16 @@
 
 namespace model {
 struct LootType {
-  std::optional<std::string> name = std::nullopt;   // example -> = "key";
-  std::optional<std::string> file = std::nullopt;   // example -> = "assets/key.obj";
-  std::optional<std::string> type = std::nullopt;   // example -> = "obj";
+  std::string name{};   // example -> = "key";
+  std::string file{};   // example -> = "assets/key.obj";
+  std::string type{};   // example -> = "obj";
   std::optional<int> rotation = std::nullopt;       // example -> = 90;
   std::optional<std::string> color = std::nullopt;  // example -> = "#338844";
   std::optional<double> scale = std::nullopt;       // example -> = 0.03;
-  std::optional<size_t> value = std::nullopt;
+  size_t value{0};
 
-  int type_num = -1;
+  /// index type (for compatibility)
+  int type_num{-1};
 
   auto operator<=>(const LootType&) const = default;
 };

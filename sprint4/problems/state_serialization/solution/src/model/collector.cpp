@@ -58,11 +58,8 @@ void Collector::CollisionEventHandler() {
 
       // calculate
       auto points = std::accumulate(loots.begin(), loots.end(), 0, [](const int& sum, const Loot& loot) {
-        auto val = loot.GetLootType().value;
-        if (val) {
-          return static_cast<int>(sum + *val);
-        }
-        return sum;
+        const auto& val = loot.GetLootType().value;
+        return static_cast<int>(sum + val);
       });
 
       // add points

@@ -2,12 +2,10 @@
 
 namespace model {
 
-int Player::ID_COUNTER = 0;
-
-Player::Player(const Token& token, const std::string& name) : m_id(ID_COUNTER++), m_token(token), m_name(name), m_dog(std::make_shared<Dog>(token)) {
+Player::Player(const Token& token, const std::string& name, const Player::Id& id) : m_id(id), m_token(token), m_name(name), m_dog{} {
 }
 
-int Player::GetId() const noexcept {
+Player::Id Player::GetId() const noexcept {
   return m_id;
 }
 
@@ -15,11 +13,16 @@ const std::string& Player::GetName() const noexcept {
   return m_name;
 }
 
-std::shared_ptr<Dog> Player::GetDog() {
+void Player::SetDog(DogPtr dog) {
+  m_dog = dog;
+  m_dog->SetToken(m_token);
+}
+
+DogPtr Player::GetDog() {
   return m_dog;
 }
 
-const std::shared_ptr<Dog> Player::GetDog() const {
+DogConstPtr Player::GetDog() const {
   return m_dog;
 }
 
@@ -37,6 +40,7 @@ const std::shared_ptr<GameSession> Player::GetSession() const {
 
 void Player::SetSession(std::shared_ptr<GameSession> sess) {
   m_gsess = sess;
+  m_gsess->AddDog(m_dog);
 }
 
 }  // namespace model

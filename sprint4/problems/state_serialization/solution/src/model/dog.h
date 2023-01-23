@@ -1,7 +1,8 @@
 #ifndef __DOG_H__
 #define __DOG_H__
 
-#include <list> 
+#include <list>
+#include <memory>
 
 #include "geometry.h"
 #include "token_generator.h"
@@ -14,11 +15,14 @@ using namespace std::literals;
 
 class Dog : public GameObject {
  public:
-  explicit Dog(const Token& token = Token(""s));
+  using Id = util::Tagged<uint32_t, Dog>;
 
-  int GetId() const;
+  explicit Dog(const Dog::Id& id);
 
-  Token GetToken() const;
+  const Id& GetId() const;
+
+  void SetToken(const Token& token);
+  const Token& GetToken() const;
 
   /**
    * @brief get current speed
@@ -58,10 +62,11 @@ class Dog : public GameObject {
   int GetPoinst() const noexcept;
 
   void SetBagSize(size_t size);
+  size_t GetBagSize() const noexcept;
 
  private:
   Token m_token;
-  int m_id;
+  Id m_id;
   static int ID_COUNTER;
 
   Point2d m_speed;
@@ -73,6 +78,9 @@ class Dog : public GameObject {
 
   int m_points;
 };
+
+using DogPtr = std::shared_ptr<Dog>;
+using DogConstPtr = std::shared_ptr<const Dog>;
 
 }  // namespace model
 

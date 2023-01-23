@@ -30,8 +30,9 @@ inline void BoundExpand(const Road& road, Point2d& min, Point2d& max) {
 
 }  // namespace
 
-GameSession::GameSession(const Map& map, LootGenerator gen)
-    : m_map(map),
+GameSession::GameSession(/*GameSession::Id id,*/ const Map& map, LootGenerator gen)
+    : m_id(0),
+      m_map(map),
       m_random_spawn(false),
       m_loot_gen(std::move(gen)) {
 }
@@ -43,8 +44,16 @@ const Map& GameSession::GetMap() const noexcept {
   return m_map;
 }
 
-void GameSession::AddDog(std::shared_ptr<Dog> dog) {
-  dog->SetPosition(m_map.GetRandPoint(m_random_spawn));
+void GameSession::AddDog(DogPtr dog) {
+  if (dog == nullptr) {
+    throw std::invalid_argument("Try to add Dog as null");
+  }
+
+  //! crutch
+  if(dog->GetPosition() == Point2d()) {
+    dog->SetPosition(m_map.GetRandPoint(m_random_spawn));
+  }
+
   dog->SetDefaultSpeed(m_map.GetDogSpeed());
   dog->SetBagSize(m_map.GetBagCapacity());
   m_dogs.emplace_back(dog);

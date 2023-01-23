@@ -29,7 +29,7 @@ void Game::AddMap(Map map) {
   }
 }
 
-std::shared_ptr<GameSession> Game::GetSession(const model::Map::Id& id) {
+Game::SessPtr Game::GetSession(const model::Map::Id& id) {
   auto map = FindMap(id);
   if (!map) {
     throw std::invalid_argument("Map"s + *id + "id not exist"s);
@@ -77,6 +77,14 @@ void Game::SetDefaultBagCapacity(size_t size) {
 
 size_t Game::GetDefaultBagCapacity() const noexcept {
   return m_default_bag_capacity;
+}
+
+// void Game::AddSession(std::shared_ptr<GameSession> sess) {
+//   m_sess.emplace_back(sess);
+// }
+
+const Game::SessPtrList& Game::GetSessionList() const {
+  return m_sess;
 }
 
 }  // namespace model

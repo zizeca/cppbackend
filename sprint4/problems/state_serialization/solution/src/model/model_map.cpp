@@ -54,6 +54,7 @@ Point2d Map::GetRandPoint(bool enable) const {
   const Point2i& start = road.GetStart();
   const Point2i& end = road.GetEnd();
 
+  ret = road.GetStart();
 
   // random by wide has no tested
   // double width;
