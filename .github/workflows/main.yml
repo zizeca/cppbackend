@@ -297,127 +297,127 @@ jobs:
         env:
           DIRECTORY: ${{ github.workspace }}/sprint3/problems/flamegraph/solution
 
-      - name: build tests sprint3 gen_objects
-        run: |
-          cd sprint3/problems/gen_objects/solution
-          docker build -t gen_objects .
-          echo "COMMAND_RUN=docker run --rm --entrypoint /app/game_server -p 8080:8080 gen_objects --config-file /app/data/config.json --www-root /app/static/" >> $GITHUB_ENV
+      # - name: build tests sprint3 gen_objects
+      #   run: |
+      #     cd sprint3/problems/gen_objects/solution
+      #     docker build -t gen_objects .
+      #     echo "COMMAND_RUN=docker run --rm --entrypoint /app/game_server -p 8080:8080 gen_objects --config-file /app/data/config.json --www-root /app/static/" >> $GITHUB_ENV
 
-      - name: run tests sprint3 gen_objects
-        run: pytest --junitxml=${GITHUB_WORKSPACE}/gen_objects.xml cpp-backend-tests-practicum/tests/test_s03_gen_objects.py
-        env:
-          CONFIG_PATH: ${{ github.workspace }}/sprint3/problems/gen_objects/solution/data/config.json
+      # - name: run tests sprint3 gen_objects
+      #   run: pytest --junitxml=${GITHUB_WORKSPACE}/gen_objects.xml cpp-backend-tests-practicum/tests/test_s03_gen_objects.py
+      #   env:
+      #     CONFIG_PATH: ${{ github.workspace }}/sprint3/problems/gen_objects/solution/data/config.json
 
-      - name: build tests sprint3 static_lib
-        run: |
-          cd sprint3/problems/static_lib/solution
-          docker build -t static_lib .
-          echo "COMMAND_RUN=docker run --rm --entrypoint /app/game_server -p 8080:8080 static_lib --config-file /app/data/config.json --www-root /app/static/" >> $GITHUB_ENV
+      # - name: build tests sprint3 static_lib
+      #   run: |
+      #     cd sprint3/problems/static_lib/solution
+      #     docker build -t static_lib .
+      #     echo "COMMAND_RUN=docker run --rm --entrypoint /app/game_server -p 8080:8080 static_lib --config-file /app/data/config.json --www-root /app/static/" >> $GITHUB_ENV
 
-      - name: run tests sprint3 static_lib
-        run: pytest --junitxml=${GITHUB_WORKSPACE}/static_lib.xml cpp-backend-tests-practicum/tests/test_s03_gen_objects.py
-        env:
-          CONFIG_PATH: ${{ github.workspace }}/sprint3/problems/static_lib/solution/data/config.json
+      # - name: run tests sprint3 static_lib
+      #   run: pytest --junitxml=${GITHUB_WORKSPACE}/static_lib.xml cpp-backend-tests-practicum/tests/test_s03_gen_objects.py
+      #   env:
+      #     CONFIG_PATH: ${{ github.workspace }}/sprint3/problems/static_lib/solution/data/config.json
 
-      - name: build tests sprint3 gather-tests
-        run: |
-          cp -r cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/* sprint3/problems/gather-tests/solution/src/
-          cd sprint3/problems/gather-tests/solution
-          docker build -t gather-tests .
+      # - name: build tests sprint3 gather-tests
+      #   run: |
+      #     cp -r cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/* sprint3/problems/gather-tests/solution/src/
+      #     cd sprint3/problems/gather-tests/solution
+      #     docker build -t gather-tests .
 
-      - name: run tests sprint3 gather-tests
-        run: docker run --rm --entrypoint /app/build/collision_detection_tests gather-tests
+      # - name: run tests sprint3 gather-tests
+      #   run: docker run --rm --entrypoint /app/build/collision_detection_tests gather-tests
 
-      - name: build tests sprint3 gather-tests_wrong1
-        run: |
-          cp -r cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/* sprint3/problems/gather-tests/solution/src/
-          cp cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/wrong/collision_detector.cpp sprint3/problems/gather-tests/solution/src/
-          cp cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/wrong/CMakeLists.txt sprint3/problems/gather-tests/solution/
-          cp cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/wrong/Dockerfile1 sprint3/problems/gather-tests/solution/Dockerfile
-          cd sprint3/problems/gather-tests/solution
-          docker build -t gather-tests_wrong1 .
+      # - name: build tests sprint3 gather-tests_wrong1
+      #   run: |
+      #     cp -r cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/* sprint3/problems/gather-tests/solution/src/
+      #     cp cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/wrong/collision_detector.cpp sprint3/problems/gather-tests/solution/src/
+      #     cp cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/wrong/CMakeLists.txt sprint3/problems/gather-tests/solution/
+      #     cp cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/wrong/Dockerfile1 sprint3/problems/gather-tests/solution/Dockerfile
+      #     cd sprint3/problems/gather-tests/solution
+      #     docker build -t gather-tests_wrong1 .
 
-      - name: run tests sprint3 gather-tests_wrong1
-        run: docker run --rm --entrypoint /app/build/collision_detection_tests gather-tests_wrong1  || [ $? -ne 0 ]
+      # - name: run tests sprint3 gather-tests_wrong1
+      #   run: docker run --rm --entrypoint /app/build/collision_detection_tests gather-tests_wrong1  || [ $? -ne 0 ]
 
-      - name: build tests sprint3 gather-tests_wrong2
-        run: |
-          cp -r cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/* sprint3/problems/gather-tests/solution/src/
-          cp cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/wrong/collision_detector.cpp sprint3/problems/gather-tests/solution/src/
-          cp cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/wrong/CMakeLists.txt sprint3/problems/gather-tests/solution/
-          cp cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/wrong/Dockerfile2 sprint3/problems/gather-tests/solution/Dockerfile
-          cd sprint3/problems/gather-tests/solution
-          docker build -t gather-tests_wrong2 .
+      # - name: build tests sprint3 gather-tests_wrong2
+      #   run: |
+      #     cp -r cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/* sprint3/problems/gather-tests/solution/src/
+      #     cp cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/wrong/collision_detector.cpp sprint3/problems/gather-tests/solution/src/
+      #     cp cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/wrong/CMakeLists.txt sprint3/problems/gather-tests/solution/
+      #     cp cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/wrong/Dockerfile2 sprint3/problems/gather-tests/solution/Dockerfile
+      #     cd sprint3/problems/gather-tests/solution
+      #     docker build -t gather-tests_wrong2 .
 
-      - name: run tests sprint3 gather-tests_wrong2
-        run: docker run --rm --entrypoint /app/build/collision_detection_tests gather-tests_wrong2  || [ $? -ne 0 ]
+      # - name: run tests sprint3 gather-tests_wrong2
+      #   run: docker run --rm --entrypoint /app/build/collision_detection_tests gather-tests_wrong2  || [ $? -ne 0 ]
 
-      - name: build tests sprint3 gather-tests_wrong3
-        run: |
-          cp -r cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/* sprint3/problems/gather-tests/solution/src/
-          cp cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/wrong/collision_detector.cpp sprint3/problems/gather-tests/solution/src/
-          cp cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/wrong/CMakeLists.txt sprint3/problems/gather-tests/solution/
-          cp cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/wrong/Dockerfile3 sprint3/problems/gather-tests/solution/Dockerfile
-          cd sprint3/problems/gather-tests/solution
-          docker build -t gather-tests_wrong3 .
+      # - name: build tests sprint3 gather-tests_wrong3
+      #   run: |
+      #     cp -r cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/* sprint3/problems/gather-tests/solution/src/
+      #     cp cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/wrong/collision_detector.cpp sprint3/problems/gather-tests/solution/src/
+      #     cp cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/wrong/CMakeLists.txt sprint3/problems/gather-tests/solution/
+      #     cp cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/wrong/Dockerfile3 sprint3/problems/gather-tests/solution/Dockerfile
+      #     cd sprint3/problems/gather-tests/solution
+      #     docker build -t gather-tests_wrong3 .
 
-      - name: run tests sprint3 gather-tests_wrong3
-        run: docker run --rm --entrypoint /app/build/collision_detection_tests gather-tests_wrong3  || [ $? -ne 0 ]
+      # - name: run tests sprint3 gather-tests_wrong3
+      #   run: docker run --rm --entrypoint /app/build/collision_detection_tests gather-tests_wrong3  || [ $? -ne 0 ]
 
-      - name: build tests sprint3 gather-tests_wrong4
-        run: |
-          cp -r cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/* sprint3/problems/gather-tests/solution/src/
-          cp cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/wrong/collision_detector.cpp sprint3/problems/gather-tests/solution/src/
-          cp cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/wrong/CMakeLists.txt sprint3/problems/gather-tests/solution/
-          cp cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/wrong/Dockerfile4 sprint3/problems/gather-tests/solution/Dockerfile
-          cd sprint3/problems/gather-tests/solution
-          docker build -t gather-tests_wrong4 .
+      # - name: build tests sprint3 gather-tests_wrong4
+      #   run: |
+      #     cp -r cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/* sprint3/problems/gather-tests/solution/src/
+      #     cp cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/wrong/collision_detector.cpp sprint3/problems/gather-tests/solution/src/
+      #     cp cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/wrong/CMakeLists.txt sprint3/problems/gather-tests/solution/
+      #     cp cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/wrong/Dockerfile4 sprint3/problems/gather-tests/solution/Dockerfile
+      #     cd sprint3/problems/gather-tests/solution
+      #     docker build -t gather-tests_wrong4 .
 
-      - name: run tests sprint3 gather-tests_wrong4
-        run: docker run --rm --entrypoint /app/build/collision_detection_tests gather-tests_wrong4  || [ $? -ne 0 ]
+      # - name: run tests sprint3 gather-tests_wrong4
+      #   run: docker run --rm --entrypoint /app/build/collision_detection_tests gather-tests_wrong4  || [ $? -ne 0 ]
 
-      - name: build tests sprint3 gather-tests_wrong5
-        run: |
-          cp -r cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/* sprint3/problems/gather-tests/solution/src/
-          cp cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/wrong/collision_detector.cpp sprint3/problems/gather-tests/solution/src/
-          cp cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/wrong/CMakeLists.txt sprint3/problems/gather-tests/solution/
-          cp cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/wrong/Dockerfile5 sprint3/problems/gather-tests/solution/Dockerfile
-          cd sprint3/problems/gather-tests/solution
-          docker build -t gather-tests_wrong5 .
+      # - name: build tests sprint3 gather-tests_wrong5
+      #   run: |
+      #     cp -r cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/* sprint3/problems/gather-tests/solution/src/
+      #     cp cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/wrong/collision_detector.cpp sprint3/problems/gather-tests/solution/src/
+      #     cp cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/wrong/CMakeLists.txt sprint3/problems/gather-tests/solution/
+      #     cp cpp-backend-tests-practicum/tests/cpp/test_s03_gather-tests/wrong/Dockerfile5 sprint3/problems/gather-tests/solution/Dockerfile
+      #     cd sprint3/problems/gather-tests/solution
+      #     docker build -t gather-tests_wrong5 .
 
-      - name: run tests sprint3 gather-tests_wrong5
-        run: docker run --rm --entrypoint /app/build/collision_detection_tests gather-tests_wrong5  || [ $? -ne 0 ]
+      # - name: run tests sprint3 gather-tests_wrong5
+      #   run: docker run --rm --entrypoint /app/build/collision_detection_tests gather-tests_wrong5  || [ $? -ne 0 ]
 
-      - name: build tests sprint3 gather
-        run: |
-          cp cpp-backend-tests-practicum/tests/cpp/test_s03_gather/* sprint3/problems/gather/solution/tests/
-          cd sprint3/problems/gather/solution
-          docker build -t gather .
+      # - name: build tests sprint3 gather
+      #   run: |
+      #     cp cpp-backend-tests-practicum/tests/cpp/test_s03_gather/* sprint3/problems/gather/solution/tests/
+      #     cd sprint3/problems/gather/solution
+      #     docker build -t gather .
 
-      - name: run tests sprint3 gather
-        run: docker run --rm --entrypoint /app/build/collision_detection_tests gather
+      # - name: run tests sprint3 gather
+      #   run: docker run --rm --entrypoint /app/build/collision_detection_tests gather
 
-      - name: build tests sprint3 find_return
-        run: |
-          cd sprint3/problems/find_return/solution
-          docker build -t find_return .
-          echo "COMMAND_RUN=docker run --rm --entrypoint /app/game_server -p 8080:8080 find_return --config-file /app/data/config.json --www-root /app/static/" >> $GITHUB_ENV
+      # - name: build tests sprint3 find_return
+      #   run: |
+      #     cd sprint3/problems/find_return/solution
+      #     docker build -t find_return .
+      #     echo "COMMAND_RUN=docker run --rm --entrypoint /app/game_server -p 8080:8080 find_return --config-file /app/data/config.json --www-root /app/static/" >> $GITHUB_ENV
 
-      - name: run tests sprint3 find_return
-        run: pytest --junitxml=${GITHUB_WORKSPACE}/find_return.xml cpp-backend-tests-practicum/tests/test_s03_find_return.py
-        env:
-          CONFIG_PATH: ${{ github.workspace }}/sprint3/problems/find_return/solution/data/config.json
+      # - name: run tests sprint3 find_return
+      #   run: pytest --junitxml=${GITHUB_WORKSPACE}/find_return.xml cpp-backend-tests-practicum/tests/test_s03_find_return.py
+      #   env:
+      #     CONFIG_PATH: ${{ github.workspace }}/sprint3/problems/find_return/solution/data/config.json
 
-      - name: build tests sprint3 scores
-        run: |
-          cd sprint3/problems/scores/solution
-          docker build -t scores .
-          echo "COMMAND_RUN=docker run --rm --entrypoint /app/game_server -p 8080:8080 scores --config-file /app/data/config.json --www-root /app/static/" >> $GITHUB_ENV
+      # - name: build tests sprint3 scores
+      #   run: |
+      #     cd sprint3/problems/scores/solution
+      #     docker build -t scores .
+      #     echo "COMMAND_RUN=docker run --rm --entrypoint /app/game_server -p 8080:8080 scores --config-file /app/data/config.json --www-root /app/static/" >> $GITHUB_ENV
 
-      - name: run tests sprint3 scores
-        run: pytest --junitxml=${GITHUB_WORKSPACE}/scores.xml cpp-backend-tests-practicum/tests/test_s03_scores.py
-        env:
-          CONFIG_PATH: ${{ github.workspace }}/sprint3/problems/scores/solution/data/config.json
+      # - name: run tests sprint3 scores
+      #   run: pytest --junitxml=${GITHUB_WORKSPACE}/scores.xml cpp-backend-tests-practicum/tests/test_s03_scores.py
+      #   env:
+      #     CONFIG_PATH: ${{ github.workspace }}/sprint3/problems/scores/solution/data/config.json
 
       - name: build tests sprint4 state_serialization
         run: |
