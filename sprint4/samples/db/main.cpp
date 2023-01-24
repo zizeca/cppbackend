@@ -32,6 +32,10 @@ int main(int argc, const char* argv[]) {
         "('The Sting', 1973), ('The Terminal', 2004), ('Amarcord', 1973), ('The King''s Speech', 2010), "
         "('Det sjunde inseglet', 1957), ('Groundhog Day', 1993);"_zv);
 
+    // Создадим таблицу points и добавим в неё строки с неопределёнными значениями
+    w.exec("CREATE TABLE IF NOT EXISTS points (x int, y int);"_zv);
+    w.exec("INSERT INTO points VALUES (DEFAULT, 10), (20, DEFAULT);"_zv);
+
     // Применяем все изменения
     w.commit();
 
@@ -76,6 +80,11 @@ int main(int argc, const char* argv[]) {
       } else {
         std::cout << "No movie of 1999 in database"sv << std::endl;
       }
+    }
+
+    //
+    for (auto [x, y] : r.query<std::optional<int>, std::optional<int>>("SELECT x, y FROM points;"_zv)) {
+      std::cout << x.value_or(-9999) << ":" << y.value_or(-9999) << std::endl;
     }
 
   } catch (const std::exception& e) {
