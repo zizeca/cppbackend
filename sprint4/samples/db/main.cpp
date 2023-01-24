@@ -26,8 +26,8 @@ int main(int argc, const char* argv[]) {
 
         // Используя транзакцию создадим таблицу в выбранной базе данных:
         w.exec(
-            "CREATE TABLE movies (id SERIAL PRIMARY KEY, title varchar(200) NOT NULL, year integer NOT NULL);"_zv);
-
+            // "CREATE TABLE movies (id SERIAL PRIMARY KEY, title varchar(200) NOT NULL, year integer NOT NULL);"_zv);
+            "CREATE TABLE IF NOT EXISTS movies (id SERIAL PRIMARY KEY, title varchar(200), year integer);"_zv);
         // Применяем все изменения
         w.commit();
     } catch (const std::exception& e) {
