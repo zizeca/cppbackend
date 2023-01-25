@@ -1,7 +1,11 @@
 #include <iostream>
+
 #include <pqxx/pqxx>
+#include <boost/json/src.hpp>
 
 using namespace std::literals;
+namespace json = boost::json;
+
 // libpqxx использует zero-terminated символьные литералы вроде "abc"_zv;
 using pqxx::operator"" _zv;
 
@@ -22,70 +26,82 @@ int main(int argc, const char* argv[]) {
     // Транзакция нужна, чтобы выполнять запросы.
     pqxx::work w(conn);
 
+    // constants
+    constexpr auto tag_add_book = "add_book"_zv;
+    constexpr auto tag_all_books = "all_books"_zv;
+    constexpr auto tag_exit = "exit"_zv;
+
+    auto result_true = []() { std::cout << "{\"result\":true}" << std::endl; };
+    auto result_false = []() { std::cout << "{\"result\":false}" << std::endl; };
+
     // Используя транзакцию создадим таблицу в выбранной базе данных:
     w.exec(
-        "CREATE TABLE IF NOT EXISTS movies (id SERIAL PRIMARY KEY, title varchar(200) NOT NULL, year integer NOT NULL);"_zv);
+        "CREATE TABLE IF NOT EXISTS books ("
+        "id SERIAL PRIMARY KEY,"
+        "title varchar(100) NOT NULL,"
+        "author varchar(100) NOT NULL,"
+        "year integer NOT NULL,"
+        "ISBN char(13) UNIQUE);"_zv);
 
-    w.exec("DELETE FROM movies;"_zv);
-    w.exec(
-        "INSERT INTO movies (title, year) VALUES ('Trash', 2014), ('The Kid', 2000), "
-        "('The Sting', 1973), ('The Terminal', 2004), ('Amarcord', 1973), ('The King''s Speech', 2010), "
-        "('Det sjunde inseglet', 1957), ('Groundhog Day', 1993);"_zv);
-
-    // Создадим таблицу points и добавим в неё строки с неопределёнными значениями
-    w.exec("CREATE TABLE IF NOT EXISTS points (x int, y int);"_zv);
-    w.exec("INSERT INTO points VALUES (DEFAULT, 10), (20, DEFAULT);"_zv);
-
-    // Применяем все изменения
+    w.exec("DELETE FROM books;"_zv);
     w.commit();
 
-    // ... Тут будем писать код чтения
+    // prepare
+    conn.prepare(tag_add_book, "INSERT INTO books (title, author, year, ISBN) VALUES ($1, $2, $3, $4)"_zv);
+    // conn.prepare(tag_all_books, "SELECT * FROM books ORDER BY year DESC, ORDER BY title, ORDER BY author, ORDER BY ISBN"_zv);
+    constexpr auto query_text = "SELECT * FROM books ORDER BY year DESC, title ASC, author ASC, ISBN ASC;"_zv;
 
-    pqxx::read_transaction r(conn);
+    std::string input;
 
-    // Вычислим кубический корень из 100:
-    {
-      double cube_root_of_100 = r.query_value<double>("SELECT ||/100.;"_zv);
-      std::cout << "Cube root of 100: " << cube_root_of_100 << std::endl;
-    }
+    while (std::getline(std::cin, input)) {
+      const json::value jv = json::parse(input);
+      const std::string req = std::string(jv.as_object().at("action").as_string());
+      const json::object payload = jv.as_object().at("payload").as_object();
+      if (tag_add_book == req) {
+        // add book
+        const std::string title{payload.at("title").as_string()};
+        const std::string author{payload.at("author").as_string()};
+        const int year = static_cast<int>(payload.at("year").as_int64());
+        const auto* isbn = payload.at("ISBN").if_string();
+        std::optional<std::string> isbn_opt{std::nullopt};
+        if (isbn != nullptr) {
+          isbn_opt = *isbn;
+        }
 
-    // Перечислим фильмы до 2000 года.
-    {
-      auto query_text = "SELECT id, title, year FROM movies WHERE year < 2000 ORDER BY year, title"_zv;
+        try {
+          w.exec_prepared(tag_add_book, title, author, year, isbn_opt);
+          w.commit();
+        } catch (const pqxx::sql_error& e) {
+          result_false();
+          continue;
+        }
+        result_true();
 
-      // Выполняем запрос и итерируемся по строкам ответа
-      for (auto [id, title, year] : r.query<int, std::string_view, int>(query_text)) {
-        std::cout << "Movie "sv << title << " ["sv << id << "] filmed in "sv << year
-                  << std::endl;
-      }
-    }
-
-    // Найдём фильм 2004 года. Мы уверены, что он есть в базе.
-    {
-      // Тут не получится использовать std::string_view, так как
-      // мы не сохранили объект ответа, данные будут уничтожены.
-      auto [id, title] = r.query1<int, std::string>("SELECT id, title FROM movies WHERE year=2004 LIMIT 1;"_zv);
-      std::cout << "Movie of 2004: "sv << title << " ["sv << id << "];"sv << std::endl;
-    }
-
-    // Поищем фильм 1999 года. Мы не уверены, что он есть в базе.
-    {
-      // Результат query01 возвращается в виде optional:
-      std::optional result = r.query01<int, std::string>(
-          "SELECT id, title FROM movies WHERE year=1999 LIMIT 1;"_zv);
-
-      if (result) {
-        auto [id, title] = *result;
-        std::cout << "Movie of 1999: "sv << title << " ["sv << id << "];"sv << std::endl;
+      } else if (tag_all_books == req) {
+        // read db
+        pqxx::read_transaction r(conn);
+        json::array arr;
+        for (auto const& [id, title, author, year, isbn] : r.query<int, std::string, std::string, int, std::optional<std::string>>(query_text)) {
+          json::object obj = {
+              {"id", id},
+              {"title", title},
+              {"author", author},
+              {"year", year},
+              {"ISBN", isbn ? *isbn : "null"s}};
+          arr.push_back(obj);
+        }
+        std::cout << json::serialize(arr) << std::endl;
+      } else if (tag_exit == req) {
+        // exit
+        // std::cout << "Exit command" << std::endl;
+        break;
       } else {
-        std::cout << "No movie of 1999 in database"sv << std::endl;
+        // wrong
+        break;
       }
     }
 
-    //
-    for (auto [x, y] : r.query<std::optional<int>, std::optional<int>>("SELECT x, y FROM points;"_zv)) {
-      std::cout << x.value_or(-9999) << ":" << y.value_or(-9999) << std::endl;
-    }
+    conn.close();
 
   } catch (const std::exception& e) {
     std::cerr << e.what() << std::endl;
