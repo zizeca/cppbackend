@@ -1,4 +1,6 @@
 #pragma once
+
+#include <optional>
 #include <string>
 
 #include "tagged_uuid.h"
@@ -35,6 +37,7 @@ class AuthorRepository {
 public:
     virtual void Save(const Author& author) = 0;
     virtual void ShowAuthors(std::ostream &output) = 0;
+    virtual std::optional<AuthorId> GetAuthorIdByIndex(int index) = 0;
 
 protected:
     ~AuthorRepository() = default;

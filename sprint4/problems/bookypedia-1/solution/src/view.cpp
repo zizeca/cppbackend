@@ -59,16 +59,19 @@ bool View::AddBook(std::istream& cmd_input) {
     boost::algorithm::trim(title);
 
     // show question
-    //use_case_.ShowAuthors();
-    //output_ << 
-
-
+    output_ << "Select author:" << std::endl;
+    ShowAuthors(cmd_input);
+    
+    int id{0};
+    output_ << "Enter author # or empty line to cancel" << std::endl;
+    input_ >> id;
+    return use_cases_.AddBook(year, title, id);
 
   } catch (const std::exception& e) {
     output_ << e.what() << '\n';
   }
 
-  return true;
+  return false;
 }
 
 }  // namespace ui

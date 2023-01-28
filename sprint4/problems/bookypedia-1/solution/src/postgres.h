@@ -15,6 +15,7 @@ public:
 
     void Save(const domain::Author& author) override;
     void ShowAuthors(std::ostream &cmd_output) override;
+    std::optional<domain::AuthorId> GetAuthorIdByIndex(int index) override;
 
 
 private:

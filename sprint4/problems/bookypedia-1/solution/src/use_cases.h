@@ -8,7 +8,7 @@ namespace app {
 class UseCases {
  public:
   virtual void AddAuthor(const std::string& name) = 0;
-  virtual void AddBook(int year, const std::string& title, const std::string& id) = 0;
+  virtual bool AddBook(int year, const std::string& title, int author_id) = 0;
   
   virtual void ShowAuthors(std::ostream& ostream) = 0;
 

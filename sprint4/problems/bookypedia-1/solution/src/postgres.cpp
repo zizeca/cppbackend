@@ -22,18 +22,30 @@ void AuthorRepositoryImpl::ShowAuthors(std::ostream &output) {
   pqxx::read_transaction r(work_.conn());
   int counter = 1;
   for(const auto& [name] : r.query<std::string>("SELECT name FROM authors ORDER BY name;"_zv)) {
-    output << counter << ". " << name << std::endl;
+    output << counter++ << ". " << name << std::endl;
   }
 }
 
+std::optional<domain::AuthorId> AuthorRepositoryImpl::GetAuthorIdByIndex(int index) {
+  pqxx::read_transaction r(work_.conn());
+  index--;
+
+  auto result = r.exec("SELECT * FROM authors ORDER BY name;"_zv);
+  if(index < 0 || index >= result.size()) {
+    return std::nullopt;
+  }
+
+  auto row = result.at(index);
+  return  domain::AuthorId::FromString(row.at(0).c_str());
+}
 
 
 void BookRepositoryImpl::Save(const domain::Book& book) {
   work_.exec_params(R"(
-INSERT INTO books (id, author_id, title) VALUES ($1, $2, $3)
-ON CONFLICT (id) DO UPDATE SET author_id=$2, title=$3;
+INSERT INTO books (id, author_id, title, publication_year) VALUES ($1, $2, $3, $4)
+ON CONFLICT (id) DO UPDATE SET author_id=$2, title=$3, publication_year=$4;
 )"_zv,
-                    book.GetId().ToString(), book.GetAuthorId().ToString(), book.GetTitle());
+                    book.GetId().ToString(), book.GetAuthorId().ToString(), book.GetTitle(), book.GetYear());
   work_.commit();
 }
 

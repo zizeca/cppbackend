@@ -18,6 +18,9 @@ struct MockAuthorRepository : domain::AuthorRepository {
         output << i+1 << ". " << saved_authors[i].GetName() << std::endl;
       }
     }
+
+    std::optional<domain::AuthorId> GetAuthorIdByIndex(int index) override { return std::nullopt;}
+
 };
 
 struct MockBookRepository : domain::BookRepository {
