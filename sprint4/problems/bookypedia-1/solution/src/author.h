@@ -34,6 +34,7 @@ private:
 class AuthorRepository {
 public:
     virtual void Save(const Author& author) = 0;
+    virtual void ShowAuthors(std::ostream &output) = 0;
 
 protected:
     ~AuthorRepository() = default;

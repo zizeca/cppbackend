@@ -17,6 +17,8 @@ public:
 
 private:
     bool AddAuthor(std::istream& cmd_input);
+    bool ShowAuthors(std::istream& cmd_input);
+    bool AddBook(std::istream& cmd_input);
 
     menu::Menu& menu_;
     app::UseCases& use_cases_;

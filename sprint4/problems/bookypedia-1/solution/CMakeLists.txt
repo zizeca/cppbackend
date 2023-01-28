@@ -3,8 +3,9 @@ cmake_minimum_required(VERSION 3.11)
 project(bookypedia CXX)
 set(CMAKE_CXX_STANDARD 20)
 
-include(${CMAKE_BINARY_DIR}/conanbuildinfo_multi.cmake)
-conan_basic_setup(TARGETS)
+#include(${CMAKE_BINARY_DIR}/conanbuildinfo_multi.cmake)
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+conan_basic_setup(TARGETS NO_OUTPUT_DIRS)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
@@ -20,6 +21,7 @@ add_library(libbookypedia STATIC
 	src/author.cpp
 	src/author.h
 	src/author_fwd.h
+  src/book.h
 	src/tagged.h
 	src/tagged_uuid.cpp
 	src/tagged_uuid.h
