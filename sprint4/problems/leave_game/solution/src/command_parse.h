@@ -17,6 +17,7 @@ struct Args {
   bool random_spawn{false};
   std::string state_file{};
   unsigned int save_state_period{0};
+  std::string db_url{};
 };
 
 [[nodiscard]] std::optional<Args> ParseCommandLine(int argc, const char* const argv[]);
