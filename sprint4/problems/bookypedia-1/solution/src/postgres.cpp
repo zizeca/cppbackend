@@ -23,9 +23,9 @@ void AuthorRepositoryImpl::ShowAuthors(std::ostream& output) {
   for (const auto& [name] : r.query<std::string>("SELECT name FROM authors ORDER BY name;"_zv)) {
     output << ++counter << " " << name << std::endl;
   }
-  if(counter == 0) {
-    output << "" << std::endl;
-  } 
+  // if(counter == 0) {
+  //   output << "" << std::endl;
+  // } 
 }
 
 std::optional<domain::AuthorId> AuthorRepositoryImpl::GetAuthorIdByIndex(int index) {
@@ -64,9 +64,9 @@ void BookRepositoryImpl::ShowAuthorBooks(std::ostream& output, const domain::Aut
   for (const auto& [title, year] : r.query<std::string, int>("SELECT title, publication_year FROM books WHERE author_id="s + r.quote(id.ToString()) + " ORDER BY publication_year;"s)) {
     output << ++counter << " " << title << ", " << year << std::endl;
   }
-  if(counter == 0) {
-    output << "" << std::endl;
-  } 
+  // if(counter == 0) {
+  //   output << "" << std::endl;
+  // } 
 }
 
 Database::Database(pqxx::connection connection)
