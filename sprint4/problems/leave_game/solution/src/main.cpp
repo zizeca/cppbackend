@@ -32,6 +32,11 @@ void RunWorkers(unsigned n, const Fn& fn) {
   fn();
 }
 
+
+// sys enviropment for DB GAME_DB_URL=postgres://postgres:Mys3Cr3t@192.168.1.200:30432/test_db
+constexpr const char DB_URL_ENV_NAME[]{"GAME_DB_URL"};
+
+
 }  // namespace
 
 int main(int argc, const char* argv[]) {
@@ -44,6 +49,15 @@ int main(int argc, const char* argv[]) {
     } else {
       return EXIT_FAILURE;
     }
+
+    if (const auto* url_db = std::getenv(DB_URL_ENV_NAME)) {
+      arg.db_url = url_db;
+    } else {
+      std::cout << "The environment variable \"GAME_DB_URL\" is not set" << std::endl;
+      return EXIT_FAILURE;
+    }
+
+
   } catch (const std::exception& e) {
     std::cout << "Parse arguments failure. " << e.what() << std::endl;
     return EXIT_FAILURE;
