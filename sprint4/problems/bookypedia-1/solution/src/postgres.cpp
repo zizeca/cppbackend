@@ -19,10 +19,13 @@ ON CONFLICT (id) DO UPDATE SET name=$2;
 
 void AuthorRepositoryImpl::ShowAuthors(std::ostream& output) {
   pqxx::read_transaction r(work_.conn());
-  int counter = 1;
+  int counter = 0;
   for (const auto& [name] : r.query<std::string>("SELECT name FROM authors ORDER BY name;"_zv)) {
-    output << counter++ << " " << name << std::endl;
+    output << ++counter << " " << name << std::endl;
   }
+  if(counter == 0) {
+    output << '\n';
+  } 
 }
 
 std::optional<domain::AuthorId> AuthorRepositoryImpl::GetAuthorIdByIndex(int index) {
@@ -57,10 +60,13 @@ void BookRepositoryImpl::ShowBooks(std::ostream& output) {
 
 void BookRepositoryImpl::ShowAuthorBooks(std::ostream& output, const domain::AuthorId& id) {
   pqxx::read_transaction r(work_.conn());
-  int counter = 1;
+  int counter = 0;
   for (const auto& [title, year] : r.query<std::string, int>("SELECT title, publication_year FROM books WHERE author_id="s + r.quote(id.ToString()) + " ORDER BY title;"s)) {
-    output << counter++ << " " << title << ", " << year << std::endl;
+    output << ++counter << " " << title << ", " << year << std::endl;
   }
+  if(counter == 0) {
+    output << '\n';
+  } 
 }
 
 Database::Database(pqxx::connection connection)
