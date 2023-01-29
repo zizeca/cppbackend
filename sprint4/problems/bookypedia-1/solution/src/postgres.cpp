@@ -61,7 +61,7 @@ void BookRepositoryImpl::ShowBooks(std::ostream& output) {
 void BookRepositoryImpl::ShowAuthorBooks(std::ostream& output, const domain::AuthorId& id) {
   pqxx::read_transaction r(work_.conn());
   int counter = 0;
-  for (const auto& [title, year] : r.query<std::string, int>("SELECT title, publication_year FROM books WHERE author_id="s + r.quote(id.ToString()) + " ORDER BY publication_year;"s)) {
+  for (const auto& [title, year] : r.query<std::string, int>("SELECT title, publication_year FROM books WHERE author_id="s + r.quote(id.ToString()) + " ORDER BY publication_year, title ASC;"s)) {
     output << ++counter << " " << title << ", " << year << std::endl;
   }
   // if(counter == 0) {
