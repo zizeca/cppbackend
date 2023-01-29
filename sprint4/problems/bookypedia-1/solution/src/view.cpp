@@ -74,6 +74,7 @@ bool View::AddBook(std::istream& cmd_input) {
     output_ << "Enter author # or empty line to cancel" << std::endl;
     std::string str;
     std::getline(input_, str);
+    boost::algorithm::trim(str);
     if (str.empty()) {
       // output_ << "cancel" << std::endl;
       return true;
@@ -82,8 +83,8 @@ bool View::AddBook(std::istream& cmd_input) {
     try {
       id = std::stoi(str);
     } catch (const std::exception& e) {
-      output_ << e.what() << '\n';
-      return false;
+      // output_ << e.what() << '\n';
+      return true;
     }
 
     if (!use_cases_.AddBook(year, title, id)) {
@@ -107,6 +108,7 @@ bool View::ShowAuthorBooks(std::istream& cmd_input) {
   output_ << "Enter author # or empty line to cancel" << std::endl;
   std::string str;
   std::getline(input_, str);
+  boost::algorithm::trim(str);
   if (str.empty()) {
     // output_ << "cancel" << std::endl;
     return true;
@@ -115,8 +117,8 @@ bool View::ShowAuthorBooks(std::istream& cmd_input) {
   try {
     id = std::stoi(str);
   } catch (const std::exception& e) {
-    output_ << e.what() << '\n';
-    return false;
+    // output_ << e.what() << '\n';
+    return true;
   }
 
   use_cases_.ShowAuthorBooks(output_, id);
