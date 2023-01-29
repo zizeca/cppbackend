@@ -34,4 +34,8 @@ void UseCasesImpl::ShowAuthorBooks(std::ostream &ostream, int author_id) {
   }
 }
 
+void UseCasesImpl::ShowBooks(std::ostream &ostream) {
+  books_.ShowBooks(ostream);
+}
+
 }  // namespace app

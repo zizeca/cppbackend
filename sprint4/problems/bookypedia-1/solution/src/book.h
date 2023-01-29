@@ -46,6 +46,7 @@ class Book {
 class BookRepository {
  public:
   virtual void Save(const Book& book) = 0;
+  virtual void ShowBooks(std::ostream& ostream) = 0;
   virtual void ShowAuthorBooks(std::ostream& ostream, const AuthorId& id) = 0;
 
  protected:

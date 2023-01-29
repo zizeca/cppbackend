@@ -17,6 +17,7 @@ class UseCasesImpl : public UseCases {
 
   void ShowAuthors(std::ostream &ostream) override;
   void ShowAuthorBooks(std::ostream &ostream, int id) override;
+  void ShowBooks(std::ostream &ostream) override;
 
 
 

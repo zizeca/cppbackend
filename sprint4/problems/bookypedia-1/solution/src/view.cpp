@@ -28,6 +28,9 @@ View::View(menu::Menu& menu, app::UseCases& use_cases, std::istream& input, std:
 
   menu_.AddAction(
       "ShowAuthorBooks"s, {}, "Show Author Books"s, std::bind(&View::ShowAuthorBooks, this, ph::_1));
+
+  menu_.AddAction(
+      "ShowBooks"s, {}, "Show Books"s, std::bind(&View::ShowBooks, this, ph::_1));
 }
 
 bool View::AddAuthor(std::istream& cmd_input) {
@@ -111,6 +114,13 @@ bool View::ShowAuthorBooks(std::istream& cmd_input) {
 
   use_cases_.ShowAuthorBooks(output_, id);
 
+  return true;
+}
+
+bool View::ShowBooks(std::istream& cmd_input) {
+  std::string ignore;
+  std::getline(cmd_input, ignore);
+  use_cases_.ShowBooks(output_);
   return true;
 }
 

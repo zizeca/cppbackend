@@ -12,6 +12,7 @@ class UseCases {
   
   virtual void ShowAuthors(std::ostream& ostream) = 0;
   virtual void ShowAuthorBooks(std::ostream &ostream, int id) = 0;
+  virtual void ShowBooks(std::ostream &ostream) = 0;
 
  protected:
   ~UseCases() = default;

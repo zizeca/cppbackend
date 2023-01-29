@@ -17,11 +17,10 @@ ON CONFLICT (id) DO UPDATE SET name=$2;
   work_.commit();
 }
 
-
-void AuthorRepositoryImpl::ShowAuthors(std::ostream &output) {
+void AuthorRepositoryImpl::ShowAuthors(std::ostream& output) {
   pqxx::read_transaction r(work_.conn());
   int counter = 1;
-  for(const auto& [name] : r.query<std::string>("SELECT name FROM authors ORDER BY name;"_zv)) {
+  for (const auto& [name] : r.query<std::string>("SELECT name FROM authors ORDER BY name;"_zv)) {
     output << counter++ << ". " << name << std::endl;
   }
 }
@@ -31,14 +30,13 @@ std::optional<domain::AuthorId> AuthorRepositoryImpl::GetAuthorIdByIndex(int ind
   index--;
 
   auto result = r.exec("SELECT * FROM authors ORDER BY name;"_zv);
-  if(index < 0 || index >= result.size()) {
+  if (index < 0 || index >= result.size()) {
     return std::nullopt;
   }
 
   auto row = result.at(index);
-  return  domain::AuthorId::FromString(row.at(0).c_str());
+  return domain::AuthorId::FromString(row.at(0).c_str());
 }
-
 
 void BookRepositoryImpl::Save(const domain::Book& book) {
   work_.exec_params(R"(
@@ -49,14 +47,21 @@ ON CONFLICT (id) DO UPDATE SET author_id=$2, title=$3, publication_year=$4;
   work_.commit();
 }
 
-void BookRepositoryImpl::ShowAuthorBooks(std::ostream &output, const domain::AuthorId &id) {
+void BookRepositoryImpl::ShowBooks(std::ostream& output) {
   pqxx::read_transaction r(work_.conn());
   int counter = 1;
-  for(const auto& [title, year] : r.query<std::string,int>("SELECT title, publication_year FROM books WHERE author_id="s + r.quote(id.ToString()) + " ORDER BY title;"s)) {
+  for (const auto& [title, year] : r.query<std::string, int>("SELECT title, publication_year FROM books ORDER BY title;"_zv)) {
     output << counter++ << ". " << title << ", " << year << std::endl;
   }
 }
 
+void BookRepositoryImpl::ShowAuthorBooks(std::ostream& output, const domain::AuthorId& id) {
+  pqxx::read_transaction r(work_.conn());
+  int counter = 1;
+  for (const auto& [title, year] : r.query<std::string, int>("SELECT title, publication_year FROM books WHERE author_id="s + r.quote(id.ToString()) + " ORDER BY title;"s)) {
+    output << counter++ << ". " << title << ", " << year << std::endl;
+  }
+}
 
 Database::Database(pqxx::connection connection)
     : connection_{std::move(connection)} {

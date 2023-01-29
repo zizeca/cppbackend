@@ -29,6 +29,8 @@ struct MockBookRepository : domain::BookRepository {
     saved_books.emplace_back(book);
   }
 
+  virtual void ShowBooks(std::ostream& ostream) override {}
+
   void ShowAuthorBooks(std::ostream& ostream, const domain::AuthorId& id) override {
   }
 };
