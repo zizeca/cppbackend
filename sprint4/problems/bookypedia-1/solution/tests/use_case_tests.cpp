@@ -22,6 +22,11 @@ struct MockAuthorRepository : domain::AuthorRepository {
   }
 
   std::optional<domain::AuthorId> GetAuthorIdByIndex(int index) override { return std::nullopt; }
+
+  virtual std::vector<domain::Author> GetAuthors() override {
+    return saved_authors;
+  }
+
 };
 
 struct MockBookRepository : domain::BookRepository {

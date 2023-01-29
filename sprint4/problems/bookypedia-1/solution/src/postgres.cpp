@@ -3,6 +3,8 @@
 #include <pqxx/pqxx>
 #include <pqxx/zview.hxx>
 
+#include <iostream>
+
 namespace postgres {
 
 using namespace std::literals;
@@ -39,6 +41,20 @@ std::optional<domain::AuthorId> AuthorRepositoryImpl::GetAuthorIdByIndex(int ind
 
   auto row = result.at(index);
   return domain::AuthorId::FromString(row.at(0).c_str());
+}
+
+std::vector<domain::Author> postgres::AuthorRepositoryImpl::GetAuthors() {
+  std::vector<domain::Author> author;
+
+  pqxx::read_transaction r(work_.conn());
+  int counter = 0;
+  for (const auto& [id_str, name] : r.query<std::string, std::string>("SELECT id, name FROM authors ORDER BY name;"_zv)) {
+    /// std::cout << id_str << " " <<  name << std::endl;
+    auto id = domain::AuthorId::FromString(id_str);
+    /// std::cout << id_str << " | " << id.ToString() << std::endl;
+    author.emplace_back(id, name);
+  }
+  return author;
 }
 
 void BookRepositoryImpl::Save(const domain::Book& book) {

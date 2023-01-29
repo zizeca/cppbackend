@@ -16,6 +16,8 @@ class AuthorRepositoryImpl : public domain::AuthorRepository {
   void Save(const domain::Author& author) override;
   void ShowAuthors(std::ostream& cmd_output) override;
   std::optional<domain::AuthorId> GetAuthorIdByIndex(int index) override;
+  virtual std::vector<domain::Author> GetAuthors() override;
+
 
  private:
   pqxx::work& work_;

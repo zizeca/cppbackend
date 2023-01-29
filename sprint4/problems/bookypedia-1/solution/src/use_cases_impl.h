@@ -13,12 +13,13 @@ class UseCasesImpl : public UseCases {
   }
 
   void AddAuthor(const std::string& name) override;
-  bool AddBook(int year, const std::string& title, int author_id) override;
+  bool AddBook(int year, const std::string& title, domain::AuthorId id) override;
 
   void ShowAuthors(std::ostream &ostream) override;
   void ShowAuthorBooks(std::ostream &ostream, int id) override;
   void ShowBooks(std::ostream &ostream) override;
 
+  std::vector<domain::Author> GetAuthors() override;
 
 
  private:

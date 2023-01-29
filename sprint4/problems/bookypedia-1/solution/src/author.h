@@ -2,6 +2,7 @@
 
 #include <optional>
 #include <string>
+#include <vector>
 
 #include "tagged_uuid.h"
 
@@ -38,6 +39,8 @@ public:
     virtual void Save(const Author& author) = 0;
     virtual void ShowAuthors(std::ostream &output) = 0;
     virtual std::optional<AuthorId> GetAuthorIdByIndex(int index) = 0;
+
+    virtual std::vector<domain::Author> GetAuthors() = 0;
 
 protected:
     ~AuthorRepository() = default;

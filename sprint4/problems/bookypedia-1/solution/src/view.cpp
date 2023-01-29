@@ -6,6 +6,7 @@
 
 #include "menu.h"
 #include "use_cases.h"
+#include "author.h"
 
 using namespace std::literals;
 namespace ph = std::placeholders;
@@ -68,7 +69,11 @@ bool View::AddBook(std::istream& cmd_input) {
 
     // show question
     output_ << "Select author:" << std::endl;
-    use_cases_.ShowAuthors(output_);
+    auto auth =  use_cases_.GetAuthors();
+
+    for(size_t i = 0; i < auth.size(); ++i) {
+      output_ << i+1 << " " << auth[i].GetName() << std::endl;
+    }
 
     int id{0};
     output_ << "Enter author # or empty line to cancel" << std::endl;
@@ -82,15 +87,14 @@ bool View::AddBook(std::istream& cmd_input) {
 
     try {
       id = std::stoi(str);
+      use_cases_.AddBook(year, title, auth.at(id-1).GetId());
     } catch (const std::exception& e) {
       // output_ << e.what() << '\n';
+      output_ << "Failed to add book" << std::endl;
       return true;
     }
 
-    if (!use_cases_.AddBook(year, title, id)) {
-      output_ << "Failed to add book" << std::endl;
-    }
-
+ 
   } catch (const std::exception& e) {
     output_ << "Failed to add book" << std::endl;
     // output_ << e.what() << '\n';
