@@ -49,6 +49,15 @@ ON CONFLICT (id) DO UPDATE SET author_id=$2, title=$3, publication_year=$4;
   work_.commit();
 }
 
+void BookRepositoryImpl::ShowAuthorBooks(std::ostream &output, const domain::AuthorId &id) {
+  pqxx::read_transaction r(work_.conn());
+  int counter = 1;
+  for(const auto& [title, year] : r.query<std::string,int>("SELECT title, publication_year FROM books WHERE author_id="s + r.quote(id.ToString()) + " ORDER BY title;"s)) {
+    output << counter++ << ". " << title << ", " << year << std::endl;
+  }
+}
+
+
 Database::Database(pqxx::connection connection)
     : connection_{std::move(connection)} {
   work_.exec(R"(

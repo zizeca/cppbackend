@@ -29,6 +29,7 @@ public:
     }
 
     void Save(const domain::Book& book) override;
+    void ShowAuthorBooks(std::ostream& ostream, const domain::AuthorId& id) override;
 
 private:
     pqxx::work& work_;

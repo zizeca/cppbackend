@@ -11,6 +11,7 @@ class UseCases {
   virtual bool AddBook(int year, const std::string& title, int author_id) = 0;
   
   virtual void ShowAuthors(std::ostream& ostream) = 0;
+  virtual void ShowAuthorBooks(std::ostream &ostream, int id) = 0;
 
  protected:
   ~UseCases() = default;

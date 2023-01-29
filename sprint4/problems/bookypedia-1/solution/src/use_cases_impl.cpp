@@ -27,4 +27,11 @@ void UseCasesImpl::ShowAuthors(std::ostream &ostream) {
   authors_.ShowAuthors(ostream);
 }
 
+void UseCasesImpl::ShowAuthorBooks(std::ostream &ostream, int author_id) {
+  std::optional<AuthorId> id = authors_.GetAuthorIdByIndex(author_id);
+  if(id) {
+    books_.ShowAuthorBooks(ostream, *id);
+  }
+}
+
 }  // namespace app
