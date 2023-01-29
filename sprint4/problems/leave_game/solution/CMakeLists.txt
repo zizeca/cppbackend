@@ -42,7 +42,7 @@ set(HEADER
   ${SRCDIR}/content_type.h
   ${SRCDIR}/util.h
   ${SRCDIR}/response_maker.h
-
+  ${SRCDIR}/conn_pool.h
 )
 
 
