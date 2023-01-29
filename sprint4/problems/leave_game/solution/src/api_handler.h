@@ -26,6 +26,7 @@ struct ApiKey {
   static constexpr std::string_view Maps = "/api/v1/maps"sv;
   static constexpr std::string_view MapsPrefix = "/api/v1/maps/"sv;
   static constexpr std::string_view Players = "/api/v1/game/players"sv;
+  static constexpr std::string_view Records = "/api/v1/game/records"sv;
   static constexpr std::string_view State = "/api/v1/game/state"sv;
   static constexpr std::string_view Tick = "/api/v1/game/tick"sv;
 };
@@ -52,6 +53,8 @@ class ApiHandler {
   StringResponse PostAction();
 
   StringResponse PostTick();
+
+  StringResponse GetRecords();
 
   /**
    * @brief

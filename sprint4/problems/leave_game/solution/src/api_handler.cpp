@@ -34,6 +34,8 @@ StringResponse ApiHandler::Response() {
     return PostAction();
   } else if (m_target == ApiKey::Tick) {
     return PostTick();
+  } else if (m_target == ApiKey::Records) {
+    return GetRecords();
   } else {
     return MakeJsonResponse(http::status::bad_request, JsAnswer("badRequest", "Bad request"));
   }
@@ -228,6 +230,19 @@ StringResponse ApiHandler::PostTick() {
   return MakeJsonResponse(http::status::ok,
                           json::object(),
                           CacheControl::NO_CACHE);
+}
+
+StringResponse ApiHandler::GetRecords() {
+  if (!(m_req.method() == http::verb::get || m_req.method() == http::verb::head)) {
+    return MakeJsonResponse(http::status::method_not_allowed,
+                            JsAnswer("invalidMethod", "Invalid method"),
+                            CacheControl::NO_CACHE,
+                            "GET, HEAD"sv);
+  }
+
+  
+
+  assert(!"no implementation");
 }
 
 std::optional<model::Token> ApiHandler::TryExtractToken() {
