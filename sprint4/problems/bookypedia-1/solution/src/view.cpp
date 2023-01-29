@@ -38,6 +38,9 @@ bool View::AddAuthor(std::istream& cmd_input) {
     std::string name;
     std::getline(cmd_input, name);
     boost::algorithm::trim(name);
+    if (name.empty()) {
+      throw std::logic_error("invalid input");
+    }
     use_cases_.AddAuthor(std::move(name));
   } catch (const std::exception&) {
     output_ << "Failed to add author"s << std::endl;
@@ -59,6 +62,9 @@ bool View::AddBook(std::istream& cmd_input) {
     cmd_input >> year;
     std::getline(cmd_input, title);
     boost::algorithm::trim(title);
+    if (year == 0 || title.empty()) {
+      throw std::logic_error("invalid input");
+    }
 
     // show question
     output_ << "Select author:" << std::endl;
@@ -69,7 +75,7 @@ bool View::AddBook(std::istream& cmd_input) {
     std::string str;
     std::getline(input_, str);
     if (str.empty()) {
-      //output_ << "cancel" << std::endl;
+      // output_ << "cancel" << std::endl;
       return true;
     }
 

@@ -21,7 +21,9 @@ add_library(libbookypedia STATIC
 	src/author.cpp
 	src/author.h
 	src/author_fwd.h
+  src/book.cpp
   src/book.h
+  src/book_fwd.h
 	src/tagged.h
 	src/tagged_uuid.cpp
 	src/tagged_uuid.h
