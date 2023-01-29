@@ -21,12 +21,10 @@ View::View(menu::Menu& menu, app::UseCases& use_cases, std::istream& input, std:
   );
 
   menu_.AddAction(
-    "AddBook"s, "name"s, "Add book"s, std::bind(&View::AddBook, this, ph::_1)
-  );
+      "AddBook"s, "year title"s, "Add book"s, std::bind(&View::AddBook, this, ph::_1));
 
   menu_.AddAction(
-    "ShowAuthors"s, "name"s, "Add book"s, std::bind(&View::ShowAuthors, this, ph::_1)
-  );
+      "ShowAuthors"s, ""s, "Show Authors"s, std::bind(&View::ShowAuthors, this, ph::_1));
 }
 
 bool View::AddAuthor(std::istream& cmd_input) {
@@ -41,14 +39,12 @@ bool View::AddAuthor(std::istream& cmd_input) {
   return true;
 }
 
-
 bool View::ShowAuthors(std::istream& cmd_input) {
   std::string ignore;
   std::getline(cmd_input, ignore);
   use_cases_.ShowAuthors(output_);
   return true;
 }
-
 
 bool View::AddBook(std::istream& cmd_input) {
   try {
@@ -60,18 +56,33 @@ bool View::AddBook(std::istream& cmd_input) {
 
     // show question
     output_ << "Select author:" << std::endl;
-    ShowAuthors(cmd_input);
-    
+    use_cases_.ShowAuthors(output_);
+
     int id{0};
     output_ << "Enter author # or empty line to cancel" << std::endl;
-    input_ >> id;
-    return use_cases_.AddBook(year, title, id);
+    std::string str;
+    std::getline(input_, str);
+    if (str.empty()) {
+      output_ << "cancel" << std::endl;
+      return true;
+    }
+
+    try {
+      id = std::stoi(str);
+    } catch (const std::exception& e) {
+      output_ << e.what() << '\n';
+      return false;
+    }
+
+    if(!use_cases_.AddBook(year, title, id)) {
+      output_ << "fail to add book" << std::endl;
+    }
 
   } catch (const std::exception& e) {
     output_ << e.what() << '\n';
   }
 
-  return false;
+  return true;
 }
 
 }  // namespace ui
