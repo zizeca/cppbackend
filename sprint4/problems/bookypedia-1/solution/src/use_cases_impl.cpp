@@ -13,6 +13,11 @@ void UseCasesImpl::AddAuthor(const std::string& name) {
 }
 
 bool UseCasesImpl::AddBook(int year, const std::string& title, int author_id) {
+
+  if(year == 0 || title.empty() || author_id == 0) {
+    throw std::invalid_argument("wrong args for add book");
+  }
+
   std::optional<AuthorId> id = authors_.GetAuthorIdByIndex(author_id);
 
   if(id) {

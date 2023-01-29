@@ -40,7 +40,7 @@ bool View::AddAuthor(std::istream& cmd_input) {
     boost::algorithm::trim(name);
     use_cases_.AddAuthor(std::move(name));
   } catch (const std::exception&) {
-    output_ << "Failed to add author"sv << std::endl;
+    output_ << "Failed to add author"s << std::endl;
   }
   return true;
 }
@@ -69,7 +69,7 @@ bool View::AddBook(std::istream& cmd_input) {
     std::string str;
     std::getline(input_, str);
     if (str.empty()) {
-      output_ << "cancel" << std::endl;
+      //output_ << "cancel" << std::endl;
       return true;
     }
 
@@ -81,11 +81,12 @@ bool View::AddBook(std::istream& cmd_input) {
     }
 
     if (!use_cases_.AddBook(year, title, id)) {
-      output_ << "fail to add book" << std::endl;
+      output_ << "Failed to add book" << std::endl;
     }
 
   } catch (const std::exception& e) {
-    output_ << e.what() << '\n';
+    output_ << "Failed to add book" << std::endl;
+    // output_ << e.what() << '\n';
   }
 
   return true;
@@ -101,7 +102,7 @@ bool View::ShowAuthorBooks(std::istream& cmd_input) {
   std::string str;
   std::getline(input_, str);
   if (str.empty()) {
-    output_ << "cancel" << std::endl;
+    // output_ << "cancel" << std::endl;
     return true;
   }
 
