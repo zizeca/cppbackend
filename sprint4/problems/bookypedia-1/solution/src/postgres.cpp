@@ -24,7 +24,7 @@ void AuthorRepositoryImpl::ShowAuthors(std::ostream& output) {
     output << ++counter << " " << name << std::endl;
   }
   if(counter == 0) {
-    output << '\n';
+    output << "" << std::endl;
   } 
 }
 
@@ -65,7 +65,7 @@ void BookRepositoryImpl::ShowAuthorBooks(std::ostream& output, const domain::Aut
     output << ++counter << " " << title << ", " << year << std::endl;
   }
   if(counter == 0) {
-    output << '\n';
+    output << "" << std::endl;
   } 
 }
 
