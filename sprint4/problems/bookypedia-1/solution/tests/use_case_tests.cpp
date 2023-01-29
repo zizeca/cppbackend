@@ -1,5 +1,7 @@
 #include <catch2/catch_test_macros.hpp>
 
+#include <sstream>
+
 #include "../src/author.h"
 #include "../src/book.h"
 #include "../src/use_cases_impl.h"
