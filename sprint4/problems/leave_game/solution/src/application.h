@@ -78,7 +78,7 @@ class Application {
 
   std::filesystem::path m_state_file;
 
-  std::shared_ptr<ConnectionPool> m_conn_pool;
+  std::shared_ptr<dbconn::ConnectionPool> m_conn_pool;
 };
 
 #endif  // __APPLICATION_H__

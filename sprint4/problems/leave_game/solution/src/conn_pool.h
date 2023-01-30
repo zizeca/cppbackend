@@ -10,6 +10,8 @@
 #include <mutex>
 #include <condition_variable>
 
+namespace dbconn {
+
 class ConnectionPool : public std::enable_shared_from_this<ConnectionPool> {
  public:
   using PoolType = ConnectionPool;
@@ -87,5 +89,7 @@ class ConnectionPool : public std::enable_shared_from_this<ConnectionPool> {
   std::vector<ConnectionPtr> m_conn_arr;
   size_t used_connections_ = 0;
 };
+
+}  // namespace conn
 
 #endif  // __CONN_POOL_H__

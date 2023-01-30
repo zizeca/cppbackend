@@ -44,8 +44,8 @@ Application::Application(boost::asio::io_context &ioc, const c_parse::Args &args
   }
 
   // DB
-  ConnectionFactory conn_fact(args.db_url);
-  m_conn_pool = std::make_shared<ConnectionPool>(10, conn_fact);
+  dbconn::ConnectionFactory conn_fact(args.db_url);
+  m_conn_pool = std::make_shared<dbconn::ConnectionPool>(10, conn_fact);
 }
 
 Application::~Application() {
