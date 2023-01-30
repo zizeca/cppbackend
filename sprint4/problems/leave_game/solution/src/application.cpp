@@ -46,6 +46,23 @@ Application::Application(boost::asio::io_context &ioc, const c_parse::Args &args
   // DB
   dbconn::ConnectionFactory conn_fact(args.db_url);
   m_conn_pool = std::make_shared<dbconn::ConnectionPool>(10, conn_fact);
+
+  m_player_list.SetRecorder([this](model::Token token, std::string name, int score, double time){
+    std::cout << *token << ", " << name << ", " << score << ", " << time << std::endl;
+    auto conn = m_conn_pool->GetConnection();
+    pqxx::work w(*conn);
+    try {
+      auto r = w.exec_prepared(dbconn::ConnectionFactory::update_data,*token, name, score, time);
+      if(r.affected_rows() == 0) {
+         w.exec_prepared(dbconn::ConnectionFactory::insert_data,*token, name, score, time);
+      }
+      w.commit();
+    } catch (const std::exception& e) {
+      w.abort();
+      throw;
+    }
+  });
+
 }
 
 Application::~Application() {

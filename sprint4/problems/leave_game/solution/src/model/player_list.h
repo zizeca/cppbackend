@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <vector>
 #include <optional>
+#include <functional>
 
 #include "../tagged.h"
 #include "player.h"
@@ -14,10 +15,12 @@ namespace model {
 
 class PlayerList {
  public:
+  using Container = std::unordered_map<Token, Player, TokenHasher>;
+  using Record = std::function<void(Token, std::string, int, double)>;
+  
   PlayerList();
   ~PlayerList();
 
-  using Container = std::unordered_map<Token, Player, TokenHasher>;
 
   std::optional<std::reference_wrapper<Player>> FindPlayer(const Token& token);
 
@@ -27,12 +30,15 @@ class PlayerList {
   const Container& GetContainer() const;
 
   void Update(double delta_time);
+
+  void SetRecorder(const Record& record);
   
   auto cbegin() { return m_players.cbegin(); }
   auto cend() { return m_players.cend(); }
 
  private:
   Container m_players;
+  Record m_record;
 };
 
 }  // namespace model
