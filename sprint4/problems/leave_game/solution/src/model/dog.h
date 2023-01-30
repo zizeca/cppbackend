@@ -64,6 +64,12 @@ class Dog : public GameObject {
   void SetBagSize(size_t size);
   size_t GetBagSize() const noexcept;
 
+  void Update(double delta_time);
+
+  double GetDownTime() const;
+
+  double GetPlayTime() const;
+
  private:
   Token m_token;
   Id m_id;
@@ -77,10 +83,12 @@ class Dog : public GameObject {
   size_t m_bag_size;
 
   int m_points;
+  double m_play_time;
   double m_downtime;
 };
 
 using DogPtr = std::shared_ptr<Dog>;
+using DogWeakPtr = std::weak_ptr<Dog>;
 using DogConstPtr = std::shared_ptr<const Dog>;
 
 }  // namespace model

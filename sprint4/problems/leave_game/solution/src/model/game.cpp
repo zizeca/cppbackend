@@ -47,6 +47,7 @@ Game::SessPtr Game::GetSession(const model::Map::Id& id) {
   // creat ne session if fail to find exist
   auto sess = std::make_shared<GameSession>(*map, LootGenerator(ms, m_probability_loot_gen));
   sess->SetDogRandomSpawn(m_random_dog_spawn);
+  sess->SetRetirementTime(m_dog_retirement_time);
   m_sess.push_back(sess);
 
   return sess;

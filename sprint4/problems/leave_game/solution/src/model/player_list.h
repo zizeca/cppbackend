@@ -26,6 +26,8 @@ class PlayerList {
 
   const Container& GetContainer() const;
 
+  void Update(double delta_time);
+  
   auto cbegin() { return m_players.cbegin(); }
   auto cend() { return m_players.cend(); }
 

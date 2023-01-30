@@ -33,4 +33,23 @@ const PlayerList::Container& PlayerList::GetContainer() const {
   return m_players;
 }
 
+void model::PlayerList::Update(double delta_time) {
+  for(auto it = m_players.begin(); it != m_players.end();) {
+    auto dog = it->second.GetDog();
+    auto sess = it->second.GetSession();
+
+    // std::cout <<"\nplay=" << dog->GetPlayTime() << ", down=" << dog->GetDownTime() << "\n" << std::endl;
+
+    if(dog->GetDownTime() >= sess->GetRetirementTime()) {
+      // todo save to db
+      std::cout << "\n\" delete dog " << it->second.GetName() << " time=" << dog->GetPlayTime() << std::endl; 
+      // assert(!"delete dog");
+      
+      it = m_players.erase(it);
+    } else {
+      ++it;
+    }
+  }
+}
+
 }  // namespace model

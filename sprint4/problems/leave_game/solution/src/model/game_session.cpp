@@ -34,7 +34,8 @@ GameSession::GameSession(/*GameSession::Id id,*/ const Map& map, LootGenerator g
     : m_id(0),
       m_map(map),
       m_random_spawn(false),
-      m_loot_gen(std::move(gen)) {
+      m_loot_gen(std::move(gen)),
+      m_retirement_time(.0) {
 }
 
 GameSession::~GameSession() {
@@ -50,7 +51,7 @@ void GameSession::AddDog(DogPtr dog) {
   }
 
   //! crutch
-  if(dog->GetPosition() == Point2d()) {
+  if (dog->GetPosition() == Point2d()) {
     dog->SetPosition(m_map.GetRandPoint(m_random_spawn));
   }
 
@@ -67,6 +68,16 @@ void GameSession::Update(double delta_time) {
 
 void GameSession::SetDogRandomSpawn(bool enable) {
   m_random_spawn = enable;
+}
+
+void GameSession::SetRetirementTime(double downtime) {
+  assert(downtime != .0);
+  m_retirement_time = downtime;
+}
+
+double GameSession::GetRetirementTime() const noexcept {
+  // assert(m_retirement_time == 0.0);
+  return m_retirement_time;
 }
 
 void GameSession::GenerateLoot(double delta_time) {
@@ -89,8 +100,16 @@ void GameSession::DogsUpdate(double delta_time) {
 
   // dog udate (calculate next position, and detect road bound)
   for (auto it = m_dogs.begin(); it != m_dogs.end(); ++it) {
-    auto dog = *it;
-    assert(dog != nullptr);
+    auto dog = it->lock();
+    if (!dog) {
+      it = m_dogs.erase(it);
+      --it;  // for loop ++it
+      continue;
+    }
+    // assert(dog != nullptr);
+
+    // update dog state 
+    dog->Update(delta_time); 
 
     const Point2d& pos = dog->GetPosition();
     const Point2d& speed = dog->GetSpeed();
@@ -127,6 +146,8 @@ void GameSession::DogsUpdate(double delta_time) {
       nextPos.x = max_pos.x;
       dog->Stop();
     }
+
+
 
     // if dog not move (check again because road collision detect)
     if (pos == nextPos) {

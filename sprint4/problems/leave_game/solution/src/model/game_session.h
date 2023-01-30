@@ -19,7 +19,7 @@ class GameSession {
  public:
 
   using Id = util::Tagged<uint32_t, GameSession>;
-  using DogPtrList = std::list<DogPtr>;
+  using DogPtrList = std::list<DogWeakPtr>;
 
   explicit GameSession(/*Id id,*/ const Map& map, LootGenerator gen);
   ~GameSession();
@@ -39,7 +39,10 @@ class GameSession {
   const std::list<Loot>& GetLoots() const noexcept { return m_loots;}
   //const std::list<std::shared_ptr<GameObject>>& GetObjects() const noexcept { return m_objects;}
 
-  const DogPtrList& GetDogs() const noexcept { return m_dogs; }
+  // const DogPtrList& GetDogs() const noexcept { return m_dogs; }
+
+  void SetRetirementTime(double downtime);
+  double GetRetirementTime() const noexcept;
 
  private:
 
@@ -57,6 +60,8 @@ class GameSession {
   std::list<Loot> m_loots;
 
   int m_loot_id = 0;
+
+  double m_retirement_time;
 };
 
 }  // namespace model

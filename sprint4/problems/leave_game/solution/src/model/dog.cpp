@@ -10,7 +10,9 @@ Dog::Dog(const Dog::Id& id)
       m_dir("U"s),
       m_default_speed(0.0),
       m_bag_size(0),
-      m_points(0) {
+      m_points(0),
+      m_downtime(.0),
+      m_play_time(.0) {
 }
 
 const Dog::Id& Dog::GetId() const {
@@ -95,6 +97,23 @@ void Dog::SetBagSize(size_t size) {
 
 size_t Dog::GetBagSize() const noexcept{
   return m_bag_size;
+}
+
+void Dog::Update(double delta_time) {
+  m_play_time += delta_time;
+  if(m_speed.x == .0 && m_speed.y == .0) {
+    m_downtime += delta_time;
+  } else {
+    m_downtime = .0;
+  }
+}
+
+double Dog::GetDownTime() const {
+  return m_downtime;
+}
+
+double Dog::GetPlayTime() const {
+  return m_play_time;
 }
 
 
