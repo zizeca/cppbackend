@@ -554,7 +554,7 @@ jobs:
         env:
           DELIVERY_APP: ${{ github.workspace }}/sprint4/problems/db_of_books/solution/build/book_manager
       
-       - name: build sprint4 bookypedia-1
+      - name: build sprint4 bookypedia-1
         run: |
           cd sprint4/problems/bookypedia-1/solution
           mkdir build
