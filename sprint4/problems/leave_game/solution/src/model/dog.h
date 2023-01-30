@@ -77,6 +77,7 @@ class Dog : public GameObject {
   size_t m_bag_size;
 
   int m_points;
+  double m_downtime;
 };
 
 using DogPtr = std::shared_ptr<Dog>;

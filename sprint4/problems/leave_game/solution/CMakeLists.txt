@@ -53,6 +53,8 @@ if(Boost_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})
 endif()
 
+find_package(PostgreSQL REQUIRED)
+
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
@@ -64,8 +66,8 @@ add_subdirectory(${SRCDIR}/model)
 add_subdirectory(${SRCDIR}/json_parser)
 
 add_executable(${EXECUTE} ${SRC} ${HEADER})
-target_include_directories(${EXECUTE} PRIVATE CONAN_PKG::boost)
-target_link_libraries(${EXECUTE} PRIVATE Threads::Threads CONAN_PKG::boost ${MODEL_LIB} ${JSON_LIB})
+target_include_directories(${EXECUTE} PRIVATE CONAN_PKG::boost CONAN_PKG::libpq CONAN_PKG::libpqxx)
+target_link_libraries(${EXECUTE} PRIVATE Threads::Threads CONAN_PKG::boost CONAN_PKG::libpq CONAN_PKG::libpqxx ${MODEL_LIB} ${JSON_LIB})
 add_subdirectory(${SRCDIR}/http_server)
 
 add_subdirectory(tests)

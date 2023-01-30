@@ -21,6 +21,8 @@ using namespace std::string_literals;
 #include "ticker.h"
 #include "command_parse.h"
 #include "model_serialization.h"
+#include "conn_pool.h"
+#include "conn_fact.h"
 
 class Application {
   Application() = delete;
@@ -75,6 +77,8 @@ class Application {
   size_t m_max_dog_id;
 
   std::filesystem::path m_state_file;
+
+  std::shared_ptr<ConnectionPool> m_conn_pool;
 };
 
 #endif  // __APPLICATION_H__

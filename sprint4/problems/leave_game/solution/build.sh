@@ -17,5 +17,5 @@ if ! [ -f "conanbuildinfo.cmake" ]; then
   conan install .. -s compiler.libcxx=libstdc++11 -s build_type=Debug --build=missing
 fi
 
-cmake ..
+cmake .. -DCMAKE_BUILD_TYPE=Debug
 cmake --build .

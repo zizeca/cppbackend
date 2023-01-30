@@ -14,7 +14,6 @@ Application::Application(boost::asio::io_context &ioc, const c_parse::Args &args
       m_max_dog_id{0},
       m_dir_to_content(args.www_root),
       m_state_file(args.state_file) {
-
   // required pathes
   if (!(std::filesystem::exists(args.config_file) && std::filesystem::exists(args.www_root))) {
     throw std::logic_error("Wrong path, config="s + args.config_file + ", content="s + args.www_root);  //? maybe need more output information
@@ -43,6 +42,10 @@ Application::Application(boost::asio::io_context &ioc, const c_parse::Args &args
   if (!args.state_file.empty() && args.save_state_period) {
     std::make_shared<util::Ticker>(this->strand, std::chrono::milliseconds(args.save_state_period), std::bind(&Application::SaveState, this))->Start();
   }
+
+  // DB
+  ConnectionFactory conn_fact(args.db_url);
+  m_conn_pool = std::make_shared<ConnectionPool>(10, conn_fact);
 }
 
 Application::~Application() {
@@ -109,11 +112,11 @@ void Application::Update(std::chrono::milliseconds ms) {
 }
 
 void Application::SaveState() {
-  if(m_state_file.empty()) {
+  if (m_state_file.empty()) {
     return;
   }
 
-  if( std::filesystem::exists(m_state_file)) {
+  if (std::filesystem::exists(m_state_file)) {
     // todo rename
     std::filesystem::path bak_file = m_state_file;
     bak_file += ".bak";
@@ -121,7 +124,7 @@ void Application::SaveState() {
   }
 
   std::ofstream file(m_state_file);
-  if(!file.is_open()) {
+  if (!file.is_open()) {
     throw std::logic_error("Fail to open file - "s + m_state_file.string());
   }
 
@@ -130,15 +133,15 @@ void Application::SaveState() {
   output_archive << m_max_player_id;
   output_archive << m_max_dog_id;
 
-  model::GameSessionSer ser(m_game.GetSessionList() , m_player_list.GetContainer());
-  
+  model::GameSessionSer ser(m_game.GetSessionList(), m_player_list.GetContainer());
+
   output_archive << ser;
   file.close();
 }
 
 void Application::LoadState(const std::filesystem::path &path) {
   std::ifstream file(path);
-  if(!file.is_open()) {
+  if (!file.is_open()) {
     throw std::logic_error("Fail to open file - "s + path.string());
   }
 
@@ -151,5 +154,4 @@ void Application::LoadState(const std::filesystem::path &path) {
   input_archive >> ser;
 
   ser.UpdateGame(m_game, m_player_list);
-
 }
