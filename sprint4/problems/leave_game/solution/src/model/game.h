@@ -46,7 +46,7 @@ class Game {
   void SetDefaultBagCapacity(size_t size);
   size_t GetDefaultBagCapacity() const noexcept;
 
-  //// void AddSession(SessPtr sess);
+  void SetDogRetirementTime(double time_in_seconds);
 
   const SessPtrList& GetSessionList() const;
 
@@ -66,6 +66,8 @@ class Game {
   double m_period_loot_gen = 0.0;
   double m_probability_loot_gen = 0.0;
   size_t m_default_bag_capacity = 3;
+
+  double m_dog_retirement_time = 60.0;
 };
 
 }  // namespace model

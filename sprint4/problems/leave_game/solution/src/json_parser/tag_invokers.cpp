@@ -301,6 +301,12 @@ Game tag_invoke(value_to_tag<Game>, value const& jv) {
     // game.SetDefaultSpeed(1.0);
   }
 
+  if (jv.as_object().contains(MapKey::dogRetirementTime)) {
+    game.SetDogRetirementTime(jv.as_object().at(MapKey::dogRetirementTime).as_double());
+  } else {
+    // game.SetDefaultSpeed(1.0);
+  }
+
   if (jv.as_object().contains(MapKey::defaultBagCapacity)) {
     game.SetDefaultBagCapacity(jv.as_object().at(MapKey::defaultBagCapacity).as_int64());
   } else {

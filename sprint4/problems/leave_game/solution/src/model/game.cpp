@@ -83,6 +83,10 @@ size_t Game::GetDefaultBagCapacity() const noexcept {
 //   m_sess.emplace_back(sess);
 // }
 
+void Game::SetDogRetirementTime(double time_in_seconds) {
+  m_dog_retirement_time = time_in_seconds;
+}
+
 const Game::SessPtrList& Game::GetSessionList() const {
   return m_sess;
 }

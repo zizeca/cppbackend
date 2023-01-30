@@ -42,6 +42,7 @@ struct MapKey {
   constexpr static string_view color = "color";
   constexpr static string_view defaultBagCapacity = "defaultBagCapacity";
   constexpr static string_view defaultDogSpeed = "defaultDogSpeed";
+  constexpr static string_view dogRetirementTime = "dogRetirementTime";
   constexpr static string_view dogSpeed = "dogSpeed";
   constexpr static string_view end_X = "x1";
   constexpr static string_view end_Y = "y1";
