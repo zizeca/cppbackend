@@ -19,7 +19,7 @@ class GameSession {
  public:
 
   using Id = util::Tagged<uint32_t, GameSession>;
-  using DogPtrList = std::vector<DogPtr>;
+  using DogPtrList = std::list<DogPtr>;
 
   explicit GameSession(/*Id id,*/ const Map& map, LootGenerator gen);
   ~GameSession();
