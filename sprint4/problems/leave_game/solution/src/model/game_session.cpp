@@ -108,8 +108,8 @@ void GameSession::DogsUpdate(double delta_time) {
     }
     // assert(dog != nullptr);
 
-    // update dog state 
-    dog->Update(delta_time); 
+    // update dog timer 
+    dog->UpdateTimer(); //! perhaps not necessary
 
     const Point2d& pos = dog->GetPosition();
     const Point2d& speed = dog->GetSpeed();
@@ -156,6 +156,8 @@ void GameSession::DogsUpdate(double delta_time) {
 
     // delegate move update and collect loot
     collector.AddDogToMoveUpdate(dog, nextPos);
+
+
 
     // eraly code, obsolete
     // dog->SetPosition(nextPos);

@@ -132,7 +132,7 @@ void Application::Update(std::chrono::milliseconds ms) {
   }
 
   const double delta_time = std::chrono::duration<double>(ms).count();
-  m_player_list.Update(delta_time);
+  m_player_list.UpdateState(); //! perhaps not necessary see PlayerList::FindPlayer(...)
   m_game.Update(delta_time);
 }
 

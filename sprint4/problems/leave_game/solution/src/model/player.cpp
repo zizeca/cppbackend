@@ -53,4 +53,9 @@ PlayerInfo Player::GetInfo() const {
   return info;  // RVO
 }
 
+void Player::Update() {
+  
+}
+
+
 }  // namespace model

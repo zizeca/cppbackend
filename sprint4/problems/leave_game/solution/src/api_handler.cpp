@@ -324,6 +324,8 @@ StringResponse ApiHandler::MakeJsonResponse(const http::status &status,
 }
 
 StringResponse ApiHandler::ExecuteAuthorized(std::function<StringResponse(model::Player &player)> action) {
+  // 
+
   if (auto token = this->TryExtractToken()) {
     auto player = m_app.FindPlayer(*token);
     if (player == std::nullopt) {

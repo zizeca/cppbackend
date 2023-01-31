@@ -10,6 +10,12 @@ PlayerList::~PlayerList() {
 
 std::optional<std::reference_wrapper<Player>> PlayerList::FindPlayer(const Token& token) {
   if (m_players.contains(token)) {
+    const auto& player = m_players.at(token);
+    if(player.GetDog()->GetDownTime() >= player.GetSession()->GetRetirementTime()) {
+      m_record(player.GetInfo());
+      m_players.erase(token);
+      return std::nullopt;
+    }
     return m_players.at(token);
   }
   return std::nullopt;
@@ -33,7 +39,7 @@ const PlayerList::Container& PlayerList::GetContainer() const {
   return m_players;
 }
 
-void model::PlayerList::Update(double delta_time) {
+void model::PlayerList::UpdateState() {
   for(auto it = m_players.begin(); it != m_players.end();) {
     auto dog = it->second.GetDog();
     auto sess = it->second.GetSession();
