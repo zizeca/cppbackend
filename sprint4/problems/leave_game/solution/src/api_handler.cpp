@@ -1,5 +1,7 @@
 #include "api_handler.h"
 
+#include <boost/url.hpp>
+
 #include <cassert>
 
 #include "content_type.h"
@@ -34,7 +36,7 @@ StringResponse ApiHandler::Response() {
     return PostAction();
   } else if (m_target == ApiKey::Tick) {
     return PostTick();
-  } else if (m_target == ApiKey::Records) {
+  } else if (m_target.starts_with(ApiKey::Records)) {
     return GetRecords();
   } else {
     return MakeJsonResponse(http::status::bad_request, JsAnswer("badRequest", "Bad request"));
@@ -246,15 +248,34 @@ StringResponse ApiHandler::GetRecords() {
   size_t max_items{dbconn::ConnectionFactory::MaxItemReq};
 
   // parse if body not empty
-  try {
-    boost::json::value jv = boost::json::parse(m_req.body());
-    start = jv.as_object().at("start").as_int64();
-    max_items = jv.as_object().at("maxItems").as_int64();
-  } catch (const std::exception &) {
-    // **empty**
-    // only for check body
-    // std::cout << "start=" << start << " max_items " << max_items << "\n";
-    //   //return MakeJsonResponse(http::status::bad_request, JsAnswer("invalidArgument", "record request parse error"), CacheControl::NO_CACHE);
+  // try {
+  //   boost::json::value jv = boost::json::parse(m_req.body());
+  //   start = jv.as_object().at("start").as_int64();
+  //   max_items = jv.as_object().at("maxItems").as_int64();
+  // } catch (const std::exception &) {
+  //   // **empty**
+  //   // only for check body
+  //   // std::cout << "start=" << start << " max_items " << max_items << "\n";
+  //   //   //return MakeJsonResponse(http::status::bad_request, JsAnswer("invalidArgument", "record request parse error"), CacheControl::NO_CACHE);
+  // }
+
+  boost::urls::url_view url = boost::urls::parse_relative_ref(m_target).value();
+  std::cout << " check url " << url << std::endl;
+
+  // url parse
+  if (url.has_query()) {
+    boost::urls::params_view params_ref = url.params();
+    for (auto v : params_ref) {
+      try {
+        if (v.key == "start") {
+          start = std::stoul(v.value);
+        } else if (v.key == "maxItems") {
+          max_items = std::stoul(v.value);
+        }
+      } catch (const std::exception &e) {
+        std::cerr << e.what() << '\n';
+      }
+    }
   }
 
   // check max_items value
