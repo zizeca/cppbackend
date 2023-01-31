@@ -16,7 +16,7 @@ namespace model {
 class PlayerList {
  public:
   using Container = std::unordered_map<Token, Player, TokenHasher>;
-  using Record = std::function<void(Token, std::string, int, double)>;
+  using Record = std::function<void(model::PlayerInfo)>;
   
   PlayerList();
   ~PlayerList();
@@ -31,7 +31,7 @@ class PlayerList {
 
   void Update(double delta_time);
 
-  void SetRecorder(const Record& record);
+  void SetRecorder(Record record);
   
   auto cbegin() { return m_players.cbegin(); }
   auto cend() { return m_players.cend(); }

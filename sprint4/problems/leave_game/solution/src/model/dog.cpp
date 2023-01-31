@@ -10,7 +10,7 @@ Dog::Dog(const Dog::Id& id)
       m_dir("U"s),
       m_default_speed(0.0),
       m_bag_size(0),
-      m_points(0),
+      m_score(0),
       m_downtime(.0),
       m_play_time(.0) {
 }
@@ -65,11 +65,11 @@ const std::list<Loot>& Dog::GetLoots() const noexcept {
 }
 
 void Dog::AddPoints(int points) {
-  m_points += points;
+  m_score += points;
 }
 
-int Dog::GetPoinst() const noexcept {
-  return m_points;
+int Dog::GetScore() const noexcept {
+  return m_score;
 }
 
 

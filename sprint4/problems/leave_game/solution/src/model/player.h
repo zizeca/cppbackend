@@ -9,6 +9,13 @@
 
 namespace model {
 
+struct PlayerInfo {
+  Token token;
+  std::string name;
+  int score;
+  double play_time;
+};
+
 class Player {
  public:
   using Id = util::Tagged<uint32_t, Player>;
@@ -29,6 +36,8 @@ class Player {
   const std::shared_ptr<GameSession> GetSession() const;
 
   void SetSession(std::shared_ptr<GameSession> sess);
+
+  PlayerInfo GetInfo() const;
 
  private:
   Id m_id;

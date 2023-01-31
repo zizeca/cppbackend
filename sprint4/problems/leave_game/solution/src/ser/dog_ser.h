@@ -17,7 +17,7 @@ void save_construct_data(Archive& ar, const Dog* t, const unsigned int file_vers
   auto token = *t->GetToken();
   ar << id;
   ar << token;
-  ar << t->GetPoinst();
+  ar << t->GetScore();
   ar << t->GetPosition();
   ar << t->GetWidth();
   ar << t->GetBagSize();
@@ -29,7 +29,7 @@ template <typename Archive>
 void load_construct_data(Archive& ar, Dog* t, const unsigned int file_version) {
   Dog::Id::ValueType id;
   Token::ValueType token;
-  int points;
+  int score;
   Point2d pos;
   double width;
   size_t bag_size;
@@ -37,7 +37,7 @@ void load_construct_data(Archive& ar, Dog* t, const unsigned int file_version) {
 
   ar >> id;
   ar >> token;
-  ar >> points;
+  ar >> score;
   ar >> pos;
   ar >> width;
   ar >> bag_size;
@@ -45,7 +45,7 @@ void load_construct_data(Archive& ar, Dog* t, const unsigned int file_version) {
 
   ::new (t) Dog(Dog::Id(id));
   t->SetToken(Token(token));
-  t->AddPoints(points);
+  t->AddPoints(score);
   t->SetPosition(pos);
   t->SetWidth(width);
   t->SetBagSize(bag_size);

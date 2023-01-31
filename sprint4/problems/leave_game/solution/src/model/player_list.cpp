@@ -41,7 +41,8 @@ void model::PlayerList::Update(double delta_time) {
 
     if(dog->GetDownTime() >= sess->GetRetirementTime() && m_record) {
       // record
-      m_record(player.GetToken(), player.GetName(), dog->GetPoinst(), dog->GetPlayTime());
+      auto player_info = player.GetInfo();
+      m_record(player_info);
       // delete
       it = m_players.erase(it);
     } else {
@@ -50,7 +51,7 @@ void model::PlayerList::Update(double delta_time) {
   }
 }
 
-void model::PlayerList::SetRecorder(const model::PlayerList::Record &record) {
+void model::PlayerList::SetRecorder( model::PlayerList::Record record) {
   m_record = record;
 }
 

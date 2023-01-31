@@ -53,13 +53,12 @@ class Dog : public GameObject {
 
   bool IsFull() const;
 
-  [[nodiscard("Unload all resource from the Dog object")]]
-  std::list<Loot> UnloadLoots();
+  [[nodiscard("Unload all resource from the Dog object")]] std::list<Loot> UnloadLoots();
 
   const std::list<Loot>& GetLoots() const noexcept;
 
   void AddPoints(int points);
-  int GetPoinst() const noexcept;
+  int GetScore() const noexcept;
 
   void SetBagSize(size_t size);
   size_t GetBagSize() const noexcept;
@@ -82,7 +81,7 @@ class Dog : public GameObject {
   std::list<Loot> m_loots;
   size_t m_bag_size;
 
-  int m_points;
+  int m_score;
   double m_play_time;
   double m_downtime;
 };

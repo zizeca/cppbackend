@@ -63,6 +63,8 @@ class Application {
 
   void LoadState(const std::filesystem::path& path);
 
+  
+
   boost::asio::strand<boost::asio::io_context::executor_type> strand;
 
  private:

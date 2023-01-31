@@ -198,7 +198,7 @@ SCENARIO_METHOD(Fixture, "Dog serialization") {
         input_archive >> restored_dog;
         CHECK(dog->GetId() == restored_dog->GetId());
         CHECK(dog->GetToken() == restored_dog->GetToken());
-        CHECK(dog->GetPoinst() == restored_dog->GetPoinst());
+        CHECK(dog->GetScore() == restored_dog->GetScore());
         CHECK(dog->GetPosition() == restored_dog->GetPosition());
         CHECK(dog->GetWidth() == restored_dog->GetWidth());
         REQUIRE(dog->GetLoots().size() == restored_dog->GetLoots().size());
