@@ -134,24 +134,33 @@ void tag_invoke(value_from_tag, value& jv, LootType const& lootType) {
 
 void tag_invoke(value_from_tag, value& jv, Dog const& dog) {
   object obj{};
-  obj["pos"] = {dog.GetPosition().x, dog.GetPosition().y};
-  obj["speed"] = {dog.GetSpeed().x, dog.GetSpeed().y};
-  obj["dir"] = dog.GetDir();
+  obj[MapKey::pos] = {dog.GetPosition().x, dog.GetPosition().y};
+  obj[MapKey::speed] = {dog.GetSpeed().x, dog.GetSpeed().y};
+  obj[MapKey::dir] = dog.GetDir();
 
   array bag{};
   auto loots = dog.GetLoots();
   for (auto const& i : loots) {
     object loot;
-    loot["id"] = i.GetId();
-    loot["type"] = i.GetLootType().type_num;
+    loot[MapKey::id] = i.GetId();
+    loot[MapKey::type] = i.GetLootType().type_num;
     bag.push_back(loot);
   }
 
-  obj["bag"] = bag;
+  obj[MapKey::bag] = bag;
   
-  obj["score"] = dog.GetScore();
+  obj[MapKey::score] = dog.GetScore();
   jv = obj;
 }
+
+void tag_invoke(value_from_tag, value& jv, PlayerInfo const& player) {
+  jv = {
+    { MapKey::name ,player.name},
+    { MapKey::score, player.score},
+    { MapKey::play_time, player.play_time}
+  };
+}
+
 
 // ------------------------------------
 

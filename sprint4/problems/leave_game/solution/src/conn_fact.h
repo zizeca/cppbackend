@@ -11,11 +11,23 @@ namespace dbconn {
 using namespace std::literals;
 using pqxx::operator"" _zv;
 
+struct ColName
+{
+  static constexpr char token[] = "token";
+  static constexpr char name[] = "name";
+  static constexpr char score[] = "score";
+  static constexpr char play_time[] = "play_time";
+};
+
+
 class ConnectionFactory {
  public:
   static constexpr auto insert_data = "insert_data"_zv;
   static constexpr auto update_data = "update_data"_zv;
   static constexpr auto get_data = "get_data"_zv;
+  
+  // for read 
+  static constexpr size_t MaxItemReq = 100u; 
 
   explicit ConnectionFactory(const std::string& db_url) : m_url(db_url) {
     pqxx::connection conn(m_url);
@@ -37,7 +49,7 @@ CREATE TABLE IF NOT EXISTS hall_of_fame (
 
     ptr->prepare(insert_data, "INSERT INTO hall_of_fame (token, name, score, play_time) VALUES ($1, $2, $3, $4)"_zv);
     ptr->prepare(update_data, "UPDATE hall_of_fame SET name=$2, score=$3, play_time=$4 WHERE token=$1"_zv);
-    ptr->prepare(get_data, "SELECT * FROM hall_of_fame ORDER BY score DESC, play_time ASC LIMIT $1 OFFSET $2"_zv);
+    ptr->prepare(get_data, "SELECT * FROM hall_of_fame ORDER BY score DESC, play_time ASC OFFSET $1 LIMIT $2 "_zv);
 
     return ptr;
   }

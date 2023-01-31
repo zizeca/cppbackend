@@ -180,3 +180,27 @@ void Application::LoadState(const std::filesystem::path &path) {
 
   ser.UpdateGame(m_game, m_player_list);
 }
+
+std::vector<model::PlayerInfo> Application::GetPlayerInfoList(size_t start, size_t max_items) {
+  assert(max_items <= dbconn::ConnectionFactory::MaxItemReq);
+  std::vector<model::PlayerInfo> players;
+
+  auto conn = m_conn_pool->GetConnection();
+  pqxx::read_transaction r(*conn);
+  auto result = r.exec_prepared(dbconn::ConnectionFactory::get_data, start, max_items);
+
+  for(const auto& row : result) {
+    std::string tok_str;
+    std::string name;
+    int score;
+    double time;
+    row.at(std::string(dbconn::ColName::token)).to(tok_str);
+    row.at(std::string(dbconn::ColName::name)).to(name);
+    row.at(std::string(dbconn::ColName::score)).to(score);
+    row.at(std::string(dbconn::ColName::play_time)).to(time);
+
+    players.emplace_back(model::Token(tok_str), name, score, time);
+  }
+
+  return players;  // rvo
+}

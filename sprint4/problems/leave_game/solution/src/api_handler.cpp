@@ -233,6 +233,7 @@ StringResponse ApiHandler::PostTick() {
 }
 
 StringResponse ApiHandler::GetRecords() {
+  // check method
   if (!(m_req.method() == http::verb::get || m_req.method() == http::verb::head)) {
     return MakeJsonResponse(http::status::method_not_allowed,
                             JsAnswer("invalidMethod", "Invalid method"),
@@ -240,9 +241,35 @@ StringResponse ApiHandler::GetRecords() {
                             "GET, HEAD"sv);
   }
 
-  
+  // def
+  size_t start{0};
+  size_t max_items{dbconn::ConnectionFactory::MaxItemReq};
 
-  assert(!"no implementation");
+  // parse if body not empty
+  try {
+    boost::json::value jv = boost::json::parse(m_req.body());
+    start = jv.as_object().at("start").as_int64();
+    max_items = jv.as_object().at("maxItems").as_int64();
+  } catch (const std::exception &) {
+    // **empty**
+    // only for check body
+    // std::cout << "start=" << start << " max_items " << max_items << "\n";
+    //   //return MakeJsonResponse(http::status::bad_request, JsAnswer("invalidArgument", "record request parse error"), CacheControl::NO_CACHE);
+  }
+
+  // check max_items value
+  if (max_items > dbconn::ConnectionFactory::MaxItemReq) {
+    return MakeJsonResponse(http::status::bad_request,
+                            JsAnswer("invalidArgument",
+                                     "maxItem request more than"s + std::to_string(dbconn::ConnectionFactory::MaxItemReq)),
+                            CacheControl::NO_CACHE);
+  }
+
+  auto players = m_app.GetPlayerInfoList(start, max_items);
+
+  const boost::json::value jv_response = boost::json::value_from(std::move(players));
+
+  return MakeJsonResponse(http::status::ok, jv_response, CacheControl::NO_CACHE);
 }
 
 std::optional<model::Token> ApiHandler::TryExtractToken() {

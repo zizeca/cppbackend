@@ -63,7 +63,8 @@ class Application {
 
   void LoadState(const std::filesystem::path& path);
 
-  
+  // return player info from database
+  std::vector<model::PlayerInfo> GetPlayerInfoList(size_t start, size_t max_items);
 
   boost::asio::strand<boost::asio::io_context::executor_type> strand;
 
