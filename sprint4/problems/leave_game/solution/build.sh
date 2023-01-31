@@ -14,8 +14,8 @@ cd build
 
 if ! [ -f "conanbuildinfo.cmake" ]; then
   echo "conan install .."
-  conan install .. -s compiler.libcxx=libstdc++11 -s build_type=Debug --build=missing
+  conan install .. -s compiler.libcxx=libstdc++11 -s build_type=Release --build=missing
 fi
 
-cmake .. -DCMAKE_BUILD_TYPE=Debug
+cmake -DCMAKE_BUILD_TYPE=Release ..
 cmake --build .
