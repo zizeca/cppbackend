@@ -108,8 +108,7 @@ void GameSession::DogsUpdate(double delta_time) {
     }
     // assert(dog != nullptr);
 
-    // update dog state 
-    dog->Update(delta_time); 
+
 
     const Point2d& pos = dog->GetPosition();
     const Point2d& speed = dog->GetSpeed();

@@ -74,6 +74,11 @@ int Dog::GetScore() const noexcept {
 
 
 void Dog::SetDir(const std::string& dir) {
+  if (dir == "") {
+    Stop();
+    return;
+  }
+
   if (dir == "U") {
     m_speed = {0.0, -m_default_speed};
   } else if (dir == "R") {
@@ -82,12 +87,11 @@ void Dog::SetDir(const std::string& dir) {
     m_speed = {0.0, m_default_speed};
   } else if (dir == "L") {
     m_speed = {-m_default_speed, 0.0};
-  } else if (dir == "") {
-    m_speed = {0.0, 0.0};
-    return;
   } else {
     throw std::invalid_argument("Argumen\'"s + dir + "\' must be 'U', 'R', 'D', 'L' or \"\"."s);
   }
+  
+  m_downtime = 0.0;
   m_dir = dir;
 }
 
@@ -101,11 +105,7 @@ size_t Dog::GetBagSize() const noexcept{
 
 void Dog::Update(double delta_time) {
   m_play_time += delta_time;
-  if(m_speed.x == .0 && m_speed.y == .0) {
-    m_downtime += delta_time;
-  } else {
-    m_downtime = .0;
-  }
+  m_downtime += delta_time;
 }
 
 double Dog::GetDownTime() const {

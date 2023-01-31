@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS hall_of_fame (
 
     ptr->prepare(insert_data, "INSERT INTO hall_of_fame (token, name, score, play_time) VALUES ($1, $2, $3, $4)"_zv);
     ptr->prepare(update_data, "UPDATE hall_of_fame SET name=$2, score=$3, play_time=$4 WHERE token=$1"_zv);
-    ptr->prepare(get_data, "SELECT * FROM hall_of_fame ORDER BY score DESC, play_time ASC OFFSET $1 LIMIT $2 "_zv);
+    ptr->prepare(get_data, "SELECT * FROM hall_of_fame ORDER BY score DESC, play_time ASC, name ASC OFFSET $1 LIMIT $2 "_zv);
 
     return ptr;
   }
