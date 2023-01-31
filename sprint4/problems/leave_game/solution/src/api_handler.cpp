@@ -260,7 +260,7 @@ StringResponse ApiHandler::GetRecords() {
   // }
 
   boost::urls::url_view url = boost::urls::parse_relative_ref(m_target).value();
-  std::cout << " check url " << url << std::endl;
+  // std::cout << " check url " << url << std::endl;
 
   // url parse
   if (url.has_query()) {
