@@ -45,7 +45,8 @@ Application::Application(boost::asio::io_context &ioc, const c_parse::Args &args
 
   // DB
   dbconn::ConnectionFactory conn_fact(args.db_url);
-  m_conn_pool = std::make_shared<dbconn::ConnectionPool>(std::thread::hardware_concurrency(), conn_fact);
+  //  m_conn_pool = std::make_shared<dbconn::ConnectionPool>(std::thread::hardware_concurrency(), conn_fact);
+  m_conn_pool = std::make_shared<dbconn::ConnectionPool>(2, conn_fact);
 
   m_player_list.SetRecorder([this](model::PlayerInfo player_info) {
     // std::cout << *token << ", " << name << ", " << score << ", " << time << std::endl;
