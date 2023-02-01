@@ -1,7 +1,5 @@
 #include "api_handler.h"
 
-#include <boost/url.hpp>
-
 #include <cassert>
 
 #include "content_type.h"
@@ -36,7 +34,7 @@ StringResponse ApiHandler::Response() {
     return PostAction();
   } else if (m_target == ApiKey::Tick) {
     return PostTick();
-  } else if (m_target.starts_with(ApiKey::Records)) {
+  } else if (m_target == ApiKey::Records) {
     return GetRecords();
   } else {
     return MakeJsonResponse(http::status::bad_request, JsAnswer("badRequest", "Bad request"));
