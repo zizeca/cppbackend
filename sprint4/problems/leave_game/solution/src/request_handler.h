@@ -43,7 +43,7 @@ class RequestHandler : public std::enable_shared_from_this<RequestHandler> {
       });
     } else {
       if (req.method() == http::verb::get || req.method() == http::verb::head) {
-        FileRequest(req, send);
+        FileRequest(std::move(req), std::move(send));
         return;
       }
     }
@@ -52,7 +52,7 @@ class RequestHandler : public std::enable_shared_from_this<RequestHandler> {
   }
 
   template <typename Body, typename Allocator, typename Send>
-  void FileRequest(http::request<Body, http::basic_fields<Allocator>>& req, Send& send) {
+  void FileRequest(http::request<Body, http::basic_fields<Allocator>>&& req, Send&& send) {
     auto text_response = [&req, &send](http::status status, std::string_view text) {
       send(MakeResponse(status, text, req.version(), req.keep_alive()));
     };
