@@ -12,7 +12,7 @@
 #ifndef __SESSION_H__
 #define __SESSION_H__
 
-#define BOOST_BEAST_USE_STD_STRING_VIEW
+// #define BOOST_BEAST_USE_STD_STRING_VIEW
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/write.hpp>
 #include <boost/asio/dispatch.hpp>
