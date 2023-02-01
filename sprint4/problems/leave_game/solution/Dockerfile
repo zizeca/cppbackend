@@ -13,7 +13,7 @@ RUN apt update && \
 # копируем conanfile.txt в контейнер и запускаем conan install
 COPY conanfile.txt /app/
 RUN mkdir /app/build && cd /app/build && \
-    conan install .. --build=missing -s compiler.libcxx=libstdc++11 -s build_type=Debug
+    conan install .. --build=missing -s compiler.libcxx=libstdc++11 -s build_type=Release
 
 # только после этого копируем остальные иходники
 COPY ./src /app/src
@@ -23,7 +23,7 @@ COPY ./tests /app/tests
 COPY CMakeLists.txt /app/
 
 RUN cd /app/build && \
-    cmake -DCMAKE_BUILD_TYPE=Debug .. && \
+    cmake -DCMAKE_BUILD_TYPE=Release .. && \
     cmake --build .
     
     
@@ -42,4 +42,4 @@ COPY ./static /app/static
 
 # Запускаем игровой сервер
 #ENTRYPOINT ["/app/game_server", "--config-file", "/app/data/config.json", "--www-root", "/app/static", "--tick-period", "100"] 
-ENTRYPOINT ["/app/game_server", "--config-file", "/app/data/config.json", "--www-root", "/app/static", "--tick-period", "100"] 
+ENTRYPOINT ["/app/game_server", "--config-file", "/app/data/config.json", "--www-root", "/app/static"] 
