@@ -36,7 +36,7 @@ StringResponse ApiHandler::Response() {
     return PostAction();
   } else if (m_target == ApiKey::Tick) {
     return PostTick();
-  } else if (m_target == ApiKey::Records) {
+  } else if (m_target.starts_with(ApiKey::Records)) {
     return GetRecords();
   } else {
     return MakeJsonResponse(http::status::bad_request, JsAnswer("badRequest", "Bad request"));
