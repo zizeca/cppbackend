@@ -44,7 +44,7 @@ class ConnectionFactory {
 work.exec(R"(
 CREATE TABLE IF NOT EXISTS hall_of_fame (
     id SERIAL PRIMARY KEY,
-    name varchar(32) NOT NULL,
+    name varchar(40) NOT NULL,
     score integer NOT NULL,
     play_time float4 NOT NULL
 );
