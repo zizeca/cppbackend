@@ -105,7 +105,9 @@ size_t Dog::GetBagSize() const noexcept{
 
 void Dog::Update(double delta_time) {
   m_play_time += delta_time;
-  m_downtime += delta_time;
+  if(m_speed.x == 0 && m_speed.y==0) {
+    m_downtime += delta_time;
+  }
 }
 
 double Dog::GetDownTime() const {

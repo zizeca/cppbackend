@@ -10,7 +10,7 @@
 namespace model {
 
 struct PlayerInfo {
-  Token token;
+  //Token token;
   std::string name;
   int score;
   double play_time;

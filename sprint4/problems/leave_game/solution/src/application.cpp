@@ -52,18 +52,18 @@ Application::Application(boost::asio::io_context &ioc, const c_parse::Args &args
     auto conn = m_conn_pool->GetConnection();
     pqxx::work w(*conn);
     try {
-      auto r = w.exec_prepared(dbconn::ConnectionFactory::update_data,
-                               *player_info.token,
-                               player_info.name,
-                               player_info.score,
-                               player_info.play_time);
-      if (r.affected_rows() == 0) {
+      // auto r = w.exec_prepared(dbconn::ConnectionFactory::update_data,
+      //                          *player_info.token,
+      //                          player_info.name,
+      //                          player_info.score,
+      //                          player_info.play_time);
+      // if (r.affected_rows() == 0) {
         w.exec_prepared(dbconn::ConnectionFactory::insert_data,
-                        *player_info.token,
+                        /* *player_info.token, */
                         player_info.name,
                         player_info.score,
                         player_info.play_time);
-      }
+      //}
       w.commit();
     } catch (const std::exception &e) {
       w.abort();
@@ -194,12 +194,12 @@ std::vector<model::PlayerInfo> Application::GetPlayerInfoList(size_t start, size
     std::string name;
     int score;
     double time;
-    row.at(std::string(dbconn::ColName::token)).to(tok_str);
+    // row.at(std::string(dbconn::ColName::token)).to(tok_str);
     row.at(std::string(dbconn::ColName::name)).to(name);
     row.at(std::string(dbconn::ColName::score)).to(score);
     row.at(std::string(dbconn::ColName::play_time)).to(time);
 
-    players.emplace_back(model::Token(tok_str), name, score, time);
+    players.emplace_back(/* model::Token(tok_str), */ name, score, time);
   }
 
   return players;  // rvo

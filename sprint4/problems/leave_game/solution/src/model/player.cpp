@@ -46,7 +46,7 @@ void Player::SetSession(std::shared_ptr<GameSession> sess) {
 PlayerInfo Player::GetInfo() const {
   assert(m_dog != nullptr);
   PlayerInfo info{
-      .token = m_token,
+      /*.token = m_token,*/
       .name = m_name,
       .score = m_dog->GetScore(),
       .play_time = m_dog->GetPlayTime()};

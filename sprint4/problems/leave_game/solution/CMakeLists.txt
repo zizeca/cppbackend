@@ -27,6 +27,7 @@ set(SRC
   ${SRCDIR}/api_handler.cpp
   ${SRCDIR}/content_type.cpp
 	#${SRCDIR}/request_handler.cpp
+  ${SRCDIR}/tagged_uuid.cpp
 )
 
 set(HEADER 
@@ -43,6 +44,7 @@ set(HEADER
   ${SRCDIR}/util.h
   ${SRCDIR}/response_maker.h
   ${SRCDIR}/conn_pool.h
+  ${SRCDIR}/tagged_uuid.cpp
 )
 
 
