@@ -50,7 +50,7 @@ set(HEADER
 
 
 
-find_package(Boost 1.78.0 REQUIRED)
+find_package(Boost 1.81.0 REQUIRED)
 if(Boost_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})
 endif()

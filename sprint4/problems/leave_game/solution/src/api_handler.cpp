@@ -1,5 +1,7 @@
 #include "api_handler.h"
 
+#include <boost/url.hpp>
+
 #include <cassert>
 
 #include "content_type.h"
@@ -257,24 +259,24 @@ StringResponse ApiHandler::GetRecords() {
   //   //   //return MakeJsonResponse(http::status::bad_request, JsAnswer("invalidArgument", "record request parse error"), CacheControl::NO_CACHE);
   // }
 
-  // boost::urls::url_view url = boost::urls::parse_relative_ref(m_target).value();
-  // // std::cout << " check url " << url << std::endl;
+  boost::urls::url_view url = boost::urls::parse_relative_ref(m_target).value();
+  // std::cout << " check url " << url << std::endl;
 
-  // // url parse
-  // if (url.has_query()) {
-  //   boost::urls::params_view params_ref = url.params();
-  //   for (auto v : params_ref) {
-  //     try {
-  //       if (v.key == "start") {
-  //         start = std::stoul(v.value);
-  //       } else if (v.key == "maxItems") {
-  //         max_items = std::stoul(v.value);
-  //       }
-  //     } catch (const std::exception &e) {
-  //       std::cerr << e.what() << '\n';
-  //     }
-  //   }
-  // }
+  // url parse
+  if (url.has_query()) {
+    boost::urls::params_view params_ref = url.params();
+    for (auto v : params_ref) {
+      try {
+        if (v.key == "start") {
+          start = std::stoul(v.value);
+        } else if (v.key == "maxItems") {
+          max_items = std::stoul(v.value);
+        }
+      } catch (const std::exception &e) {
+        std::cerr << e.what() << '\n';
+      }
+    }
+  }
 
   // check max_items value
   if (max_items > dbconn::ConnectionFactory::MaxItemReq) {
