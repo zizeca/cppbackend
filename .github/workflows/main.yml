@@ -564,7 +564,7 @@ jobs:
           cd sprint4/problems/leave_game/solution
           docker build -t leave_game .
       - name: run tests sprint4 leave_game
-        run: pytest -v --workers 1 --junitxml=${GITHUB_WORKSPACE}/leave_game.xml ${GITHUB_WORKSPACE}/cpp-backend-tests-practicum/tests/test_s04_leave_game.py
+        run: pytest -v --workers 4 --junitxml=${GITHUB_WORKSPACE}/leave_game.xml ${GITHUB_WORKSPACE}/cpp-backend-tests-practicum/tests/test_s04_leave_game.py
         env:
           CONFIG_PATH: ${{ github.workspace }}/sprint4/problems/leave_game/solution/data/config.json
           IMAGE_NAME: leave_game
