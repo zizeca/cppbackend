@@ -47,16 +47,17 @@ Application::Application(boost::asio::io_context &ioc, const c_parse::Args &args
   // DB
   dbconn::ConnectionFactory conn_fact(args.db_url);
   //  m_conn_pool = std::make_shared<dbconn::ConnectionPool>(std::thread::hardware_concurrency(), conn_fact);
-  m_conn_pool = std::make_shared<dbconn::ConnectionPool>(20, std::move(conn_fact));
+  m_conn_pool = std::make_shared<dbconn::ConnectionPool>(10, std::move(conn_fact));
 
   m_player_list.SetRecorder([this](model::PlayerInfo player_info) {
     auto conn = m_conn_pool->GetConnection();
     pqxx::work w(*conn);
     try {
-      w.exec_prepared(dbconn::ConnectionFactory::insert_data,
-                        player_info.name,
-                        player_info.score,
-                        player_info.play_time);
+      auto res = w.exec_prepared(dbconn::ConnectionFactory::insert_data,
+                                 player_info.name,
+                                 player_info.score,
+                                 player_info.play_time);
+      assert(res.affected_rows() != 0);
       w.commit();
     } catch (const std::exception &e) {
       w.abort();
@@ -121,13 +122,13 @@ const model::PlayerList::Container &Application::GetPlayers() const noexcept {
 }
 
 void Application::Update(std::chrono::milliseconds ms) {
-  if (!m_manual_ticker && (ms.count() > timeout)) {  // fail if timeout
-    throw std::runtime_error("Time for aplication update state is very long");
-  }
+  // if (!m_manual_ticker && (ms.count() > timeout)) {  // fail if timeout
+  //   throw std::runtime_error("Time for aplication update state is very long");
+  // }
 
   const double delta_time = std::chrono::duration<double>(ms).count();
-  m_player_list.Update(delta_time);
   m_game.Update(delta_time);
+  m_player_list.Update();
 }
 
 void Application::SaveState() {
@@ -178,13 +179,13 @@ void Application::LoadState(const std::filesystem::path &path) {
 std::vector<model::PlayerInfo> Application::GetPlayerInfoList(size_t start, size_t max_items) {
   assert(max_items <= dbconn::ConnectionFactory::MaxItemReq);
   std::vector<model::PlayerInfo> players;
+  players.reserve(dbconn::ConnectionFactory::MaxItemReq);
 
   auto conn = m_conn_pool->GetConnection();
   pqxx::read_transaction r(*conn);
   auto result = r.exec_prepared(dbconn::ConnectionFactory::get_data, start, max_items);
 
-  for(const auto& row : result) {
-    std::string tok_str;
+  for (const auto &row : result) {
     std::string name;
     int score;
     double time;

@@ -53,4 +53,8 @@ PlayerInfo Player::GetInfo() const {
   return info;  // RVO
 }
 
+bool Player::IsRetired() const {
+  return m_dog->GetDownTime() >= m_gsess->GetRetirementTime();
+}
+
 }  // namespace model

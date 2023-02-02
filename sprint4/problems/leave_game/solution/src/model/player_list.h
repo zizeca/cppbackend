@@ -29,7 +29,7 @@ class PlayerList {
 
   const Container& GetContainer() const;
 
-  void Update(double delta_time);
+  void Update();
 
   void SetRecorder(Record record);
   

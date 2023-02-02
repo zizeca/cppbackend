@@ -63,7 +63,7 @@ class Dog : public GameObject {
   void SetBagSize(size_t size);
   size_t GetBagSize() const noexcept;
 
-  void Update(double delta_time);
+  void UpdateTimer(double delta_time);
 
   double GetDownTime() const;
 

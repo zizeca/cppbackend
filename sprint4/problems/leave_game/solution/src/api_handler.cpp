@@ -148,7 +148,7 @@ StringResponse ApiHandler::GetGameState() {
     boost::json::object js_players{};  // part of response
     boost::json::object js_lost_loots{};  // part of response
 
-    // get list of players
+    // get list of players  //! mayby concurency
     for (auto it = m_app.GetPlayers().cbegin(); it != m_app.GetPlayers().cend(); ++it) {
       if (it->second.GetSession() == player.GetSession()) {
         assert(it->second.GetDog() != nullptr);
@@ -247,25 +247,11 @@ StringResponse ApiHandler::GetRecords() {
   size_t start{0};
   size_t max_items{dbconn::ConnectionFactory::MaxItemReq};
 
-  // parse if body not empty
-  // try {
-  //   boost::json::value jv = boost::json::parse(m_req.body());
-  //   start = jv.as_object().at("start").as_int64();
-  //   max_items = jv.as_object().at("maxItems").as_int64();
-  // } catch (const std::exception &) {
-  //   // **empty**
-  //   // only for check body
-  //   // std::cout << "start=" << start << " max_items " << max_items << "\n";
-  //   //   //return MakeJsonResponse(http::status::bad_request, JsAnswer("invalidArgument", "record request parse error"), CacheControl::NO_CACHE);
-  // }
-
-  boost::urls::url_view url = boost::urls::parse_relative_ref(m_target).value();
-  // std::cout << " check url " << url << std::endl;
-
   // url parse
+  boost::urls::url_view url = boost::urls::parse_relative_ref(m_target).value();
   if (url.has_query()) {
     boost::urls::params_view params_ref = url.params();
-    for (auto v : params_ref) {
+    for (const auto &v : params_ref) {
       try {
         if (v.key == "start") {
           start = std::stoul(v.value);
@@ -274,6 +260,7 @@ StringResponse ApiHandler::GetRecords() {
         }
       } catch (const std::exception &e) {
         std::cerr << e.what() << '\n';
+        throw;
       }
     }
   }

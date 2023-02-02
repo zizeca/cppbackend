@@ -108,7 +108,7 @@ void GameSession::DogsUpdate(double delta_time) {
     }
     // assert(dog != nullptr);
 
-
+    dog->UpdateTimer(delta_time);
 
     const Point2d& pos = dog->GetPosition();
     const Point2d& speed = dog->GetSpeed();
@@ -145,8 +145,6 @@ void GameSession::DogsUpdate(double delta_time) {
       nextPos.x = max_pos.x;
       dog->Stop();
     }
-
-
 
     // if dog not move (check again because road collision detect)
     if (pos == nextPos) {

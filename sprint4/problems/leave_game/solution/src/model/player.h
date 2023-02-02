@@ -10,7 +10,7 @@
 namespace model {
 
 struct PlayerInfo {
-  //Token token;
+  // Token token;
   std::string name;
   int score;
   double play_time;
@@ -38,6 +38,8 @@ class Player {
   void SetSession(std::shared_ptr<GameSession> sess);
 
   PlayerInfo GetInfo() const;
+
+  bool IsRetired() const;
 
  private:
   Id m_id;
