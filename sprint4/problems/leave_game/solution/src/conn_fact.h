@@ -41,16 +41,26 @@ class ConnectionFactory {
 // );
 // )"_zv);
 
-work.exec(R"(
+/* work.exec(R"(
 CREATE TABLE IF NOT EXISTS hall_of_fame (
     id SERIAL PRIMARY KEY,
     name varchar(40) NOT NULL,
     score integer NOT NULL,
     play_time float4 NOT NULL
 );
-)"_zv);
+)"_zv); */
 
-    work.exec("DELETE FROM hall_of_fame;"_zv);
+  
+work.exec(R"(
+CREATE TABLE IF NOT EXISTS hall_of_fame ( 
+    id SERIAL PRIMARY KEY,
+    name varchar(40) NOT NULL,
+    score integer CONSTRAINT score_positive CHECK (score >= 0),
+    play_time integer NOT NULL CONSTRAINT play_time_positive CHECK (play_time >= 0));
+CREATE INDEX IF NOT EXISTS hall_of_fame_score ON hall_of_fame (score); )"_zv);
+
+
+    // work.exec("DELETE FROM hall_of_fame;"_zv);
     work.commit();
   }
   ~ConnectionFactory() = default;

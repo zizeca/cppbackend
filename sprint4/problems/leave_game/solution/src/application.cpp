@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <chrono>
+#include <iostream>
 
 #include "logger.h"
 #include "ticker.h"
@@ -46,28 +47,20 @@ Application::Application(boost::asio::io_context &ioc, const c_parse::Args &args
   // DB
   dbconn::ConnectionFactory conn_fact(args.db_url);
   //  m_conn_pool = std::make_shared<dbconn::ConnectionPool>(std::thread::hardware_concurrency(), conn_fact);
-  m_conn_pool = std::make_shared<dbconn::ConnectionPool>(2, conn_fact);
+  m_conn_pool = std::make_shared<dbconn::ConnectionPool>(20, std::move(conn_fact));
 
   m_player_list.SetRecorder([this](model::PlayerInfo player_info) {
-    // std::cout << *token << ", " << name << ", " << score << ", " << time << std::endl;
     auto conn = m_conn_pool->GetConnection();
     pqxx::work w(*conn);
     try {
-      // auto r = w.exec_prepared(dbconn::ConnectionFactory::update_data,
-      //                          *player_info.token,
-      //                          player_info.name,
-      //                          player_info.score,
-      //                          player_info.play_time);
-      // if (r.affected_rows() == 0) {
-        w.exec_prepared(dbconn::ConnectionFactory::insert_data,
-                        /* *player_info.token, */
+      w.exec_prepared(dbconn::ConnectionFactory::insert_data,
                         player_info.name,
                         player_info.score,
                         player_info.play_time);
-      //}
       w.commit();
     } catch (const std::exception &e) {
       w.abort();
+      std::cerr << e.what() << std::endl;
       throw;
     }
   });
@@ -195,12 +188,11 @@ std::vector<model::PlayerInfo> Application::GetPlayerInfoList(size_t start, size
     std::string name;
     int score;
     double time;
-    // row.at(std::string(dbconn::ColName::token)).to(tok_str);
     row.at(std::string(dbconn::ColName::name)).to(name);
     row.at(std::string(dbconn::ColName::score)).to(score);
     row.at(std::string(dbconn::ColName::play_time)).to(time);
 
-    players.emplace_back(/* model::Token(tok_str), */ name, score, time);
+    players.emplace_back(name, score, time);
   }
 
   return players;  // rvo
