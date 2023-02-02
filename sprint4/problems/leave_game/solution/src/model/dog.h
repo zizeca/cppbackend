@@ -84,11 +84,13 @@ class Dog : public GameObject {
   int m_score;
   double m_play_time;
   double m_downtime;
+  bool m_moving;
 };
 
 using DogPtr = std::shared_ptr<Dog>;
 using DogWeakPtr = std::weak_ptr<Dog>;
 using DogConstPtr = std::shared_ptr<const Dog>;
+
 
 }  // namespace model
 
