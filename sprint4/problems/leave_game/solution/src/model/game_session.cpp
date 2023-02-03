@@ -61,7 +61,7 @@ void GameSession::AddDog(DogPtr dog) {
 }
 
 void GameSession::Update(std::chrono::milliseconds delta_time) {
-  // GenerateLoot(delta_time);
+  GenerateLoot(delta_time);
 
   DogsUpdate(delta_time);
 }
