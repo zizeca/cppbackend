@@ -3,6 +3,7 @@
 
 #include <list>
 #include <memory>
+#include <chrono>
 
 #include "geometry.h"
 #include "token_generator.h"
@@ -63,11 +64,11 @@ class Dog : public GameObject {
   void SetBagSize(size_t size);
   size_t GetBagSize() const noexcept;
 
-  void UpdateTimer(double delta_time);
+  void UpdateTimer(std::chrono::milliseconds delta_time);
 
-  double GetDownTime() const;
+  std::chrono::milliseconds GetDownTime() const;
 
-  double GetPlayTime() const;
+  std::chrono::milliseconds GetPlayTime() const;
 
  private:
   Token m_token;
@@ -82,8 +83,8 @@ class Dog : public GameObject {
   size_t m_bag_size;
 
   int m_score;
-  double m_play_time;
-  double m_downtime;
+  std::chrono::milliseconds  m_play_time;
+  std::chrono::milliseconds  m_downtime;
   bool m_moving;
 };
 

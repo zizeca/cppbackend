@@ -126,8 +126,7 @@ void Application::Update(std::chrono::milliseconds ms) {
   //   throw std::runtime_error("Time for aplication update state is very long");
   // }
 
-  const double delta_time = std::chrono::duration<double>(ms).count();
-  m_game.Update(delta_time);
+  m_game.Update(ms);
   m_player_list.Update();
 }
 

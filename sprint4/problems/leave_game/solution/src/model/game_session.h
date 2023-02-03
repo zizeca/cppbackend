@@ -2,6 +2,7 @@
 #define __MODEL_GSES_H__
 
 #include <cassert>
+#include <chrono>
 #include <iostream>
 #include <memory>
 #include <string>
@@ -30,7 +31,7 @@ class GameSession {
 
   void AddDog(DogPtr dog);
 
-  void Update(double delta_time);
+  void Update(std::chrono::milliseconds delta_time);
 
   void SetDogRandomSpawn(bool enable = true);
 
@@ -41,14 +42,14 @@ class GameSession {
 
   // const DogPtrList& GetDogs() const noexcept { return m_dogs; }
 
-  void SetRetirementTime(double downtime);
-  double GetRetirementTime() const noexcept;
+  void SetRetirementTime(std::chrono::milliseconds downtime);
+  std::chrono::milliseconds GetRetirementTime() const noexcept;
 
  private:
 
-  void GenerateLoot(double delta_time);
+  void GenerateLoot(std::chrono::milliseconds delta_time);
 
-  void DogsUpdate(double delta_time);
+  void DogsUpdate(std::chrono::milliseconds delta_time);
 
   Id m_id;
   const Map& m_map;
@@ -61,7 +62,7 @@ class GameSession {
 
   int m_loot_id = 0;
 
-  double m_retirement_time;
+  std::chrono::milliseconds m_retirement_time;
 };
 
 }  // namespace model

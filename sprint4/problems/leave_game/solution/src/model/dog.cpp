@@ -11,8 +11,8 @@ Dog::Dog(const Dog::Id& id)
       m_default_speed(0.0),
       m_bag_size(0),
       m_score(0),
-      m_downtime(.0),
-      m_play_time(.0),
+      m_downtime(0ms),
+      m_play_time(0ms),
       m_moving(false) {
 }
 
@@ -76,7 +76,7 @@ int Dog::GetScore() const noexcept {
 
 void Dog::SetDir(const std::string& dir) {
   // any change dir not mean idle 
-  m_downtime = 0.0;
+  m_downtime = 0ms;
   m_moving = true;
   
   if (dir == "") {
@@ -108,20 +108,20 @@ size_t Dog::GetBagSize() const noexcept{
   return m_bag_size;
 }
 
-void Dog::UpdateTimer(double delta_time) {
+void Dog::UpdateTimer(std::chrono::milliseconds delta_time) {
   m_play_time += delta_time;
   if(!m_moving) {
     m_downtime += delta_time;
   } else {
-    m_downtime = 0.0;
+    m_downtime = 0ms;
   }
 }
 
-double Dog::GetDownTime() const {
+std::chrono::milliseconds Dog::GetDownTime() const {
   return m_downtime;
 }
 
-double Dog::GetPlayTime() const {
+std::chrono::milliseconds Dog::GetPlayTime() const {
   return m_play_time;
 }
 

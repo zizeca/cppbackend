@@ -36,7 +36,7 @@ class Game {
   // get exist or create new & return pointer
   SessPtr GetSession(const model::Map::Id& id);
 
-  void Update(double delta_time);
+  void Update(std::chrono::milliseconds delta_time);
 
   void SetRandomSpawn(bool enable = true);
   bool IsRandomSpawn() const;
@@ -46,7 +46,9 @@ class Game {
   void SetDefaultBagCapacity(size_t size);
   size_t GetDefaultBagCapacity() const noexcept;
 
-  void SetDogRetirementTime(double time_in_seconds);
+
+  void SetDogRetirementTime(double seconds);
+  void SetDogRetirementTime(std::chrono::milliseconds ret_time);
 
   const SessPtrList& GetSessionList() const;
 
@@ -67,7 +69,7 @@ class Game {
   double m_probability_loot_gen = 0.0;
   size_t m_default_bag_capacity = 3;
 
-  double m_dog_retirement_time = 60.0;
+  std::chrono::milliseconds m_dog_retirement_time = 60000ms;
 };
 
 }  // namespace model
