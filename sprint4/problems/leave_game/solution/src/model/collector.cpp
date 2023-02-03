@@ -50,7 +50,7 @@ std::list<CollisionEvent> Collector::FindEvent() const {
 void Collector::CollisionEventHandler() {
   std::list<CollisionEvent> event = FindEvent();
 
-  for (auto it = event.begin(); it != event.end(); it = event.erase(it)) {
+  for (auto it = event.begin(); it != event.end(); ++it) {
     // if Office need unload and calculte points
     if (std::holds_alternative<Office>(it->game_object)) {
       // get loots

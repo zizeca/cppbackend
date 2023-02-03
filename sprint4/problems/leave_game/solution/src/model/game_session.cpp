@@ -94,7 +94,7 @@ void GameSession::GenerateLoot(std::chrono::milliseconds delta_time) {
 
 void GameSession::DogsUpdate(std::chrono::milliseconds delta_time) {
   // create collector for delegate collect loot
-  // Collector collector(m_loots, m_map.GetOffices());
+  Collector collector(m_loots, m_map.GetOffices());
 
   std::erase_if(m_dogs, [](DogWeakPtr& w) {
     return w.expired();
@@ -151,14 +151,14 @@ void GameSession::DogsUpdate(std::chrono::milliseconds delta_time) {
     }
 
     // delegate move update and collect loot
-    // collector.AddDogToMoveUpdate(dog, nextPos);
+    collector.AddDogToMoveUpdate(dog, nextPos);
 
     // eraly code, obsolete
-    dog->SetPosition(nextPos);
+    // dog->SetPosition(nextPos);
   }
 
   // update state of the collector
-  // collector.Update();
+  collector.Update();
 }
 
 }  // namespace model
