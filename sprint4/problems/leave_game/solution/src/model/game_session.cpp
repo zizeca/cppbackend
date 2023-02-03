@@ -98,17 +98,32 @@ void GameSession::DogsUpdate(double delta_time) {
   // create collector for delegate collect loot
   Collector collector(m_loots, m_map.GetOffices());
 
-  // dog udate (calculate next position, and detect road bound)
-  for (auto it = m_dogs.begin(); it != m_dogs.end(); ++it) {
-    auto dog = it->lock();
-    if (!dog) {
-      it = m_dogs.erase(it);
-      --it;  // for loop ++it
-      continue;
+  /**/
+  std::erase_if(m_dogs, [delta_time, rt = m_retirement_time](DogWeakPtr& w) {
+    if (w.expired()) {
+      return true;
     }
-    // assert(dog != nullptr);
+
+    auto dog = w.lock();
+
+    if (dog == nullptr) {
+      return true;
+    }
 
     dog->UpdateTimer(delta_time);
+
+    if (dog->GetDownTime() >= rt) {
+      return true;
+    }
+    return false;
+  });
+  /**/
+
+  // dog udate (calculate next position, and detect road bound)
+  for (auto it = m_dogs.begin(); it != m_dogs.end();++it) {
+    assert(!it->expired());
+    auto dog = it->lock();
+    assert(dog != nullptr);
 
     const Point2d& pos = dog->GetPosition();
     const Point2d& speed = dog->GetSpeed();
