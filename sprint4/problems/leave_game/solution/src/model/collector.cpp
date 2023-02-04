@@ -52,7 +52,7 @@ void Collector::CollisionEventHandler() {
 
   for (auto it = event.begin(); it != event.end(); ++it) {
     // if Office need unload and calculte points
-/*     if (std::holds_alternative<Office>(it->game_object)) {
+    if (std::holds_alternative<Office>(it->game_object)) {
       // get loots
       auto loots = it->dog->UnloadLoots();
 
@@ -61,7 +61,7 @@ void Collector::CollisionEventHandler() {
         it->dog->AddPoints(loot.GetLootType().value);
       }
 
-    } else */ if (std::holds_alternative<Loot>(it->game_object) && !it->dog->IsFull()) {
+    } /* else if (std::holds_alternative<Loot>(it->game_object) && !it->dog->IsFull()) {
       Loot loot = std::get<Loot>(it->game_object);
       it->dog->AddLoot(loot);
 
@@ -79,7 +79,7 @@ void Collector::CollisionEventHandler() {
 
       // remove collected loots from list 
       m_loots.remove(loot);
-    }
+    } */
   }
 }
 
