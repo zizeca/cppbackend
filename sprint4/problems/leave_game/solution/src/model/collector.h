@@ -35,10 +35,10 @@ struct CollisionResult {
 };
 
 struct CollisionEvent {
-  DogPtr dog;
+  DogPtr dog{nullptr};
   std::variant<Loot, Office> game_object;  // maybe need replace to std::shared_ptr<GameObject>
-  double sq_distance;
-  double time;
+  double sq_distance{.0};
+  double time{.0};
 };
 
 CollisionResult TryCollectPoint(Point2d a, Point2d b, Point2d c);

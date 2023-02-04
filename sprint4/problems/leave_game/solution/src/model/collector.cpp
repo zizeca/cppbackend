@@ -53,32 +53,33 @@ void Collector::CollisionEventHandler() {
   for (auto it = event.begin(); it != event.end(); ++it) {
     // if Office need unload and calculte points
     if (std::holds_alternative<Office>(it->game_object)) {
-      // get loots
+      // get loots (extruct loot from bag)
       auto loots = it->dog->UnloadLoots();
 
-      // add poit
-      for(const auto& loot : loots) {
+      // add poits when unload loot 
+      for (const auto& loot : loots) {
         it->dog->AddPoints(loot.GetLootType().value);
       }
+    } // if loot -  collect loot and erase samevent
+    else if (std::holds_alternative<Loot>(it->game_object) && !it->dog->IsFull()) {
+      const auto& loot = std::get<Loot>(it->game_object);
 
-    } else if (std::holds_alternative<Loot>(it->game_object) && !it->dog->IsFull()) {
-      Loot loot = std::get<Loot>(it->game_object);
+      // collect loot
       it->dog->AddLoot(loot);
 
-
-      // // remove event with collected loot
-      // for (auto j = std::next(it); j != event.end();) {
-      //   if (std::holds_alternative<Loot>(j->game_object)) {
-      //     if (std::get<Loot>(j->game_object) == loot) {
-      //       j = event.erase(j);
-      //     } else {
-      //       ++j;
-      //     }
-      //   }
-      // }
-
-      // remove collected loots from list 
+      // remove collected loots from game session list
       m_loots.remove(loot);
+
+      // remove if next event has same loot
+      auto next = std::next(it);
+      while (next != event.end()) {
+        if (std::holds_alternative<Loot>(it->game_object) && std::get<Loot>(it->game_object) == loot) {
+          next = event.erase(next);
+        }
+        else {
+          ++next;
+        }
+      }
     }
   }
 }
