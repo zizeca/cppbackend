@@ -61,25 +61,25 @@ void Collector::CollisionEventHandler() {
         it->dog->AddPoints(loot.GetLootType().value);
       }
 
-    } /* else if (std::holds_alternative<Loot>(it->game_object) && !it->dog->IsFull()) {
+    } else if (std::holds_alternative<Loot>(it->game_object) && !it->dog->IsFull()) {
       Loot loot = std::get<Loot>(it->game_object);
       it->dog->AddLoot(loot);
 
 
-      // remove event with collected loot
-      for (auto j = std::next(it); j != event.end();) {
-        if (std::holds_alternative<Loot>(j->game_object)) {
-          if (std::get<Loot>(j->game_object) == loot) {
-            j = event.erase(j);
-          } else {
-            ++j;
-          }
-        }
-      }
+      // // remove event with collected loot
+      // for (auto j = std::next(it); j != event.end();) {
+      //   if (std::holds_alternative<Loot>(j->game_object)) {
+      //     if (std::get<Loot>(j->game_object) == loot) {
+      //       j = event.erase(j);
+      //     } else {
+      //       ++j;
+      //     }
+      //   }
+      // }
 
       // remove collected loots from list 
       m_loots.remove(loot);
-    } */
+    }
   }
 }
 
