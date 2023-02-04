@@ -117,11 +117,6 @@ void Dog::UpdateTimer(std::chrono::milliseconds delta_time) {
   }
 }
 
-void Dog::ResetIdleTimer() {
-  m_start_idle = m_clock.now();
-}
-
-
 std::chrono::milliseconds Dog::GetDownTime() const {
   return m_downtime;
 }
