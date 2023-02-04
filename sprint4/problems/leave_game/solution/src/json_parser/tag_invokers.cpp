@@ -139,7 +139,7 @@ void tag_invoke(value_from_tag, value& jv, Dog const& dog) {
   obj[MapKey::dir] = dog.GetDir();
 
   array bag{};
-  auto loots = dog.GetLoots();
+  const auto& loots = dog.GetLoots();
   for (auto const& i : loots) {
     object loot;
     loot[MapKey::id] = i.GetId();
