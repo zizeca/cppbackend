@@ -1,7 +1,7 @@
 #ifndef __REPORTERROR_H__
 #define __REPORTERROR_H__
 
-#define BOOST_BEAST_USE_STD_STRING_VIEW
+// #define BOOST_BEAST_USE_STD_STRING_VIEW
 #include <boost/beast/core.hpp>
 #include "../logger.h"
 

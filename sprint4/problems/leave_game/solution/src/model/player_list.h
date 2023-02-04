@@ -29,7 +29,7 @@ class PlayerList {
 
   const Container& GetContainer() const;
 
-  void UpdateState(); //! perhaps not necessary see FindPlayer(...)
+  void Update();
 
   void SetRecorder(Record record);
   

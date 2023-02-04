@@ -35,17 +35,18 @@ struct CollisionResult {
 };
 
 struct CollisionEvent {
-  DogPtr dog;
+  DogPtr dog{nullptr};
   std::variant<Loot, Office> game_object;  // maybe need replace to std::shared_ptr<GameObject>
-  double sq_distance;
-  double time;
+  double sq_distance{.0};
+  double time{.0};
 };
 
 CollisionResult TryCollectPoint(Point2d a, Point2d b, Point2d c);
 
 class Collector {
  public:
-  Collector(std::list<Loot>& loots, const std::vector<Office>& offices) : m_loots(loots), m_offices(offices) {}
+  Collector(std::list<Loot>& loots, const std::vector<Office>& offices)
+      : m_loots(loots), m_offices(offices) {}
 
   void AddDogToMoveUpdate(DogPtr dog, const Point2d& nextPos) {
     m_dogs.emplace_back(dog, nextPos);

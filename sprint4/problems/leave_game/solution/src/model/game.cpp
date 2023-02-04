@@ -53,7 +53,7 @@ Game::SessPtr Game::GetSession(const model::Map::Id& id) {
   return sess;
 }
 
-void Game::Update(double delta_time) {
+void Game::Update(std::chrono::milliseconds delta_time) {
   for (const auto& sess : m_sess) {
     sess->Update(delta_time);
   }
@@ -84,8 +84,13 @@ size_t Game::GetDefaultBagCapacity() const noexcept {
 //   m_sess.emplace_back(sess);
 // }
 
-void Game::SetDogRetirementTime(double time_in_seconds) {
-  m_dog_retirement_time = time_in_seconds;
+void Game::SetDogRetirementTime(double seconds) {
+  const auto ms = std::chrono::milliseconds(static_cast<int64_t>(seconds * 1000.0));
+  SetDogRetirementTime(ms);
+}
+
+void Game::SetDogRetirementTime(std::chrono::milliseconds ret_time) {
+  m_dog_retirement_time = ret_time;
 }
 
 const Game::SessPtrList& Game::GetSessionList() const {

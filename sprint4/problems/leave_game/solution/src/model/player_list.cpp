@@ -10,8 +10,9 @@ PlayerList::~PlayerList() {
 
 std::optional<std::reference_wrapper<Player>> PlayerList::FindPlayer(const Token& token) {
   if (m_players.contains(token)) {
+    // check again
     const auto& player = m_players.at(token);
-    if(player.GetDog()->GetDownTime() >= player.GetSession()->GetRetirementTime()) {
+    if (player.IsRetired()) {
       m_record(player.GetInfo());
       m_players.erase(token);
       return std::nullopt;
@@ -39,16 +40,14 @@ const PlayerList::Container& PlayerList::GetContainer() const {
   return m_players;
 }
 
-void model::PlayerList::UpdateState() {
-  for(auto it = m_players.begin(); it != m_players.end();) {
-    auto dog = it->second.GetDog();
-    auto sess = it->second.GetSession();
+void model::PlayerList::Update() {
+  auto it = m_players.begin(); 
+  while (it != m_players.end()) {
     const auto& player = it->second;
-
-    if(dog->GetDownTime() >= sess->GetRetirementTime() && m_record) {
+    if (player.IsRetired()) {
       // record
       auto player_info = player.GetInfo();
-      m_record(player_info);
+      m_record(player_info); // call recorder
       // delete
       it = m_players.erase(it);
     } else {
@@ -57,7 +56,7 @@ void model::PlayerList::UpdateState() {
   }
 }
 
-void model::PlayerList::SetRecorder( model::PlayerList::Record record) {
+void model::PlayerList::SetRecorder(model::PlayerList::Record record) {
   m_record = record;
 }
 

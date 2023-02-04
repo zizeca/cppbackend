@@ -68,7 +68,8 @@ int main(int argc, const char* argv[]) {
   
   try {
     // 2. Инициализируем io_context
-    const unsigned num_threads = std::thread::hardware_concurrency();
+    // const unsigned num_threads = std::thread::hardware_concurrency();
+    const unsigned num_threads = std::thread::hardware_concurrency() > 4u ? std::thread::hardware_concurrency() : 4u;
     net::io_context ioc(num_threads);
 
     // Application app(ioc, argv[1], argv[2]);

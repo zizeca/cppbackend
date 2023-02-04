@@ -45,17 +45,16 @@ void Player::SetSession(std::shared_ptr<GameSession> sess) {
 
 PlayerInfo Player::GetInfo() const {
   assert(m_dog != nullptr);
+  const auto& play_time = std::chrono::duration<double>(m_dog->GetPlayTime()).count();
   PlayerInfo info{
-      .token = m_token,
       .name = m_name,
       .score = m_dog->GetScore(),
-      .play_time = m_dog->GetPlayTime()};
+      .play_time = play_time};
   return info;  // RVO
 }
 
-void Player::Update() {
-  
+bool Player::IsRetired() const {
+  return m_dog->GetDownTime() >= m_gsess->GetRetirementTime();
 }
-
 
 }  // namespace model

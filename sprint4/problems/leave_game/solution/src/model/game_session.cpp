@@ -12,7 +12,7 @@ namespace {
 // get random number between [0, max]
 size_t Rand(size_t max) {
   if (max == 0) return max;
-  std::default_random_engine generator;
+  static std::default_random_engine generator;
   std::uniform_int_distribution<> distribution(0, max);
   return distribution(generator);
 }
@@ -35,7 +35,7 @@ GameSession::GameSession(/*GameSession::Id id,*/ const Map& map, LootGenerator g
       m_map(map),
       m_random_spawn(false),
       m_loot_gen(std::move(gen)),
-      m_retirement_time(.0) {
+      m_retirement_time(0ms) {
 }
 
 GameSession::~GameSession() {
@@ -50,7 +50,7 @@ void GameSession::AddDog(DogPtr dog) {
     throw std::invalid_argument("Try to add Dog as null");
   }
 
-  //! crutch
+  //! crutch for serialization
   if (dog->GetPosition() == Point2d()) {
     dog->SetPosition(m_map.GetRandPoint(m_random_spawn));
   }
@@ -60,7 +60,7 @@ void GameSession::AddDog(DogPtr dog) {
   m_dogs.emplace_back(dog);
 }
 
-void GameSession::Update(double delta_time) {
+void GameSession::Update(std::chrono::milliseconds delta_time) {
   GenerateLoot(delta_time);
 
   DogsUpdate(delta_time);
@@ -70,23 +70,21 @@ void GameSession::SetDogRandomSpawn(bool enable) {
   m_random_spawn = enable;
 }
 
-void GameSession::SetRetirementTime(double downtime) {
-  assert(downtime != .0);
+void GameSession::SetRetirementTime(std::chrono::milliseconds downtime) {
+  assert(downtime != 0ms);
   m_retirement_time = downtime;
 }
 
-double GameSession::GetRetirementTime() const noexcept {
+std::chrono::milliseconds GameSession::GetRetirementTime() const noexcept {
   // assert(m_retirement_time == 0.0);
   return m_retirement_time;
 }
 
-void GameSession::GenerateLoot(double delta_time) {
+void GameSession::GenerateLoot(std::chrono::milliseconds delta_time) {
   const size_t max_loots = m_map.GetLootTypes().size();
   if (max_loots == 0 || m_loots.size() >= m_dogs.size()) return;
 
-  const std::chrono::milliseconds ms(static_cast<int64_t>(delta_time * 1000));
-
-  const size_t count = m_loot_gen.Generate(ms, m_loots.size(), m_dogs.size());
+  const size_t count = m_loot_gen.Generate(delta_time, m_loots.size(), m_dogs.size());
 
   for (size_t i = 0; i < count; ++i) {
     const size_t loot_index = Rand(max_loots - 1);
@@ -94,22 +92,21 @@ void GameSession::GenerateLoot(double delta_time) {
   }
 }
 
-void GameSession::DogsUpdate(double delta_time) {
+void GameSession::DogsUpdate(std::chrono::milliseconds delta_time) {
   // create collector for delegate collect loot
   Collector collector(m_loots, m_map.GetOffices());
 
+  std::erase_if(m_dogs, [](DogWeakPtr& w) {
+    return w.expired();
+  });
+
   // dog udate (calculate next position, and detect road bound)
   for (auto it = m_dogs.begin(); it != m_dogs.end(); ++it) {
+    assert(!it->expired());
     auto dog = it->lock();
-    if (!dog) {
-      it = m_dogs.erase(it);
-      --it;  // for loop ++it
-      continue;
-    }
-    // assert(dog != nullptr);
+    assert(dog != nullptr);
 
-    // update dog timer 
-    dog->UpdateTimer(); //! perhaps not necessary
+    dog->UpdateTimer(delta_time);
 
     const Point2d& pos = dog->GetPosition();
     const Point2d& speed = dog->GetSpeed();
@@ -119,7 +116,8 @@ void GameSession::DogsUpdate(double delta_time) {
       continue;
     }
 
-    Point2d nextPos = pos + (speed * delta_time);
+    const double sec = std::chrono::duration<double>(delta_time).count();
+    Point2d nextPos = pos + (speed * sec);
 
     // border define
     Point2d min_pos = pos;
@@ -146,8 +144,6 @@ void GameSession::DogsUpdate(double delta_time) {
       nextPos.x = max_pos.x;
       dog->Stop();
     }
-
-
 
     // if dog not move (check again because road collision detect)
     if (pos == nextPos) {

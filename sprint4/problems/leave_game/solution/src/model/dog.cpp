@@ -11,10 +11,9 @@ Dog::Dog(const Dog::Id& id)
       m_default_speed(0.0),
       m_bag_size(0),
       m_score(0),
-      m_clock(){
-
-        m_start_idle = m_clock.now();
-        m_start_play = m_clock.now();
+      m_downtime(0ms),
+      m_play_time(0ms),
+      m_moving(false) {
 }
 
 const Dog::Id& Dog::GetId() const {
@@ -76,6 +75,16 @@ int Dog::GetScore() const noexcept {
 
 
 void Dog::SetDir(const std::string& dir) {
+  // any change dir not mean idle 
+  m_downtime = 0ms;
+  m_moving = true;
+  
+  if (dir == "") {
+    m_moving = false;
+    Stop();
+    return;
+  }
+
   if (dir == "U") {
     m_speed = {0.0, -m_default_speed};
   } else if (dir == "R") {
@@ -84,13 +93,10 @@ void Dog::SetDir(const std::string& dir) {
     m_speed = {0.0, m_default_speed};
   } else if (dir == "L") {
     m_speed = {-m_default_speed, 0.0};
-  } else if (dir == "") {
-    m_speed = {0.0, 0.0};
-    ResetIdleTimer();
-    return;
   } else {
     throw std::invalid_argument("Argumen\'"s + dir + "\' must be 'U', 'R', 'D', 'L' or \"\"."s);
   }
+  
   m_dir = dir;
 }
 
@@ -102,9 +108,12 @@ size_t Dog::GetBagSize() const noexcept{
   return m_bag_size;
 }
 
-void Dog::UpdateTimer() {
-  if(m_speed.x != .0 || m_speed.y != .0) {
-    ResetIdleTimer();
+void Dog::UpdateTimer(std::chrono::milliseconds delta_time) {
+  m_play_time += delta_time;
+  if(!m_moving) {
+    m_downtime += delta_time;
+  } else {
+    m_downtime = 0ms;
   }
 }
 
@@ -113,17 +122,12 @@ void Dog::ResetIdleTimer() {
 }
 
 
-double Dog::GetDownTime() const {
-  auto current = m_clock.now();
-  auto deltaTime = std::chrono::duration<double>(current - m_start_idle).count();
-
-  return deltaTime;
+std::chrono::milliseconds Dog::GetDownTime() const {
+  return m_downtime;
 }
 
-double Dog::GetPlayTime() const {
-  auto current = m_clock.now();
-  auto deltaTime = std::chrono::duration<double>(current - m_start_play).count();
-  return deltaTime;
+std::chrono::milliseconds Dog::GetPlayTime() const {
+  return m_play_time;
 }
 
 

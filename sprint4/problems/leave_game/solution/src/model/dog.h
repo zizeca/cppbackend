@@ -64,13 +64,11 @@ class Dog : public GameObject {
   void SetBagSize(size_t size);
   size_t GetBagSize() const noexcept;
 
-  void UpdateTimer();
+  void UpdateTimer(std::chrono::milliseconds delta_time);
 
-  void ResetIdleTimer();
+  std::chrono::milliseconds GetDownTime() const;
 
-  double GetDownTime() const;
-
-  double GetPlayTime() const;
+  std::chrono::milliseconds GetPlayTime() const;
 
  private:
   Token m_token;
@@ -85,16 +83,15 @@ class Dog : public GameObject {
   size_t m_bag_size;
 
   int m_score;
-
-  std::chrono::steady_clock m_clock;
-  std::chrono::time_point<std::chrono::steady_clock> m_start_idle;
-  std::chrono::time_point<std::chrono::steady_clock> m_start_play;
-
+  std::chrono::milliseconds  m_play_time;
+  std::chrono::milliseconds  m_downtime;
+  bool m_moving;
 };
 
 using DogPtr = std::shared_ptr<Dog>;
 using DogWeakPtr = std::weak_ptr<Dog>;
 using DogConstPtr = std::shared_ptr<const Dog>;
+
 
 }  // namespace model
 

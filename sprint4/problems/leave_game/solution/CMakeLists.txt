@@ -18,15 +18,14 @@ set(SRC
 	${SRCDIR}/main.cpp
   ${SRCDIR}/command_parse.cpp
   ${SRCDIR}/logger.cpp
-#	${SRCDIR}/boost_json.cpp
 	${SRCDIR}/json_loader.cpp
-#	${SRCDIR}/tag_invokers.cpp
   ${SRCDIR}/util.cpp
   ${SRCDIR}/application.cpp
   ${SRCDIR}/response_maker.cpp
   ${SRCDIR}/api_handler.cpp
   ${SRCDIR}/content_type.cpp
 	#${SRCDIR}/request_handler.cpp
+
 )
 
 set(HEADER 
@@ -36,7 +35,6 @@ set(HEADER
   ${SRCDIR}/json_loader.h
   ${SRCDIR}/http_server.h
   ${SRCDIR}/tagged.h
-#  ${SRCDIR}/tag_invokers.h
   ${SRCDIR}/application.h
   ${SRCDIR}/request_handler.h
   ${SRCDIR}/content_type.h
@@ -48,7 +46,7 @@ set(HEADER
 
 
 
-find_package(Boost 1.78.0 REQUIRED)
+find_package(Boost 1.81.0 REQUIRED)
 if(Boost_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})
 endif()
