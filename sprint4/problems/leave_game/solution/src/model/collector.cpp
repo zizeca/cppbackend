@@ -23,7 +23,7 @@ CollisionResult TryCollectPoint(Point2d a, Point2d b, Point2d c) {
 
 std::list<CollisionEvent> Collector::FindEvent() const {
   std::list<CollisionEvent> event;
-
+  /**/
   for (auto& dogmove : m_dogs) {
     // handle loot collision
     for (const auto& loot : m_loots) {
@@ -41,7 +41,7 @@ std::list<CollisionEvent> Collector::FindEvent() const {
       }
     }
   }
-
+  /**/
   event.sort([](const CollisionEvent& lhs, const CollisionEvent& rhs) { return lhs.time < rhs.time; });
 
   return event;
@@ -56,21 +56,15 @@ void Collector::CollisionEventHandler() {
       // get loots
       auto loots = it->dog->UnloadLoots();
 
-      // calculate
-      auto points = std::accumulate(loots.begin(), loots.end(), 0, [](const int& sum, const Loot& loot) {
-        const auto& val = loot.GetLootType().value;
-        return static_cast<int>(sum + val);
-      });
-
-      // add points
-      it->dog->AddPoints(points);
+      // add poit
+      for(const auto& loot : loots) {
+        it->dog->AddPoints(loot.GetLootType().value);
+      }
 
     } else if (std::holds_alternative<Loot>(it->game_object) && !it->dog->IsFull()) {
       Loot loot = std::get<Loot>(it->game_object);
       it->dog->AddLoot(loot);
 
-      // remove collected loots from list
-      m_loots.remove(loot);
 
       // remove event with collected loot
       for (auto j = std::next(it); j != event.end();) {
@@ -82,6 +76,9 @@ void Collector::CollisionEventHandler() {
           }
         }
       }
+
+      // remove collected loots from list 
+      // m_loots.remove(loot);
     }
   }
 }
